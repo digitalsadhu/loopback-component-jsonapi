@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/digitalsadhu/loopback-component-jsonapi/issues"
   },
-  "homepage": "https://github.com/digitalsadhu/loopback-component-jsonapi#readme"
+  "homepage": "https://github.com/digitalsadhu/loopback-component-jsonapi#readme",
+  "dependencies": {
+    "jsonapi-serializer": "^2.0.2"
+  }
 }
