@@ -117,6 +117,7 @@ module.exports = function (app, options) {
   var remotes = app.remotes();
 
   remotes.after('**', function (ctx, next) {
+    ctx.res.set({'Content-Type': 'application/vnd.api+json'});
     var data = ctx.result
     if (!data) return next()
     if (data.hasOwnProperty('count')) return next()
