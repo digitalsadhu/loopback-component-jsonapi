@@ -1,4 +1,7 @@
 # loopback-component-jsonapi
+[![Build Status](https://travis-ci.org/digitalsadhu/loopback-component-jsonapi.svg)](https://travis-ci.org/digitalsadhu/loopback-component-jsonapi)
+[![npm version](https://badge.fury.io/js/loopback-component-jsonapi.svg)](http://badge.fury.io/js/loopback-component-jsonapi)
+
 JSONAPI support for loopback.
 
 ## Status
