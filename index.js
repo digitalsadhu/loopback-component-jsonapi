@@ -10,6 +10,10 @@ var update = require('./update');
 var errors = require('./errors');
 
 module.exports = function (app, options) {
+  if (!options || !options.restApiRoot) {
+    options = { restApiRoot: '/api' }
+  }
+
   removeRemoteMethods(app, options);
   patch(app, options);
   serialize(app, options);
