@@ -6,18 +6,29 @@ JSONAPI support for loopback.
 
 ## Status
 This project is a work in progress. Consider it alpha software.
-I am VERY interested in help to get this module over the line. Unit tests need to be written
-among other things.
+I am VERY interested in help to get this module over the line. See the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
 
-Currently, there is pretty good support for output serializing to json api.
-Creation of records via POST has basic supported but needs improvement when it comes to relationships.
-PATCH is not yet supported so PUT currently needs to be used for updates.
+Currently supported:
+- Find all records via GET
+- Find a record by ID via GET
+- Create via POST
+- Update a record via PATCH
+- Delete a record via DELETE
+- 422 Error output in JSON API format (validation errors)
+- Some 500 errors are formatted in JSON API format
+
+Not yet properly supported:
+- hasMany relations
+- hasOne relations
+- belongsTo relations
+- 404 Errors are not yet correctly formatted
+- Some 500 Errors are not yet correctly formatted
 
 ## Usage
 In your loopback project:
 
 1. `npm install --save loopback-component-jsonapi`
-2. Create a `component-config.json` file in your server folder
+2. Create a `component-config.json` file in your server folder (if you don't already have one)
 3. Add the following config to `component-config.json`
 ```json
 {
