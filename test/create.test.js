@@ -5,7 +5,7 @@ var JSONAPIComponent = require('../')
 var app;
 var Post;
 
-describe('loopback json api component create methods', function() {
+describe('loopback json api component create method', function() {
   var MyModel;
   beforeEach(function() {
     app = loopback();
