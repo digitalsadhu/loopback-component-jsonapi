@@ -14,6 +14,7 @@ module.exports = function (app, options) {
     options = { restApiRoot: '/api' }
   }
 
+  headers(app, options);
   removeRemoteMethods(app, options);
   patch(app, options);
   serialize(app, options);
