@@ -35,7 +35,7 @@ describe('loopback json api component find methods', function() {
         .expect('Content-Type', 'application/vnd.api+json; charset=utf-8')
         .end(done);
     });
-  })
+  });
 
   describe('self links', function () {
     beforeEach(function (done) {
@@ -120,5 +120,12 @@ describe('loopback json api component find methods', function() {
         });
     });
 
+    describe('errors', function () {
+      it('GET /models/doesnt/exist should return a 404 error', function (done) {
+        request(app).get('/posts/doesnt/exist')
+          .expect(404)
+          .end(done);
+      });
+    });
   });
 });

@@ -133,4 +133,54 @@ describe('loopback json api component update method', function() {
         });
     });
   });
+
+  describe('Errors', function () {
+    it('PATCH /models/:id with empty `attributes` should not return an error', function (done) {
+      request(app).patch('/posts/1')
+        .send({ data: { type: 'posts', id: 1, attributes: { } } })
+        .set('Content-Type', 'application/json')
+        .expect(200)
+        .end(done);
+    });
+
+    it('PATCH /models/:id with no `attributes` should not return an error', function (done) {
+      request(app).patch('/posts/1')
+        .send({ data: { type: 'posts', id: 1 } })
+        .set('Content-Type', 'application/json')
+        .expect(200)
+        .end(done);
+    });
+
+    it('PATCH /models/:id should return an 422 error if type key is not present', function (done) {
+      request(app).patch('/posts/1')
+        .send({
+          data: {
+            id: 1,
+            attributes: {
+              title: 'my post',
+              content: 'my post content'
+            }
+          }
+        })
+        .expect(422)
+        .set('Content-Type', 'application/json')
+        .end(done)
+    });
+
+    it('PATCH /models/:id should return an 422 error if id key is not present', function (done) {
+      request(app).patch('/posts/1')
+        .send({
+          data: {
+            type: 'posts',
+            attributes: {
+              title: 'my post',
+              content: 'my post content'
+            }
+          }
+        })
+        .expect(422)
+        .set('Content-Type', 'application/json')
+        .end(done)
+    });
+  });
 });

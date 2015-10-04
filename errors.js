@@ -21,6 +21,15 @@ module.exports = function (app, options) {
 
     else if (ctx.error.message) {
       statusCode = ctx.error.statusCode || ctx.error.status || 500;
+
+      if (ctx.error.message === 'JSON API resource object must contain `data.type` property') {
+        statusCode = 422;
+      }
+
+      if (ctx.error.message === 'JSON API resource object must contain `data.id` property') {
+        statusCode = 422;
+      }
+
       errors.push({
         status: statusCode,
         detail: ctx.error.message
