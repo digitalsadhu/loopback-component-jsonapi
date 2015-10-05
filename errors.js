@@ -3,6 +3,7 @@ module.exports = function (app, options) {
   app.settings.remoting = app.settings.remoting || {}
   app.settings.remoting.errorHandler = app.settings.remoting.errorHandler || {}
   app.settings.remoting.errorHandler.handler = function JSONAPIErrorHandler(err, req, res, next) {
+    res.set('Content-Type', 'application/vnd.api+json');
     res.status(err.status).send({
       errors: [{
         status: err.status,
@@ -15,6 +16,7 @@ module.exports = function (app, options) {
   //catch even more errors that aren't handled by the rest error handler or by the remotes().afterError()
   //handler
   app.middleware('final', function (err, req, res, next) {
+    res.set('Content-Type', 'application/vnd.api+json');
     res.status(err.status).send({
       errors: [{
         status: err.status,
@@ -45,6 +47,10 @@ module.exports = function (app, options) {
 
     else if (ctx.error.message) {
       statusCode = ctx.error.statusCode || ctx.error.status || 500;
+
+      if (ctx.error.message === 'JSON API resource object must contain `data` property') {
+        statusCode = 422;
+      }
 
       if (ctx.error.message === 'JSON API resource object must contain `data.type` property') {
         statusCode = 422;
