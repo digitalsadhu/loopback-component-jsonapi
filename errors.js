@@ -1,6 +1,28 @@
 module.exports = function (app, options) {
-  var remotes = app.remotes();
+  //intercept rest api errors not caught in remotes().afterError()
+  app.settings.remoting.errorHandler.handler = function JSONAPIErrorHandler(err, req, res, next) {
+    res.status(err.status).send({
+      errors: [{
+        status: err.status,
+        detail: err.message
+      }]
+    });
+    res.end();
+  };
 
+  //catch even more errors that aren't handled by the rest error handler or by the remotes().afterError()
+  //handler
+  app.middleware('final', function (err, req, res, next) {
+    res.status(err.status).send({
+      errors: [{
+        status: err.status,
+        detail: err.message
+      }]
+    });
+    res.end();
+  });
+
+  var remotes = app.remotes();
   remotes.afterError('**', function (ctx, next) {
     var errors = [];
     var statusCode = 500;
