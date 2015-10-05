@@ -1,5 +1,7 @@
 module.exports = function (app, options) {
   //intercept rest api errors not caught in remotes().afterError()
+  app.settings.remoting = app.settings.remoting || {}
+  app.settings.remoting.errorHandler = app.settings.remoting.errorHandler || {}
   app.settings.remoting.errorHandler.handler = function JSONAPIErrorHandler(err, req, res, next) {
     res.status(err.status).send({
       errors: [{
