@@ -16,15 +16,12 @@ Currently supported:
 - Create via POST
 - Update a record via PATCH
 - Delete a record via DELETE
-- 422 Error output in JSON API format (validation errors)
-- Some 500 errors are formatted in JSON API format
+- All errors have now been transformed into the correct JSON API format
 
 Not yet properly supported:
 - hasMany relations
 - hasOne relations
 - belongsTo relations
-- 404 Errors are not yet correctly formatted
-- Some 500 Errors are not yet correctly formatted
 
 ## Usage
 In your loopback project:
