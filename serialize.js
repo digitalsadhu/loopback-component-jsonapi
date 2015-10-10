@@ -99,7 +99,10 @@ module.exports = function (app, options) {
         }
       }
     }
-    // addRelationships(ctx, modelName, app.models, attrs, serializeOptions, options)
+
+    if (serializeOptions.topLevelLinks.self.match(/\/relationships\//)) {
+      serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
+    }
 
     ctx.result = serialize(modelName, clone(data), serializeOptions)
     next()
