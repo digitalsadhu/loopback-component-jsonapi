@@ -67,59 +67,6 @@ function primaryKeyFromModel(model) {
   console.log(model.definition.properties)
 }
 
-function addRelationships(ctx, baseModelName, models, attrs, serializeOptions, options) {
-  function includeRelation(key) {
-    attrs.push(key)
-
-    //dynamic lookup from plural to model name
-    var modelName = modelNameForPlural(models, key)
-    var relAttrs = attributesWithoutIdForModel(models[modelName])
-
-    serializeOptions[key] = {
-      ref: 'id',
-      attributes: relAttrs,
-      relationshipLinks: {
-        //TODO: implement self relationship link
-        // Loopback supports manipulating rels with 'http://localhost:3000/cats/{id}/dogs/rel/{fk}'
-        // This doesn't quite work with JSON API as far as I can tell
-        // self: function (dataSet, data) {
-        //   ...
-        // },
-        related: function (dataSet, data) {
-          return url.format({
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            pathname: options.restApiRoot + '/' + models[baseModelName].definition.settings.plural + '/' + dataSet.id + '/' + key
-          })
-        }
-      },
-      includedLinks: {
-        self: function (dataSet, data) {
-          return url.format({
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            pathname: options.restApiRoot + '/' + key + '/' + data.id
-          })
-        }
-      }
-    }
-  }
-
-  var filter = filterFromContext(ctx)
-  if (filter && filter.include) {
-    //filter.include can be an array of strings
-    if (Array.isArray(filter.include)) {
-      filter.include.forEach(function (key) {
-        includeRelation(key)
-      })
-    } else {
-      //otherwise its a string
-      includeRelation(filter.include)
-    }
-    serializeOptions.included = true
-  }
-}
-
 module.exports = function (app, options) {
   var remotes = app.remotes();
 
