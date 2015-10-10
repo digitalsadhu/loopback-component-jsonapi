@@ -4,9 +4,11 @@ module.exports = function (app, options) {
   app.settings.remoting.errorHandler = app.settings.remoting.errorHandler || {}
   app.settings.remoting.errorHandler.handler = function JSONAPIErrorHandler(err, req, res, next) {
     res.set('Content-Type', 'application/vnd.api+json');
-    res.status(err.status).send({
+    var status = err.status || err.statusCode || 500;
+
+    res.status(status).send({
       errors: [{
-        status: err.status,
+        status: status,
         detail: err.message
       }]
     });
@@ -17,9 +19,11 @@ module.exports = function (app, options) {
   //handler
   app.middleware('final', function (err, req, res, next) {
     res.set('Content-Type', 'application/vnd.api+json');
-    res.status(err.status).send({
+    var status = err.status || err.statusCode || 500;
+
+    res.status(status).send({
       errors: [{
-        status: err.status,
+        status: status,
         detail: err.message
       }]
     });

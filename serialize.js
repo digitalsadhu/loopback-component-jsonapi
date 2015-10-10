@@ -4,7 +4,16 @@ var Serializer = require('jsonapi-serializer')
 var url = require('url')
 
 function serialize(name, data, options) {
-  return new Serializer(name, data, options);
+  //Workaround as Serializer blows up if data is null
+  var dataIsNull = !data;
+  if (dataIsNull) {
+    data = []
+  }
+  var result = new Serializer(name, data, options);
+  if (dataIsNull) {
+    result.data = null;
+  }
+  return result;
 }
 
 function pluralForModel(model) {
@@ -117,10 +126,20 @@ module.exports = function (app, options) {
   remotes.after('**', function (ctx, next) {
     ctx.res.set({'Content-Type': 'application/vnd.api+json'});
     var data = ctx.result
-    if (!data) return next()
-    if (data.hasOwnProperty('count')) return next()
+    if (ctx.req.method === 'DELETE') return next();
+    if (ctx.req.method === 'PUT') return next();
+    if (ctx.req.method === 'HEAD') return next();
 
     var modelName = modelNameFromContext(ctx)
+
+    //HACK: specifically when data is null and GET :model/:id
+    //is being accessed, we should not treat null as ok. It needs
+    //to be 404'd and to do that we just exit out of this
+    //after remote hook and let the middleware chain continue
+    if (data === null && ctx.method.name === 'findById') {
+      return next();
+    }
+
     var attrs = attributesWithoutIdForModel(app.models[modelName])
 
     var serializeOptions = {
@@ -133,8 +152,7 @@ module.exports = function (app, options) {
         }
       }
     }
-
-    addRelationships(ctx, modelName, app.models, attrs, serializeOptions, options)
+    // addRelationships(ctx, modelName, app.models, attrs, serializeOptions, options)
 
     ctx.result = serialize(modelName, clone(data), serializeOptions)
     next()
