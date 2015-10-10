@@ -17,7 +17,7 @@ function serialize(name, data, options) {
 }
 
 function pluralForModel(model) {
-  return model.definition.settings.plural
+  return model.definition.settings.plural;
 }
 
 function modelNameForPlural(models, plural) {
@@ -104,7 +104,23 @@ module.exports = function (app, options) {
       serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
     }
 
-    ctx.result = serialize(modelName, clone(data), serializeOptions)
+    var type = modelName;
+    if (ctx.methodString.match(/.*\.__.*__.*/)) {
+      //get the model name of the related model in plural form.
+      //we cant just get the relationship name because the name of
+      //the relationship may not match the related model plural.
+      //eg. /posts/1/author could actually be a user model so we
+      //would want type = 'users'
+
+      //WARNING: fragile
+      var relatedModelName = ctx.method.returns[0].type;
+      var relatedModelPlural = pluralForModel(app.models[relatedModelName])
+      if (relatedModelPlural) {
+        type = relatedModelPlural
+      }
+    }
+
+    ctx.result = serialize(type, clone(data), serializeOptions)
     next()
   })
 

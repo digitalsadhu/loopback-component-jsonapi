@@ -28,6 +28,7 @@ describe('loopback json api hasMany relationships', function() {
     });
     app.model(Comment);
     Post.hasMany(Comment, {as: 'comments', foreignKey: 'postId'});
+    Comment.settings.plural = 'comments';
 
     app.use(loopback.rest());
     JSONAPIComponent(app);
@@ -111,6 +112,7 @@ describe('loopback json api hasMany relationships', function() {
             expect(res.body.links.self).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
             expect(res.body.data.length).to.equal(1);
+            expect(res.body.data[0].type).to.equal('comments');
             done();
           });
       });

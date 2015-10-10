@@ -27,6 +27,7 @@ describe('loopback json api hasOne relationships', function() {
     });
     app.model(Person);
     Post.hasOne(Person, {as: 'author', foreignKey: 'postId'});
+    Person.settings.plural = 'people';
 
     app.use(loopback.rest());
     JSONAPIComponent(app);
@@ -106,6 +107,7 @@ describe('loopback json api hasOne relationships', function() {
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/author/);
             expect(res.body.data).to.be.an('object');
+            expect(res.body.data.type).to.equal('people');
             done();
           });
       });
