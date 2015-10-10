@@ -52,6 +52,7 @@ describe('loopback json api hasOne relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/author/);
             expect(res.body.data).to.equal(null);
             done();
           });
@@ -70,6 +71,8 @@ describe('loopback json api hasOne relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/relationships\/author/);
+            expect(res.body.links.related).to.match(/posts\/1\/author/);
             expect(res.body.data).to.equal(null);
             done();
           });
@@ -101,6 +104,7 @@ describe('loopback json api hasOne relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/author/);
             expect(res.body.data).to.be.an('object');
             done();
           });
@@ -115,10 +119,12 @@ describe('loopback json api hasOne relationships', function() {
       });
 
       it('should display a single resource object keyed by `data`', function (done) {
-        request(app).get('/posts/1/author')
+        request(app).get('/posts/1/relationships/author')
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/relationships\/author/);
+            expect(res.body.links.related).to.match(/posts\/1\/author/);
             expect(res.body.data).to.be.an('object');
             done();
           });

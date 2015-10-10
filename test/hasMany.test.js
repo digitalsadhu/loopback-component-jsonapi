@@ -53,6 +53,7 @@ describe('loopback json api hasMany relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
             expect(res.body.data.length).to.equal(0);
             done();
@@ -72,6 +73,8 @@ describe('loopback json api hasMany relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/relationships\/comments/);
+            expect(res.body.links.related).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
             expect(res.body.data.length).to.equal(0);
             done();
@@ -105,6 +108,7 @@ describe('loopback json api hasMany relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
             expect(res.body.data.length).to.equal(1);
             done();
@@ -124,6 +128,8 @@ describe('loopback json api hasMany relationships', function() {
           .end(function (err, res) {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
+            expect(res.body.links.self).to.match(/posts\/1\/relationships\/comments/);
+            expect(res.body.links.related).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
             expect(res.body.data.length).to.equal(1);
             done();
