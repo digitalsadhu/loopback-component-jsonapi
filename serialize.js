@@ -4,7 +4,9 @@ var Serializer = require('jsonapi-serializer')
 var url = require('url')
 
 function serialize(name, data, options) {
-  //Workaround as Serializer blows up if data is null
+  //Workaround as Serializer blows up if data is null.
+  //TODO: submit issue to serializer library to get this
+  //cleaned up
   var dataIsNull = !data;
   if (dataIsNull) {
     data = []
@@ -17,6 +19,9 @@ function serialize(name, data, options) {
 }
 
 function pluralForModel(model) {
+  //this only works where the plural is explicitly set.
+  //TODO: fall back to automatic pluralization when
+  //model.definition.settings.plural is undefined
   return model.definition.settings.plural;
 }
 
@@ -73,6 +78,9 @@ module.exports = function (app, options) {
   remotes.after('**', function (ctx, next) {
     ctx.res.set({'Content-Type': 'application/vnd.api+json'});
     var data = ctx.result
+
+    //housekeeping, just skip verbs we definitely aren't
+    //interested in handling.
     if (ctx.req.method === 'DELETE') return next();
     if (ctx.req.method === 'PUT') return next();
     if (ctx.req.method === 'HEAD') return next();
@@ -100,11 +108,14 @@ module.exports = function (app, options) {
       }
     }
 
+    //append `related` links key if applicable
+    //creates /:model/:id/:model from /:model/:id/relationships/:model
     if (serializeOptions.topLevelLinks.self.match(/\/relationships\//)) {
       serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
     }
 
     var type = modelName;
+    //match on __GET__, etc.
     if (ctx.methodString.match(/.*\.__.*__.*/)) {
       //get the model name of the related model in plural form.
       //we cant just get the relationship name because the name of
@@ -112,7 +123,7 @@ module.exports = function (app, options) {
       //eg. /posts/1/author could actually be a user model so we
       //would want type = 'users'
 
-      //WARNING: fragile
+      //WARNING: feels fragile but functional.
       var relatedModelName = ctx.method.returns[0].type;
       var relatedModelPlural = pluralForModel(app.models[relatedModelName])
       if (relatedModelPlural) {
