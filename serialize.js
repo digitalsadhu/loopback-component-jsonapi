@@ -1,7 +1,9 @@
 "use strict";
 
-var Serializer = require('jsonapi-serializer')
-var url = require('url')
+var Serializer = require('jsonapi-serializer');
+var url = require('url');
+var path = require('path');
+var inflection = require('inflection');
 
 function serialize(name, data, options) {
   //Workaround as Serializer blows up if data is null.
@@ -19,10 +21,19 @@ function serialize(name, data, options) {
 }
 
 function pluralForModel(model) {
-  //this only works where the plural is explicitly set.
-  //TODO: fall back to automatic pluralization when
-  //model.definition.settings.plural is undefined
-  return model.definition.settings.plural;
+  if (model.settings && model.settings.http && model.settings.http.path) {
+    return model.settings.http.path;
+  }
+
+  if (model.settings && model.settings.plural) {
+    return model.settings.plural
+  }
+
+  if (model.definition && model.definition.settings && model.definition.settings.plural) {
+    return model.definition.settings.plural
+  }
+
+  return inflection.pluralize(model.sharedClass.name);
 }
 
 function modelNameForPlural(models, plural) {
@@ -44,6 +55,8 @@ function attributesForModel(model) {
 
 function attributesWithoutIdForModel(model) {
   var attrs = attributesForModel(model)
+  //TODO: the id primary key should not be hard coded.
+  //its possible the PK may be something else.
   attrs.splice(attrs.indexOf('id'), 1)
   return attrs
 }
@@ -72,19 +85,32 @@ function primaryKeyFromModel(model) {
   console.log(model.definition.properties)
 }
 
+function buildModelUrl(protocol, host, apiRoot, modelName, id) {
+  var result;
+  try {
+    result = url.format({
+      protocol: protocol,
+      host: host,
+      pathname: url.resolve('/', [apiRoot, modelName, id].join('/'))
+    })
+  } catch (e) {
+    return '';
+  }
+  return result;
+}
+
 module.exports = function (app, options) {
   var remotes = app.remotes();
 
   remotes.after('**', function (ctx, next) {
     ctx.res.set({'Content-Type': 'application/vnd.api+json'});
-    var data = ctx.result
-
     //housekeeping, just skip verbs we definitely aren't
     //interested in handling.
     if (ctx.req.method === 'DELETE') return next();
     if (ctx.req.method === 'PUT') return next();
     if (ctx.req.method === 'HEAD') return next();
 
+    var data = clone(ctx.result)
     var modelName = modelNameFromContext(ctx)
 
     //HACK: specifically when data is null and GET :model/:id
@@ -119,8 +145,6 @@ module.exports = function (app, options) {
       attrs = attributesWithoutIdForModel(app.models[relatedModelName])
     }
 
-
-
     var serializeOptions = {
       id: 'id',
       attributes: attrs,
@@ -130,9 +154,9 @@ module.exports = function (app, options) {
           if (relatedModelPlural) {
             //TODO: fix url building. Use url module.
             //currently doesnt take into account if /api/ is in the url etc.
-            return ctx.req.protocol + '://' + ctx.req.get('host') + '/' + relatedModelPlural + '/' + item.id
+            return buildModelUrl(ctx.req.protocol, ctx.req.get('host'), options.restApiRoot, relatedModelPlural, item.id);
           }
-          return ctx.req.protocol + '://' + ctx.req.get('host') + ctx.req.baseUrl + '/' + item.id
+          return buildModelUrl(ctx.req.protocol, ctx.req.get('host'), options.restApiRoot, pluralForModel(app.models[modelName]), item.id);
         }
       }
     }
@@ -143,9 +167,22 @@ module.exports = function (app, options) {
       serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
     }
 
+    ctx.result = serialize(type, data, serializeOptions);
 
-    ctx.result = serialize(type, clone(data), serializeOptions)
-    next()
-  })
-
+    if (serializeOptions.topLevelLinks.self.match(/\/relationships\//)) {
+      if (ctx.result.data) {
+        if (Array.isArray(ctx.result.data)) {
+          ctx.result.data = ctx.result.data.map(function (item) {
+            delete item.attributes;
+            delete item.links;
+            return item;
+          });
+        } else {
+          delete ctx.result.data.attributes;
+          delete ctx.result.data.links;
+        }
+      }
+    }
+    next();
+  });
 }

@@ -132,7 +132,10 @@ describe('loopback json api hasOne relationships', function() {
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/relationships\/author/);
             expect(res.body.links.related).to.match(/posts\/1\/author/);
-            expect(res.body.data).to.be.an('object');
+            expect(res.body.data).to.deep.equal({
+                type: 'people',
+                id: '1'
+            });
             done();
           });
       });

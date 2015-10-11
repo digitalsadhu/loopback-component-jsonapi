@@ -31,7 +31,7 @@ describe('loopback json api hasMany relationships', function() {
     Comment.settings.plural = 'comments';
 
     app.use(loopback.rest());
-    JSONAPIComponent(app);
+    JSONAPIComponent(app, {restApiRoot: '/'});
   });
 
   describe('Post with no comments', function (done) {
@@ -134,6 +134,10 @@ describe('loopback json api hasMany relationships', function() {
             expect(res.body.links.related).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
             expect(res.body.data.length).to.equal(1);
+            expect(res.body.data[0]).to.deep.equal({
+                type: 'comments',
+                id: '1'
+            });
             done();
           });
       });

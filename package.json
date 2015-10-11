@@ -25,6 +25,7 @@
   "homepage": "https://github.com/digitalsadhu/loopback-component-jsonapi#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "inflection": "^1.7.2",
     "jsonapi-serializer": "^2.0.2"
   },
   "devDependencies": {
