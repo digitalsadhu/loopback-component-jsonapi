@@ -10,6 +10,15 @@ function serialize(name, data, options) {
   //TODO: submit issue to serializer library to get this
   //cleaned up
   var dataIsNull = !data;
+
+  //yuck. null === 'object' so need to also check for not null
+  //also need to exclude arrays
+  if (!Array.isArray(data) && !!data && typeof data === 'object') {
+    if (Object.keys(data).length === 0) {
+      dataIsNull = true;
+    }
+  }
+
   if (dataIsNull) {
     data = []
   }
@@ -111,6 +120,7 @@ module.exports = function (app, options) {
     if (ctx.req.method === 'HEAD') return next();
 
     var data = clone(ctx.result)
+
     var modelName = modelNameFromContext(ctx)
 
     //HACK: specifically when data is null and GET :model/:id
@@ -167,8 +177,14 @@ module.exports = function (app, options) {
       serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
     }
 
+    //serialize the data into json api format.
     ctx.result = serialize(type, data, serializeOptions);
 
+    //once again detect that we are dealing with a relationships
+    //url. this time post serialization.
+    //Clean up data here by deleting resource level attributes
+    //and links. Handle collection and single resource.
+    //TODO: create an isRelationshipRequest helper
     if (serializeOptions.topLevelLinks.self.match(/\/relationships\//)) {
       if (ctx.result.data) {
         if (Array.isArray(ctx.result.data)) {

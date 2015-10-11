@@ -15,20 +15,31 @@ function fixHttpMethod(fn, name) {
 
 module.exports = function (app, options) {
   app.models().forEach(function(ctor) {
-    // ctor.belongsToRemoting = function(relationName, relation, define) {
-    //   var modelName = relation.modelTo && relation.modelTo.modelName;
-    //   modelName = modelName || 'PersistedModel';
-    //   var fn = this.prototype[relationName];
-    //   var pathName = (relation.options.http && relation.options.http.path) || relationName;
-    //   define('__get__' + relationName, {
-    //     isStatic: false,
-    //     http: {verb: 'get', path: '/' + pathName},
-    //     accepts: {arg: 'refresh', type: 'boolean', http: {source: 'query'}},
-    //     accessType: 'READ',
-    //     description: 'Fetches belongsTo relation ' + relationName + '.',
-    //     returns: {arg: relationName, type: modelName, root: true}
-    //   }, fn);
-    // };
+    ctor.belongsToRemoting = function(relationName, relation, define) {
+      var modelName = relation.modelTo && relation.modelTo.modelName;
+      modelName = modelName || 'PersistedModel';
+      var fn = this.prototype[relationName];
+      var pathName = (relation.options.http && relation.options.http.path) || relationName;
+      define('__get__' + relationName, {
+        isStatic: false,
+        http: {verb: 'get', path: '/' + pathName},
+        accepts: {arg: 'refresh', type: 'boolean', http: {source: 'query'}},
+        accessType: 'READ',
+        description: 'Fetches belongsTo relation ' + relationName + '.',
+        returns: {arg: relationName, type: modelName, root: true}
+      }, fn);
+
+      var findBelongsToRelationshipsFunc = function (cb) {
+        this['__get__' + pathName](cb);
+      }
+      define('__findRelationships__' + relationName, {
+        isStatic: false,
+        http: {verb: 'get', path: '/relationships/' + pathName},
+        description: 'Find relations for ' + relationName + '.',
+        accessType: 'READ',
+        returns: {arg: 'result', type: relation.modelTo.modelName, root: true}
+      }, findBelongsToRelationshipsFunc);
+    };
 
     ctor.hasOneRemoting = function(relationName, relation, define) {
       var pathName = (relation.options.http && relation.options.http.path) || relationName;
