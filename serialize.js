@@ -97,23 +97,6 @@ module.exports = function (app, options) {
 
     var attrs = attributesWithoutIdForModel(app.models[modelName])
 
-    var serializeOptions = {
-      id: 'id',
-      attributes: attrs,
-      topLevelLinks: { self: urlFromContext(ctx) },
-      dataLinks: {
-        self: function (item) {
-          return ctx.req.protocol + '://' + ctx.req.get('host') + ctx.req.baseUrl + '/' + item.id
-        }
-      }
-    }
-
-    //append `related` links key if applicable
-    //creates /:model/:id/:model from /:model/:id/relationships/:model
-    if (serializeOptions.topLevelLinks.self.match(/\/relationships\//)) {
-      serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
-    }
-
     var type = modelName;
     //match on __GET__, etc.
     if (ctx.methodString.match(/.*\.__.*__.*/)) {
@@ -129,7 +112,37 @@ module.exports = function (app, options) {
       if (relatedModelPlural) {
         type = relatedModelPlural
       }
+
+      //if the model in question is a related model, we need to
+      //overwrite the attrs variable with attrs from the related
+      //model.
+      attrs = attributesWithoutIdForModel(app.models[relatedModelName])
     }
+
+
+
+    var serializeOptions = {
+      id: 'id',
+      attributes: attrs,
+      topLevelLinks: { self: urlFromContext(ctx) },
+      dataLinks: {
+        self: function (item) {
+          if (relatedModelPlural) {
+            //TODO: fix url building. Use url module.
+            //currently doesnt take into account if /api/ is in the url etc.
+            return ctx.req.protocol + '://' + ctx.req.get('host') + '/' + relatedModelPlural + '/' + item.id
+          }
+          return ctx.req.protocol + '://' + ctx.req.get('host') + ctx.req.baseUrl + '/' + item.id
+        }
+      }
+    }
+
+    //append `related` links key if applicable
+    //creates /:model/:id/:model from /:model/:id/relationships/:model
+    if (serializeOptions.topLevelLinks.self.match(/\/relationships\//)) {
+      serializeOptions.topLevelLinks.related = serializeOptions.topLevelLinks.self.replace('/relationships/', '/');
+    }
+
 
     ctx.result = serialize(type, clone(data), serializeOptions)
     next()

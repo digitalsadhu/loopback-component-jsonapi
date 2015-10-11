@@ -106,8 +106,13 @@ describe('loopback json api hasOne relationships', function() {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/author/);
-            expect(res.body.data).to.be.an('object');
+            expect(res.body.data.attributes).to.deep.equal({
+                name: 'Bob Jones',
+                'post-id': 1
+            });
             expect(res.body.data.type).to.equal('people');
+            expect(res.body.data.id).to.equal('1');
+            expect(res.body.data.links.self).to.match(/^http.*\/people\/1$/);
             done();
           });
       });
