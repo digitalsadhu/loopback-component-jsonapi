@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var JSONAPIComponent = require('../');
 var app, Post, Comment, ds;
 
-describe('loopback json api referencesMany relationships', function () {
+describe.skip('loopback json api referencesMany relationships', function () {
   beforeEach(function () {
     app = loopback();
     app.set('legacyExplorer', false);
