@@ -30,7 +30,7 @@ describe('loopback json api hasMany relationships', function () {
     JSONAPIComponent(app, {restApiRoot: '/'});
   });
 
-  describe('Post with no comments', function (done) {
+  describe('Fetch a post with no comments', function (done) {
     beforeEach(function (done) {
       Post.create({
         title: 'my post without comments',
@@ -82,7 +82,7 @@ describe('loopback json api hasMany relationships', function () {
     });
   });
 
-  describe('Post with a comment', function (done) {
+  describe('Fetch a post with a comment', function (done) {
     beforeEach(function (done) {
       Post.create({
         title: 'my post',
