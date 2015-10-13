@@ -1,13 +1,12 @@
 var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
-var JSONAPIComponent = require('../')
+var JSONAPIComponent = require('../');
 var app;
 var Post;
 
-describe('loopback json api component create method', function() {
-  var MyModel;
-  beforeEach(function() {
+describe('loopback json api component create method', function () {
+  beforeEach(function () {
     app = loopback();
     app.set('legacyExplorer', false);
     var ds = loopback.createDataSource('memory');
@@ -94,6 +93,7 @@ describe('loopback json api component create method', function() {
         })
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.deep.property('data.links.self');
           expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1/);
           done();
@@ -115,6 +115,7 @@ describe('loopback json api component create method', function() {
         })
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.all.keys('data');
           expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
           expect(res.body.data.id).to.equal('1');
@@ -139,7 +140,7 @@ describe('loopback json api component create method', function() {
         })
         .expect(422)
         .set('Content-Type', 'application/json')
-        .end(done)
+        .end(done);
     });
 
     it('POST /models should return an 422 error if model title is not present', function (done) {
@@ -160,6 +161,7 @@ describe('loopback json api component create method', function() {
         .send({ data: { type: 'posts' } })
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.keys('errors');
           expect(res.body.errors.length).to.equal(2);
           expect(res.body.errors[0]).to.deep.equal({

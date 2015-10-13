@@ -2,7 +2,7 @@
   "name": "loopback-component-jsonapi",
   "version": "0.4.0",
   "description": "JSONAPI support for loopback",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha --reporter=spec ./test/**/*"
   },
@@ -29,7 +29,9 @@
     "jsonapi-serializer": "^2.0.2"
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.3",
     "chai": "^3.3.0",
+    "eslint": "^1.6.0",
     "loopback": "^2.22.2",
     "loopback-datasource-juggler": "^2.40.1",
     "mocha": "^2.3.3",

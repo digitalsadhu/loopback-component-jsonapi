@@ -1,15 +1,14 @@
 var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
-var JSONAPIComponent = require('../')
+var JSONAPIComponent = require('../');
 var app;
 var Post;
-var Comment;
 var Person;
 var ds;
 
-describe('loopback json api hasOne relationships', function() {
-  beforeEach(function() {
+describe('loopback json api hasOne relationships', function () {
+  beforeEach(function () {
     app = loopback();
     app.set('legacyExplorer', false);
     ds = loopback.createDataSource('memory');
@@ -51,6 +50,7 @@ describe('loopback json api hasOne relationships', function() {
       it('should return `null` keyed by `data`', function (done) {
         request(app).get('/posts/1/author')
           .end(function (err, res) {
+            expect(err).to.equal(null);
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/author/);
@@ -70,6 +70,7 @@ describe('loopback json api hasOne relationships', function() {
       it('should return `null` keyed by `data`', function (done) {
         request(app).get('/posts/1/relationships/author')
           .end(function (err, res) {
+            expect(err).to.equal(null);
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/relationships\/author/);
@@ -87,6 +88,7 @@ describe('loopback json api hasOne relationships', function() {
         name: 'my post',
         content: 'my post content'
       }, function (err, post) {
+        expect(err).to.equal(null);
         post.author.create({
           name: 'Bob Jones'
         }, done);
@@ -103,12 +105,13 @@ describe('loopback json api hasOne relationships', function() {
       it('should display a single resource object keyed by `data`', function (done) {
         request(app).get('/posts/1/author')
           .end(function (err, res) {
+            expect(err).to.equal(null);
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/author/);
             expect(res.body.data.attributes).to.deep.equal({
-                name: 'Bob Jones',
-                'post-id': 1
+              name: 'Bob Jones',
+              'post-id': 1
             });
             expect(res.body.data.type).to.equal('people');
             expect(res.body.data.id).to.equal('1');
@@ -128,13 +131,14 @@ describe('loopback json api hasOne relationships', function() {
       it('should display a single resource object keyed by `data`', function (done) {
         request(app).get('/posts/1/relationships/author')
           .end(function (err, res) {
+            expect(err).to.equal(null);
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/relationships\/author/);
             expect(res.body.links.related).to.match(/posts\/1\/author/);
             expect(res.body.data).to.deep.equal({
-                type: 'people',
-                id: '1'
+              type: 'people',
+              id: '1'
             });
             done();
           });

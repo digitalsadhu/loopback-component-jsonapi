@@ -1,13 +1,12 @@
 var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
-var JSONAPIComponent = require('../')
+var JSONAPIComponent = require('../');
 var app;
 var Post;
 
-describe('loopback json api component update method', function() {
-  var MyModel;
-  beforeEach(function(done) {
+describe('loopback json api component update method', function () {
+  beforeEach(function (done) {
     app = loopback();
     app.set('legacyExplorer', false);
     var ds = loopback.createDataSource('memory');
@@ -99,6 +98,7 @@ describe('loopback json api component update method', function() {
         })
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.deep.property('data.links.self');
           expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1/);
           done();
@@ -121,6 +121,7 @@ describe('loopback json api component update method', function() {
         })
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.all.keys('data');
           expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
           expect(res.body.data.id).to.equal('1');
@@ -164,7 +165,7 @@ describe('loopback json api component update method', function() {
         })
         .expect(422)
         .set('Content-Type', 'application/json')
-        .end(done)
+        .end(done);
     });
 
     it('PATCH /models/:id should return an 422 error if id key is not present', function (done) {
@@ -180,7 +181,7 @@ describe('loopback json api component update method', function() {
         })
         .expect(422)
         .set('Content-Type', 'application/json')
-        .end(done)
+        .end(done);
     });
   });
 });

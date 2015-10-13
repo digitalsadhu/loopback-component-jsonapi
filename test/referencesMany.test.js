@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var JSONAPIComponent = require('../');
 var app, Post, Comment, ds;
 
-describe('loopback json api hasMany relationships', function () {
+describe.skip('loopback json api referencesMany relationships', function () {
   beforeEach(function () {
     app = loopback();
     app.set('legacyExplorer', false);
@@ -18,12 +18,11 @@ describe('loopback json api hasMany relationships', function () {
 
     Comment = ds.createModel('comment', {
       id: {type: Number, id: true},
-      postId: Number,
       title: String,
       comment: String
     });
     app.model(Comment);
-    Post.hasMany(Comment, {as: 'comments', foreignKey: 'postId'});
+    Post.referencesMany(Comment, {property: 'comments', foreignKey: 'comments'});
     Comment.settings.plural = 'comments';
 
     app.use(loopback.rest());
@@ -82,17 +81,23 @@ describe('loopback json api hasMany relationships', function () {
     });
   });
 
-  describe('Post with a comment', function (done) {
+  describe('Post with a comment', function () {
     beforeEach(function (done) {
-      Post.create({
-        title: 'my post',
-        content: 'my post content'
-      }, function (err, post) {
+      Comment.create({
+        title: 'My comment',
+        comment: 'My comment text'
+      }, function (err, comment) {
         expect(err).to.equal(null);
-        post.comments.create({
-          title: 'My comment',
-          comment: 'My comment text'
-        }, done);
+        expect(comment).to.be.an('object');
+        Post.create({
+          title: 'my post',
+          content: 'my post content',
+          comments: [comment.id]
+        }, function (err, post) {
+          expect(err).to.equal(null);
+          expect(post).to.be.an('object');
+          done();
+        });
       });
     });
 

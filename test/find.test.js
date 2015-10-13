@@ -1,13 +1,12 @@
 var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
-var JSONAPIComponent = require('../')
+var JSONAPIComponent = require('../');
 var app;
 var Post;
 
-describe('loopback json api component find methods', function() {
-  var MyModel;
-  beforeEach(function() {
+describe('loopback json api component find methods', function () {
+  beforeEach(function () {
     app = loopback();
     app.set('legacyExplorer', false);
     var ds = loopback.createDataSource('memory');
@@ -42,28 +41,30 @@ describe('loopback json api component find methods', function() {
       Post.create({
         title: 'my post',
         content: 'my post content'
-      }, done)
-    })
+      }, done);
+    });
 
     //TODO: see https://github.com/digitalsadhu/loopback-component-jsonapi/issues/11
-    it('should produce correct top level self links')
+    it('should produce correct top level self links');
 
     it('should produce resource level self links', function (done) {
       request(app).get('/posts/1')
         .expect(200)
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.deep.property('data.links.self');
           expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1/);
           done();
         });
-    })
-  })
+    });
+  });
 
   describe('empty responses', function () {
-    it('GET /models should return an empty JSON API resource object when there are no results', function(done) {
+    it('GET /models should return an empty JSON API resource object when there are no results', function (done) {
       request(app).get('/posts')
         .expect(200)
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.be.an('object');
           expect(res.body.links).to.be.an('object');
           // expect(res.body.links.self).to.match(/^http:\/\/127.0.0.1:.*\/api\/posts/);
@@ -73,7 +74,7 @@ describe('loopback json api component find methods', function() {
         });
     });
 
-    it('GET model/:id should return a 404 when there are no results', function(done) {
+    it('GET model/:id should return a 404 when there are no results', function (done) {
       request(app).get('/posts/1')
         .expect(404)
         .end(done);
@@ -85,13 +86,14 @@ describe('loopback json api component find methods', function() {
       Post.create({
         title: 'my post',
         content: 'my post content'
-      }, done)
-    })
+      }, done);
+    });
 
     it('GET /models/ should return a JSON API response with 1 item', function (done) {
       request(app).get('/posts')
         .expect(200)
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.all.keys('links', 'data');
           expect(res.body.links).to.have.all.keys('self');
           expect(res.body.data).to.be.an('array');
@@ -109,6 +111,7 @@ describe('loopback json api component find methods', function() {
       request(app).get('/posts/1')
         .expect(200)
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.all.keys('links', 'data');
           expect(res.body.links).to.have.all.keys('self');
           expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
