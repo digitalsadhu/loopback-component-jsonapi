@@ -1,13 +1,11 @@
 var request = require('supertest');
 var loopback = require('loopback');
-var expect = require('chai').expect;
-var JSONAPIComponent = require('../')
+var JSONAPIComponent = require('../');
 var app;
 var Post;
 
-describe('loopback json api component delete method', function() {
-  var MyModel;
-  beforeEach(function(done) {
+describe('loopback json api component delete method', function () {
+  beforeEach(function (done) {
     app = loopback();
     app.set('legacyExplorer', false);
     var ds = loopback.createDataSource('memory');
@@ -22,7 +20,7 @@ describe('loopback json api component delete method', function() {
     Post.create({
       title: 'my post',
       content: 'my post content'
-    }, done)
+    }, done);
   });
 
   describe('headers', function () {

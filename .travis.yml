@@ -4,3 +4,12 @@ node_js:
   - "4.0"
   - "0.12"
   - "0.10"
+
+before_script:
+  - "npm i -g jsinspect"
+  - "npm i -g eslint"
+
+script:
+  - "eslint"
+  - "jsinspect"
+  - "npm test"
