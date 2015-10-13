@@ -10,6 +10,6 @@ before_script:
   - "npm i -g eslint"
 
 script:
-  - "eslint"
+  - "eslint ."
   - "jsinspect"
   - "npm test"
