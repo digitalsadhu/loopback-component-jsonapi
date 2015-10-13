@@ -8,6 +8,7 @@ node_js:
 before_script:
   - "npm i -g jsinspect"
   - "npm i -g eslint"
+  - "npm i -g babel-eslint"
 
 script:
   - "eslint ."
