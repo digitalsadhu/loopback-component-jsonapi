@@ -30,11 +30,11 @@ describe('loopback json api remote methods', function () {
   });
 
   describe('status codes', function () {
-    it('POST /models should return a 201 CREATED status code', function (done) {
+    it('POST /models should return remote method message', function (done) {
       request(app).post('/posts')
         .send({'msg': 'John'})
         .set('Content-Type', 'application/json')
-        .expect(201)
+        .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
           expect(res.body).to.equal('Greetings... John!');
