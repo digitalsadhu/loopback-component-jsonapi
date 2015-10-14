@@ -37,7 +37,7 @@ describe('loopback json api remote methods', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body).to.equal('Greetings... John!');
+          expect(res.body.greeting).to.equal('Greetings... John');
           done();
         });
     });
