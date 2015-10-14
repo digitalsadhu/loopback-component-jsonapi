@@ -29,9 +29,9 @@ describe('loopback json api remote methods', function () {
     JSONAPIComponent(app);
   });
 
-  describe('status codes', function () {
-    it('POST /models should return remote method message', function (done) {
-      request(app).post('/posts')
+  describe('remote method for application/json', function () {
+    it('POST /posts/greet should return remote method message', function (done) {
+      request(app).post('/posts/greet')
         .send({'msg': 'John'})
         .set('Content-Type', 'application/json')
         .expect(200)
