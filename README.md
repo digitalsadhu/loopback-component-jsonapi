@@ -19,11 +19,13 @@ Currently supported:
 - Update a record via PATCH
 - Delete a record via DELETE
 - All errors have now been transformed into the correct JSON API format
+- Find related records via GET eg. /posts/1/comments (belongsTo, hasMany, hasOne)
+- Find relationships via GET eg. /posts/1/relationships/author (belongsTo, hasMany, hasOne)
 
 Not yet properly supported:
-- hasMany relations
-- hasOne relations
-- belongsTo relations
+- Create relationship via POST (hasMany, belongsTo, hasOne, etc)
+- Update relationship via PATCH (hasMany, belongsTo, hasOne, etc)
+- Delete relationship via DELETE (hasMany, belongsTo, hasOne, etc)
 
 ## Usage
 In your loopback project:
