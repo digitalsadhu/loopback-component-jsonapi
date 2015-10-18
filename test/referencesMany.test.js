@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var JSONAPIComponent = require('../');
 var app, Post, Comment, ds;
 
-describe.skip('loopback json api referencesMany relationships', function () {
+describe('loopback json api referencesMany relationships', function () {
   beforeEach(function () {
     app = loopback();
     app.set('legacyExplorer', false);
@@ -22,7 +22,7 @@ describe.skip('loopback json api referencesMany relationships', function () {
       comment: String
     });
     app.model(Comment);
-    Post.referencesMany(Comment, {property: 'comments', foreignKey: 'comments'});
+    Post.referencesMany(Comment, {property: 'comments', foreignKey: 'commentIDs'});
     Comment.settings.plural = 'comments';
 
     app.use(loopback.rest());
@@ -92,7 +92,7 @@ describe.skip('loopback json api referencesMany relationships', function () {
         Post.create({
           title: 'my post',
           content: 'my post content',
-          comments: [comment.id]
+          commentIDs: [comment.id]
         }, function (err, post) {
           expect(err).to.equal(null);
           expect(post).to.be.an('object');
