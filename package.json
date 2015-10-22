@@ -28,14 +28,12 @@
     "body-parser": "^1.14.1",
     "debug": "^2.2.0",
     "inflection": "^1.7.2",
-    "jsonapi-serializer": "^2.0.2",
     "lodash": "^3.10.1"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
     "chai": "^3.3.0",
     "eslint": "^1.6.0",
-    "json-api-utils": "^1.0.0",
     "loopback": "^2.22.2",
     "loopback-datasource-juggler": "^2.40.1",
     "mocha": "^2.3.3",
