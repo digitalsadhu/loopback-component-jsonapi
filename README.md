@@ -36,7 +36,11 @@ In your loopback project:
 ```json
 {
   "loopback-component-jsonapi": {
-    "restApiRoot": "/api"
+    "restApiRoot": "/api",
+    "enable": true,
+    "keyForAttribute": "dash-case",
+    "keyForType": "dash-case",
+    "keyForRelation": "dash-case"
   }
 }
 ```
