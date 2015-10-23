@@ -55,6 +55,7 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/comments\/1\/post/);
+            console.log(res.body.data);
             expect(res.body.data).to.equal(null);
             done();
           });

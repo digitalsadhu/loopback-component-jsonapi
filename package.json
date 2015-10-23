@@ -28,7 +28,6 @@
     "body-parser": "^1.14.1",
     "debug": "^2.2.0",
     "inflection": "^1.7.2",
-    "jsonapi-serializer": "^2.0.2",
     "lodash": "^3.10.1"
   },
   "devDependencies": {
