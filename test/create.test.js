@@ -21,6 +21,22 @@ describe('loopback json api component create method', function () {
   });
 
   describe('headers', function () {
+    it('POST /models should be created when Accept header is set to application/vnd.api+json', function (done) {
+      request(app).post('/posts')
+        .send({
+          data: {
+            type: 'posts',
+            attributes: {
+              title: 'my post',
+              content: 'my post content'
+            }
+          }
+        })
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .expect(201)
+        .end(done);
+    });
     it('POST /models should have the JSON API Content-Type header set on response', function (done) {
       //TODO: superagent/supertest breaks when trying to use JSON API Content-Type header
       //waiting on a fix
