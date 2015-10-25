@@ -18,7 +18,7 @@ describe('loopback json api component create method', function () {
     });
     app.model(Post);
     app.use(loopback.rest());
-    JSONAPIComponent(app);
+    JSONAPIComponent(app, { restApiRoot: '' });
   });
 
   describe('headers', function () {
