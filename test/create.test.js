@@ -1,6 +1,7 @@
 var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
+var query = require('./util/query');
 var JSONAPIComponent = require('../');
 var app;
 var Post;
@@ -17,30 +18,56 @@ describe('loopback json api component create method', function () {
     });
     app.model(Post);
     app.use(loopback.rest());
-    JSONAPIComponent(app);
+    JSONAPIComponent(app, { restApiRoot: '' });
   });
 
   describe('headers', function () {
+    it('POST /models should be created when Accept header is set to application/vnd.api+json', function (done) {
+      request(app).post('/posts')
+        .send({
+          data: {
+            type: 'posts',
+            attributes: {
+              title: 'my post',
+              content: 'my post content'
+            }
+          }
+        })
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .expect(201)
+        .end(done);
+    });
     it('POST /models should have the JSON API Content-Type header set on response', function (done) {
-      //TODO: superagent/supertest breaks when trying to use JSON API Content-Type header
+      var data = {
+        data: {
+          type: 'posts',
+          attributes: {
+            title: 'my post',
+            content: 'my post content'
+          }
+        }
+      };
+
+      var options = {
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json'
+        }
+      };
+
+      //use http module via util to make this post to check headers are working since
+      //superagent/supertest breaks when trying to use JSON API Content-Type header
       //waiting on a fix
       //see https://github.com/visionmedia/superagent/issues/753
-      //using Content-Type: application/json in the mean time.
-      //Have tested correct header using curl and all is well
-      // request(app).post('/posts')
-      //   .send({
-      //     data: {
-      //       type: 'posts',
-      //       attributes: {
-      //         title: 'my post',
-      //         content: 'my post content'
-      //       }
-      //     }
-      //   })
-      //   .set('Content-Type', 'application/vnd.api+json')
-      //   .expect('Content-Type', 'application/vnd.api+json; charset=utf-8')
-      //   .end(done);
-      done();
+      query(app).post('/posts', data, options, function (err, res) {
+        if (err) console.log(err);
+        expect(res.headers['content-type']).to.match(/application\/vnd\.api\+json/);
+        expect(res.statusCode).to.equal(201);
+        expect(res.body).to.have.all.keys('data');
+        expect(res.body.data).to.have.all.keys('type', 'id', 'links', 'attributes');
+        done();
+      });
     });
 
     it('POST /models should have the Location header set on response', function (done) {

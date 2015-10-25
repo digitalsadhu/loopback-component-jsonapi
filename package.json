@@ -4,7 +4,7 @@
   "description": "JSONAPI support for loopback",
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run lint && mocha --reporter=spec ./test/**/*",
+    "test": "npm run lint && mocha --reporter=spec ./test/**/*.test.js",
     "lint": "eslint ."
   },
   "repository": {
@@ -28,7 +28,9 @@
     "body-parser": "^1.14.1",
     "debug": "^2.2.0",
     "inflection": "^1.7.2",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "loopback": "^2.22.2",
+    "type-is": "^1.6.9"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
