@@ -146,5 +146,137 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
     });
+
+    describe.skip('embedded relationship information in collections (GET /:collection)', function () {
+      it('should return post relationship link in relationships object', function (done) {
+        request(app).get('/comments')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data[0].relationships).to.be.an('object');
+            expect(res.body.data[0].relationships.post).to.be.an('object');
+            expect(res.body.data[0].relationships.post.links).to.be.an('object');
+            expect(res.body.data[0].relationships.post.links.related).to.match(/comments\/1\/post/);
+            done();
+          });
+      });
+
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/comments?filter={"include":"post"}')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data[0].relationships).to.be.an('object');
+            expect(res.body.data[0].relationships.post).to.be.an('object');
+            expect(res.body.data[0].relationships.post.data).to.deep.equal({
+              type: 'posts',
+              id: '1'
+            });
+            expect(res.body.data[0].relationships.post.links).to.be.an('object');
+            expect(res.body.data[0].relationships.post.links.related).to.match(/comments\/1\/post/);
+            expect(res.body.included).to.be.an('array');
+            expect(res.body.included.length).to.equal(1);
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0].type).to.equal('posts');
+            expect(res.body.included[0].id).to.equal('1');
+            done();
+          });
+      });
+
+      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+        request(app).get('/comments?filter={"include":"doesnotexist"}')
+          .expect(400)
+          .end(done);
+      });
+
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+        request(app).get('/comments?include=post')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.included).to.be.an('array');
+            expect(res.body.included.length).to.equal(1);
+            done();
+          });
+      });
+
+      it('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
+        request(app).get('/comments?include=doesnotexist')
+          .expect(400)
+          .end(done);
+      });
+
+      it('should not include foreign key data in attributes', function () {
+        request(app).get('/comments')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data[0].attributes).to.not.have.keys('postId');
+            done();
+          });
+      });
+    });
+
+    describe.skip('embedded relationship information for individual resource GET /:collection/:id', function () {
+      it('should return post relationship link in relationships object', function (done) {
+        request(app).get('/comments/1')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.relationships).to.be.an('object');
+            expect(res.body.data.relationships.post).to.be.an('object');
+            expect(res.body.data.relationships.post.links).to.be.an('object');
+            expect(res.body.data.relationships.post.links.related).to.match(/comments\/1\/post/);
+            done();
+          });
+      });
+
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/comments/1?filter={"include":"post"}')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.relationships).to.be.an('object');
+            expect(res.body.data.relationships.post).to.be.an('object');
+            expect(res.body.data.relationships.post.data).to.deep.equal({
+              type: 'posts',
+              id: '1'
+            });
+            expect(res.body.data.relationships.post.links).to.be.an('object');
+            expect(res.body.data.relationships.post.links.related).to.match(/comments\/1\/post/);
+            expect(res.body.included).to.be.an('array');
+            expect(res.body.included.length).to.equal(1);
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0].type).to.equal('posts');
+            expect(res.body.included[0].id).to.equal('1');
+            done();
+          });
+      });
+
+      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+        request(app).get('/comments/1?filter={"include":"doesnotexist"}')
+          .expect(400)
+          .end(done);
+      });
+
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+        request(app).get('/comments/1?include=post')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.included).to.be.an('array');
+            expect(res.body.included.length).to.equal(1);
+            done();
+          });
+      });
+
+      it('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
+        request(app).get('/comments/1?include=doesnotexist')
+          .expect(400)
+          .end(done);
+      });
+
+      it('should not include foreign key data in attributes', function () {
+        request(app).get('/comments/1')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.attributes).to.not.have.keys('postId');
+            done();
+          });
+      });
+    });
   });
 });
