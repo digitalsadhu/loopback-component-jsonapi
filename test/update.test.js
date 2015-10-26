@@ -66,7 +66,7 @@ describe('loopback json api component update method', function () {
         .end(done);
     });
 
-    it('PATCH /models/:id should return 404 when attempting to edit non existing resource', function (done) {
+    it('PATCH /models/:id should return 400 when attempting to edit non existing resource', function (done) {
       request(app).patch('/posts/10')
         .send({
           data: {
@@ -78,7 +78,7 @@ describe('loopback json api component update method', function () {
             }
           }
         })
-        .expect(404)
+        .expect(400)
         .end(done);
     });
   });
@@ -152,7 +152,7 @@ describe('loopback json api component update method', function () {
         .end(done);
     });
 
-    it('PATCH /models/:id should return an 422 error if type key is not present', function (done) {
+    it('PATCH /models/:id should return an 400 error if type key is not present', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
@@ -163,12 +163,12 @@ describe('loopback json api component update method', function () {
             }
           }
         })
-        .expect(422)
+        .expect(400)
         .set('Content-Type', 'application/json')
         .end(done);
     });
 
-    it('PATCH /models/:id should return an 422 error if id key is not present', function (done) {
+    it('PATCH /models/:id should return an 400 error if id key is not present', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
@@ -179,7 +179,7 @@ describe('loopback json api component update method', function () {
             }
           }
         })
-        .expect(422)
+        .expect(400)
         .set('Content-Type', 'application/json')
         .end(done);
     });
