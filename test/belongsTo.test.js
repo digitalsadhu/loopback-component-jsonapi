@@ -202,6 +202,15 @@ describe('loopback json api hasOne relationships', function () {
           .expect(400)
           .end(done);
       });
+
+      it('should not include foreign key data in attributes', function () {
+        request(app).get('/comments')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data[0].attributes).to.not.have.keys('postId');
+            done();
+          });
+      });
     });
 
     describe.skip('embedded relationship information for individual resource GET /:collection/:id', function () {
@@ -258,6 +267,15 @@ describe('loopback json api hasOne relationships', function () {
         request(app).get('/comments/1?include=doesnotexist')
           .expect(400)
           .end(done);
+      });
+
+      it('should not include foreign key data in attributes', function () {
+        request(app).get('/comments/1')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.attributes).to.not.have.keys('postId');
+            done();
+          });
       });
     });
   });
