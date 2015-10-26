@@ -27,6 +27,10 @@ Not yet properly supported:
 - Update relationship via PATCH (hasMany, belongsTo, hasOne, etc)
 - Delete relationship via DELETE (hasMany, belongsTo, hasOne, etc)
 
+## Requirements
+- loopback ^v2.0.0
+- strong-remoting ^v2.22.0
+
 ## Usage
 In your loopback project:
 
