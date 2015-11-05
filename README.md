@@ -8,6 +8,9 @@
 
 JSONAPI support for loopback.
 
+## JSON API Spec
+[http://jsonapi.org/](http://jsonapi.org/)
+
 ## Status
 This project is a work in progress. Consider it alpha software.
 I am VERY interested in help to get this module over the line. See the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
