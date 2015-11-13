@@ -304,7 +304,7 @@ describe('loopback json api hasOne relationships', function () {
 
     describe.skip('delete linkages to models as part of an update operation', function () {
       it('should update model linkages', function (done) {
-        request(app).put('/posts/1')
+        request(app).patch('/posts/1')
           .send({
             data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
             relationships: {comments: {data: []}}
@@ -331,7 +331,7 @@ describe('loopback json api hasOne relationships', function () {
         }, done);
       });
       it('should update model linkages', function (done) {
-        request(app).put('/posts/1').send({
+        request(app).patch('/posts/1').send({
           data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
           relationships: {comments: {data: [
             {type: 'comments', id: 1},
