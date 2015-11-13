@@ -23,14 +23,6 @@ describe('loopback json api component delete method', function () {
     }, done);
   });
 
-  describe('headers', function () {
-    it('DELETE /models/:id should have the JSON API Content-Type header set on the response', function (done) {
-      request(app).delete('/posts/1')
-        .expect('Content-Type', 'application/vnd.api+json')
-        .end(done);
-    });
-  });
-
   describe('status code', function () {
     it('DELETE /models/:id should return a 204 NO CONTENT', function (done) {
       request(app).delete('/posts/1')
