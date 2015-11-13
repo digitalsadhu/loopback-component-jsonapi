@@ -291,6 +291,7 @@ describe('loopback json api hasOne relationships', function () {
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
+            expect(err).to.equal(null);
             Comment.findById(1, function (err, comment) {
               expect(err).to.equal(null);
               expect(comment).not.to.equal(null);
@@ -311,6 +312,7 @@ describe('loopback json api hasOne relationships', function () {
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
+            expect(err).to.equal(null);
             Comment.findById(1, function (err, comment) {
               expect(err).to.equal(null);
               expect(comment).not.to.equal(null);
@@ -339,6 +341,7 @@ describe('loopback json api hasOne relationships', function () {
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           Comment.find({postId: 1}, function (err, comments) {
             expect(err).to.equal(null);
             expect(comments.length).to.equal(2);
