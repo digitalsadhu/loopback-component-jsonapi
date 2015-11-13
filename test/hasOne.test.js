@@ -258,5 +258,70 @@ describe('loopback json api hasOne relationships', function () {
           .end(done);
       });
     });
+
+    describe.skip('link related models as part of a create operation', function () {
+      it('should create and link models', function (done) {
+        request(app).post('/posts')
+          .send({
+            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+            relationships: {author: {data: {type: 'people', id: 1}}}
+          })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            Person.findById(1, function (err, person) {
+              expect(err).to.equal(null);
+              expect(person).not.to.equal(null);
+              expect(person.postId).to.equal(2);
+              done();
+            });
+          });
+      });
+    });
+
+    describe.skip('delete linkages to models as part of an update operation', function () {
+      it('should update model linkages', function (done) {
+        request(app).put('/posts/1')
+          .send({
+            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+            relationships: {author: {data: null}}
+          })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            Person.findById(1, function (err, person) {
+              expect(err).to.equal(null);
+              expect(person).not.to.equal(null);
+              expect(person.postId).to.equal(null);
+              done();
+            });
+          });
+      });
+    });
+
+    describe.skip('replace linkages as part of an update operation', function () {
+      beforeEach(function (done) {
+        Person.create({name: 'Rachel McAdams'}, done);
+      });
+      it('should update model linkages', function (done) {
+        request(app).put('/posts/1').send({
+          data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+          relationships: {author: {data: {type: 'people', id: 2}}}
+        })
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          Person.find({postId: 1}, function (err, people) {
+            expect(err).to.equal(null);
+            expect(people.length).to.equal(1);
+            expect(people[0].id).to.equal(2);
+            done();
+          });
+        });
+      });
+    });
   });
 });
