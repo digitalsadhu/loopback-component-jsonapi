@@ -257,5 +257,77 @@ describe('loopback json api hasMany relationships', function () {
           .end(done);
       });
     });
+
+    describe.skip('link related models as part of a create operation', function () {
+      it('should create and link models', function (done) {
+        request(app).post('/posts')
+          .send({
+            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+            relationships: {comments: {data: [
+              {type: 'comments', id: 1}
+            ]}}
+          })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            Comment.findById(1, function (err, comment) {
+              expect(err).to.equal(null);
+              expect(comment).not.to.equal(null);
+              expect(comment.postId).to.equal(2);
+              done();
+            });
+          });
+      });
+    });
+
+    describe.skip('delete linkages to models as part of an update operation', function () {
+      it('should update model linkages', function (done) {
+        request(app).put('/posts/1')
+          .send({
+            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+            relationships: {comments: {data: []}}
+          })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            Comment.findById(1, function (err, comment) {
+              expect(err).to.equal(null);
+              expect(comment).not.to.equal(null);
+              expect(comment.postId).to.equal(null);
+              done();
+            });
+          });
+      });
+    });
+
+    describe.skip('replace linkages as part of an update operation', function () {
+      beforeEach(function (done) {
+        Comment.create({
+          title: 'my comment 2',
+          comment: 'my post comment 2'
+        }, done);
+      });
+      it('should update model linkages', function (done) {
+        request(app).put('/posts/1').send({
+          data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+          relationships: {comments: {data: [
+            {type: 'comments', id: 1},
+            {type: 'comments', id: 2}
+          ]}}
+        })
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          Comment.find({postId: 1}, function (err, comments) {
+            expect(err).to.equal(null);
+            expect(comments.length).to.equal(2);
+            done();
+          });
+        });
+      });
+    });
   });
 });
