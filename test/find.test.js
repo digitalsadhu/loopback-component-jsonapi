@@ -41,7 +41,12 @@ describe('loopback json api component find methods', function () {
       Post.create({
         title: 'my post',
         content: 'my post content'
-      }, done);
+      }, function () {
+        Post.create({
+          title: 'my post 2',
+          content: 'my post content 2'
+        }, done);
+      });
     });
 
     //TODO: see https://github.com/digitalsadhu/loopback-component-jsonapi/issues/11
@@ -54,6 +59,28 @@ describe('loopback json api component find methods', function () {
           expect(err).to.equal(null);
           expect(res.body).to.have.deep.property('data.links.self');
           expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1/);
+          done();
+        });
+    });
+
+    it('should produce correct resource level self links for individual resources', function (done) {
+      request(app).get('/posts/2')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.deep.property('data.links.self');
+          expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/2/);
+          done();
+        });
+    });
+
+    it('should produce correct resource level self links for collections', function (done) {
+      request(app).get('/posts')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.data[1]).to.have.deep.property('links.self');
+          expect(res.body.data[1].links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/2/);
           done();
         });
     });
