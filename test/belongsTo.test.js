@@ -147,7 +147,7 @@ describe('loopback json api hasOne relationships', function () {
       });
     });
 
-    describe.skip('embedded relationship information in collections (GET /:collection)', function () {
+    describe('embedded relationship information in collections (GET /:collection)', function () {
       it('should return post relationship link in relationships object', function (done) {
         request(app).get('/comments')
           .end(function (err, res) {
@@ -160,7 +160,16 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it('should return included data as a compound document using key "included"', function (done) {
+      it('should not include data key relationships object if `include` is not specified', function (done) {
+        request(app).get('/comments')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data[0].relationships.post).not.to.have.key('data');
+            done();
+          });
+      });
+
+      it.skip('should return included data as a compound document using key "included"', function (done) {
         request(app).get('/comments?filter={"include":"post"}')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -181,13 +190,13 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+      it.skip('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
         request(app).get('/comments?filter={"include":"doesnotexist"}')
           .expect(400)
           .end(done);
       });
 
-      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
         request(app).get('/comments?include=post')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -197,13 +206,13 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
+      it.skip('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
         request(app).get('/comments?include=doesnotexist')
           .expect(400)
           .end(done);
       });
 
-      it('should not include foreign key data in attributes', function () {
+      it.skip('should not include foreign key data in attributes', function () {
         request(app).get('/comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -213,7 +222,7 @@ describe('loopback json api hasOne relationships', function () {
       });
     });
 
-    describe.skip('embedded relationship information for individual resource GET /:collection/:id', function () {
+    describe('embedded relationship information for individual resource GET /:collection/:id', function () {
       it('should return post relationship link in relationships object', function (done) {
         request(app).get('/comments/1')
           .end(function (err, res) {
@@ -226,7 +235,16 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it('should return included data as a compound document using key "included"', function (done) {
+      it('should not include data key relationships object if `include` is not specified', function (done) {
+        request(app).get('/comments/1')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.relationships.post).not.to.have.key('data');
+            done();
+          });
+      });
+
+      it.skip('should return included data as a compound document using key "included"', function (done) {
         request(app).get('/comments/1?filter={"include":"post"}')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -247,13 +265,13 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+      it.skip('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
         request(app).get('/comments/1?filter={"include":"doesnotexist"}')
           .expect(400)
           .end(done);
       });
 
-      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
         request(app).get('/comments/1?include=post')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -269,7 +287,7 @@ describe('loopback json api hasOne relationships', function () {
           .end(done);
       });
 
-      it('should not include foreign key data in attributes', function () {
+      it.skip('should not include foreign key data in attributes', function () {
         request(app).get('/comments/1')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -328,6 +346,81 @@ describe('loopback json api hasOne relationships', function () {
         Comment.create({
           title: 'my comment 2',
           comment: 'my post comment 2'
+        }, done);
+      });
+      it('should update model linkages', function (done) {
+        request(app).patch('/posts/1').send({
+          data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+          relationships: {comments: {data: [
+            {type: 'comments', id: 1},
+            {type: 'comments', id: 2}
+          ]}}
+        })
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          Comment.find({postId: 1}, function (err, comments) {
+            expect(err).to.equal(null);
+            expect(comments.length).to.equal(2);
+            done();
+          });
+        });
+      });
+    });
+
+    describe.skip('link related models using relationship url', function () {
+      beforeEach(function (done) {
+        Post.create({name: 'my post', content: 'my post content'}, done);
+      });
+      it('should create and link models', function (done) {
+        request(app).post('/posts/1/relationships/comments')
+          .send({
+            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+            relationships: {comments: {data: [
+              {type: 'comments', id: 1}
+            ]}}
+          })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            Comment.findById(1, function (err, comment) {
+              expect(err).to.equal(null);
+              expect(comment).not.to.equal(null);
+              expect(comment.postId).to.equal(2);
+              done();
+            });
+          });
+      });
+    });
+
+    describe.skip('delete linkages to models as part of an update operation', function () {
+      it('should update model linkages', function (done) {
+        request(app).patch('/posts/1')
+          .send({
+            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
+            relationships: {comments: {data: []}}
+          })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            Comment.findById(1, function (err, comment) {
+              expect(err).to.equal(null);
+              expect(comment).not.to.equal(null);
+              expect(comment.postId).to.equal(null);
+              done();
+            });
+          });
+      });
+    });
+
+    describe.skip('replace linkages as part of an update operation', function () {
+      beforeEach(function (done) {
+        Post.create({
+          name: 'my post',
+          content: 'my post content'
         }, done);
       });
       it('should update model linkages', function (done) {

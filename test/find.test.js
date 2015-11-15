@@ -36,6 +36,38 @@ describe('loopback json api component find methods', function () {
     });
   });
 
+  describe('relationship objects', function () {
+    beforeEach(function (done) {
+      Post.create({
+        title: 'my post',
+        content: 'my post content'
+      }, function () {
+        Post.create({
+          title: 'my post 2',
+          content: 'my post content 2'
+        }, done);
+      });
+    });
+
+    it('should not be present when no relationships have been defined on a collection', function (done) {
+      request(app).get('/posts')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.data[0]).not.to.have.all.keys('relationships');
+          done();
+        });
+    });
+
+    it('should not be present when no relationships have been defined on an individual resource', function (done) {
+      request(app).get('/posts/1')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.data).not.to.have.all.keys('relationships');
+          done();
+        });
+    });
+  });
+
   describe('self links', function () {
     beforeEach(function (done) {
       Post.create({
