@@ -29,10 +29,14 @@ Not yet properly supported:
 - Create relationship via POST (hasMany, belongsTo, hasOne, etc)
 - Update relationship via PATCH (hasMany, belongsTo, hasOne, etc)
 - Delete relationship via DELETE (hasMany, belongsTo, hasOne, etc)
+- [Fetching includes](http://jsonapi.org/format/#fetching-includes)
 
 ## Requirements
 - loopback ^v2.0.0
 - strong-remoting ^v2.22.0
+
+## Sample Project
+We have created a sample project using [EmberJS](http://emberjs.com), [Loopback](http://loopback.io) and this compoment. It's called [emberloop](https://github.com/tsteuwer/emberloop).
 
 ## Usage
 In your loopback project:
