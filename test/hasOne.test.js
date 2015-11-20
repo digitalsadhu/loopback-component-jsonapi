@@ -106,6 +106,8 @@ describe('loopback json api hasOne relationships', function () {
         request(app).get('/posts/1/author')
           .end(function (err, res) {
             expect(err).to.equal(null);
+            console.log(res.body.data.relationships);
+
             expect(res.body).to.be.an('object');
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/author/);
