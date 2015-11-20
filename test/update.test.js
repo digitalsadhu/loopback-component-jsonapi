@@ -173,7 +173,7 @@ describe('loopback json api component update method', function () {
         .send({ data: { type: 'posts', id: 1, attributes: { } } })
         .set('Content-Type', 'application/json')
         .expect(200)
-        .end(function(err, res) {
+        .end(function (err, res) {
           expect(err).to.equal(null);
           expect(res.body).to.have.all.keys('data');
           expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
@@ -183,21 +183,21 @@ describe('loopback json api component update method', function () {
           expect(res.body.data.attributes).to.not.have.keys('id');
           expect(res.body.data.attributes.title).to.equal('my post');
           expect(res.body.data.attributes.content).to.equal('my post content');
-					done();
-				});
+          done();
+        });
     });
 
     it('PATCH /models/:id with no `attributes` should not return an error and should not modify existing attributes', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
-						type: 'posts',
+            type: 'posts',
             id: 1
           }
         })
         .set('Content-Type', 'application/json')
         .expect(200)
-        .end(function(err, res) {
+        .end(function (err, res) {
           expect(err).to.equal(null);
           expect(res.body).to.have.all.keys('data');
           expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
@@ -207,8 +207,8 @@ describe('loopback json api component update method', function () {
           expect(res.body.data.attributes).to.not.have.keys('id');
           expect(res.body.data.attributes.title).to.equal('my post');
           expect(res.body.data.attributes.content).to.equal('my post content');
-					done();
-				});
+          done();
+        });
     });
 
     it('PATCH /models/:id should return an 400 error if `type` key is not present and include an errors array', function (done) {
@@ -225,6 +225,7 @@ describe('loopback json api component update method', function () {
         .expect(400)
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.keys('errors');
           expect(res.body.errors).to.be.a('array');
           expect(res.body.errors.length).to.equal(1);
@@ -249,6 +250,7 @@ describe('loopback json api component update method', function () {
         .expect(400)
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
+          expect(err).to.equal(null);
           expect(res.body).to.have.keys('errors');
           expect(res.body.errors).to.be.a('array');
           expect(res.body.errors.length).to.equal(1);
