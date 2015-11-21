@@ -11,7 +11,10 @@ describe('loopback json api component update method', function () {
     app.set('legacyExplorer', false);
     var ds = loopback.createDataSource('memory');
     Post = ds.createModel('post', {
-      id: {type: Number, id: true},
+      id: {
+        type: Number,
+        id: true
+      },
       title: String,
       content: String
     });
@@ -24,7 +27,7 @@ describe('loopback json api component update method', function () {
     }, done);
   });
 
-  describe('headers', function () {
+  describe('Headers', function () {
     it('PATCH /models/:id should have the JSON API Content-Type header set on response', function (done) {
       //TODO: superagent/supertest breaks when trying to use JSON API Content-Type header
       //waiting on a fix
@@ -48,9 +51,10 @@ describe('loopback json api component update method', function () {
     });
   });
 
-  describe('status codes', function () {
+  describe('Status codes', function () {
     it('PATCH /models/:id should return a 200 status code', function (done) {
-      request(app).patch('/posts/1')
+      request(app)
+				.patch('/posts/1')
         .send({
           data: {
             type: 'posts',
@@ -83,7 +87,7 @@ describe('loopback json api component update method', function () {
     });
   });
 
-  describe('self links', function () {
+  describe('Links', function () {
     it('should produce resource level self links', function (done) {
       request(app).patch('/posts/1')
         .send({
@@ -106,9 +110,10 @@ describe('loopback json api component update method', function () {
     });
   });
 
-  describe('Creating a resource using PATCH /models/:id', function () {
+  describe('Updating a resource using PATCH', function () {
     it('PATCH /models/:id should return a correct JSON API response', function (done) {
-      request(app).patch('/posts/1')
+      request(app)
+				.patch('/posts/1')
         .send({
           data: {
             type: 'posts',
@@ -133,26 +138,80 @@ describe('loopback json api component update method', function () {
           done();
         });
     });
+
+    it('PATCH /models/:id if property in `attributes` is not present, it should not be considered null or change from it\'s original value', function (done) {
+      request(app)
+				.patch('/posts/1')
+        .send({
+          data: {
+            type: 'posts',
+            id: 1,
+            attributes: {
+              content: 'only changing content, not title'
+            }
+          }
+        })
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.all.keys('data');
+          expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
+          expect(res.body.data.id).to.equal('1');
+          expect(res.body.data.type).to.equal('posts');
+          expect(res.body.data.attributes).to.have.all.keys('title', 'content');
+          expect(res.body.data.attributes).to.not.have.keys('id');
+          expect(res.body.data.attributes.title).to.equal('my post');
+          expect(res.body.data.attributes.content).to.equal('only changing content, not title');
+          done();
+        });
+    });
   });
 
   describe('Errors', function () {
-    it('PATCH /models/:id with empty `attributes` should not return an error', function (done) {
+    it('PATCH /models/:id with empty `attributes` should not return an error and should not modify existing attributes', function (done) {
       request(app).patch('/posts/1')
         .send({ data: { type: 'posts', id: 1, attributes: { } } })
         .set('Content-Type', 'application/json')
         .expect(200)
-        .end(done);
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.all.keys('data');
+          expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
+          expect(res.body.data.id).to.equal('1');
+          expect(res.body.data.type).to.equal('posts');
+          expect(res.body.data.attributes).to.have.all.keys('title', 'content');
+          expect(res.body.data.attributes).to.not.have.keys('id');
+          expect(res.body.data.attributes.title).to.equal('my post');
+          expect(res.body.data.attributes.content).to.equal('my post content');
+          done();
+        });
     });
 
-    it('PATCH /models/:id with no `attributes` should not return an error', function (done) {
+    it('PATCH /models/:id with no `attributes` should not return an error and should not modify existing attributes', function (done) {
       request(app).patch('/posts/1')
-        .send({ data: { type: 'posts', id: 1 } })
+        .send({
+          data: {
+            type: 'posts',
+            id: 1
+          }
+        })
         .set('Content-Type', 'application/json')
         .expect(200)
-        .end(done);
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.all.keys('data');
+          expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
+          expect(res.body.data.id).to.equal('1');
+          expect(res.body.data.type).to.equal('posts');
+          expect(res.body.data.attributes).to.have.all.keys('title', 'content');
+          expect(res.body.data.attributes).to.not.have.keys('id');
+          expect(res.body.data.attributes.title).to.equal('my post');
+          expect(res.body.data.attributes.content).to.equal('my post content');
+          done();
+        });
     });
 
-    it('PATCH /models/:id should return an 400 error if type key is not present', function (done) {
+    it('PATCH /models/:id should return an 400 error if `type` key is not present and include an errors array', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
@@ -165,10 +224,19 @@ describe('loopback json api component update method', function () {
         })
         .expect(400)
         .set('Content-Type', 'application/json')
-        .end(done);
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.keys('errors');
+          expect(res.body.errors).to.be.a('array');
+          expect(res.body.errors.length).to.equal(1);
+          expect(res.body.errors[0].status).to.equal(422);
+          expect(res.body.errors[0].title).to.equal('ValidationError');
+          expect(res.body.errors[0].detail).to.equal('JSON API resource object must contain `data.type` property');
+          done();
+        });
     });
 
-    it('PATCH /models/:id should return an 400 error if id key is not present', function (done) {
+    it('PATCH /models/:id should return an 400 error if `id` key is not present and include an errors array', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
@@ -181,7 +249,16 @@ describe('loopback json api component update method', function () {
         })
         .expect(400)
         .set('Content-Type', 'application/json')
-        .end(done);
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.keys('errors');
+          expect(res.body.errors).to.be.a('array');
+          expect(res.body.errors.length).to.equal(1);
+          expect(res.body.errors[0].status).to.equal(422);
+          expect(res.body.errors[0].title).to.equal('ValidationError');
+          expect(res.body.errors[0].detail).to.equal('JSON API resource object must contain `data.id` property');
+          done();
+        });
     });
   });
 });
