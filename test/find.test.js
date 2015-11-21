@@ -20,7 +20,7 @@ describe('loopback json api component find methods', function () {
     JSONAPIComponent(app);
   });
 
-  describe('headers', function () {
+  describe('Headers', function () {
     it('GET /models should have the JSON API Content-Type header set on collection responses', function (done) {
       request(app).get('/posts')
         .expect(200)
@@ -36,7 +36,7 @@ describe('loopback json api component find methods', function () {
     });
   });
 
-  describe('relationship objects', function () {
+  describe('Relationship objects', function () {
     beforeEach(function (done) {
       Post.create({
         title: 'my post',
@@ -77,42 +77,65 @@ describe('loopback json api component find methods', function () {
         Post.create({
           title: 'my post 2',
           content: 'my post content 2'
-        }, done);
+        }, function () {
+          Post.create({
+            title: 'my post 3',
+            content: 'my post content 3'
+          }, done);
+        });
       });
     });
 
     //TODO: see https://github.com/digitalsadhu/loopback-component-jsonapi/issues/11
-    it('should produce correct top level self links');
+    it('GET /posts should produce top level self links', function (done) {
+      request(app).get('/posts')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.have.deep.property('links.self');
+          expect(res.body.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts$/);
+          done();
+        });
+    });
 
-    it('should produce resource level self links', function (done) {
+    it('GET /posts/1 should produce resource level self links', function (done) {
       request(app).get('/posts/1')
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
           expect(res.body).to.have.deep.property('data.links.self');
-          expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1/);
+          expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1$/);
           done();
         });
     });
 
-    it('should produce correct resource level self links for individual resources', function (done) {
+    it('GET /posts/2 should produce correct resource level self links for individual resources', function (done) {
       request(app).get('/posts/2')
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
           expect(res.body).to.have.deep.property('data.links.self');
-          expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/2/);
+          expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/2$/);
           done();
         });
     });
 
-    it('should produce correct resource level self links for collections', function (done) {
+    it('GET /posts should produce correct resource level self links for collections', function (done) {
       request(app).get('/posts')
         .expect(200)
         .end(function (err, res) {
+          var index = 1;
           expect(err).to.equal(null);
-          expect(res.body.data[1]).to.have.deep.property('links.self');
-          expect(res.body.data[1].links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/2/);
+          expect(res.body.data).to.be.a('array');
+          expect(res.body.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts$/);
+
+          res.body.data.forEach(function (resource) {
+            expect(resource.links.self).to.match(new RegExp('^http://127.0.0.1.*/posts/' + index));
+            index++;
+          });
+
+          // Make sure we have tested all 3
+          expect(index - 1).to.equal(3);
           done();
         });
     });
