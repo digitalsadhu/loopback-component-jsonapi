@@ -83,6 +83,36 @@ describe('loopback json api belongsTo relationships', function () {
     });
   });
 
+  describe('Comment with a post and relationship back to comment', function (done) {
+    beforeEach(function (done) {
+      Post.hasMany(Comment, {as: 'comments', foreignKey: 'postId'});
+      Comment.create({
+        title: 'my comment',
+        comment: 'my post comment'
+      }, function (err, comment) {
+        expect(err).to.equal(null);
+        comment.post.create({
+          title: 'My post',
+          content: 'My post content'
+        }, done);
+      });
+    });
+
+    describe('GET /comments/1/post', function () {
+      it('should display correct relationships', function (done) {
+        request(app).get('/comments/1/post')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.relationships.comments).to.be.an('object');
+            expect(res.body.data.relationships.comments.links).to.be.an('object');
+            expect(res.body.data.relationships.comments.links.related).to.match(/^http.*\/posts\/1\/comments$/);
+            expect(res.body.data.relationships.post).to.be.undefined;
+            done();
+          });
+      });
+    });
+  });
+
   describe('Comment with an post', function (done) {
     beforeEach(function (done) {
       Comment.create({
