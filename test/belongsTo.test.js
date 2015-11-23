@@ -169,7 +169,7 @@ describe('loopback json api belongsTo relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
+      it('should return included data as a compound document using key "included"', function (done) {
         request(app).get('/comments?filter={"include":"post"}')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -190,13 +190,13 @@ describe('loopback json api belongsTo relationships', function () {
           });
       });
 
-      it.skip('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
         request(app).get('/comments?filter={"include":"doesnotexist"}')
           .expect(400)
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
         request(app).get('/comments?include=post')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -206,13 +206,13 @@ describe('loopback json api belongsTo relationships', function () {
           });
       });
 
-      it.skip('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
+      it('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
         request(app).get('/comments?include=doesnotexist')
           .expect(400)
           .end(done);
       });
 
-      it.skip('should not include foreign key data in attributes', function () {
+      it('should not include foreign key data in attributes', function () {
         request(app).get('/comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
