@@ -234,7 +234,7 @@ describe('loopback json api component find methods', function () {
 
     it('should filter only one', function (done) {
       request(app)
-        .get('/posts?filter[title]=deer+can+jump')
+        .get('/posts?filter[where][title]=deer+can+jump')
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
@@ -245,7 +245,7 @@ describe('loopback json api component find methods', function () {
 
     it('should filter two', function (done) {
       request(app)
-        .get('/posts?filter[title][like]=myth')
+        .get('/posts?filter[where][content][like]=myth')
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
