@@ -36,13 +36,14 @@ describe('loopback json api component delete method', function () {
         .delete('/posts/1?include=anything')
         .expect(400)
         .end(function (err, res) {
-					expect(res.body.errors).to.be.a('array');
-					expect(res.body.errors.length).to.equal(1);
-					expect(res.body.errors[0].title).to.equal('ValidationError');
-					expect(res.body.errors[0].code).to.equal('presence');
-					expect(res.body.errors[0].detail).to.equal('JSON API resource does not support `include`');
-					done();
-				});
+          expect(err).to.equal(null);
+          expect(res.body.errors).to.be.a('array');
+          expect(res.body.errors.length).to.equal(1);
+          expect(res.body.errors[0].title).to.equal('ValidationError');
+          expect(res.body.errors[0].code).to.equal('presence');
+          expect(res.body.errors[0].detail).to.equal('JSON API resource does not support `include`');
+          done();
+        });
     });
   });
 });

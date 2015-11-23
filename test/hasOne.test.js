@@ -196,6 +196,7 @@ describe('loopback json api hasOne relationships', function () {
       it('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
         request(app).get('/posts?include=author')
           .end(function (err, res) {
+            expect(err).to.equal(null);
 						// Includes param
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
