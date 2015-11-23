@@ -327,7 +327,7 @@ describe('loopback json api belongsTo relationships', function () {
       });
     });
 
-    describe.skip('link related models as part of a create operation', function () {
+    describe('link related models as part of a create operation', function () {
       it('should create and link models', function (done) {
         request(app).post('/posts')
           .send({
@@ -350,7 +350,7 @@ describe('loopback json api belongsTo relationships', function () {
       });
     });
 
-    describe.skip('delete linkages to models as part of an update operation', function () {
+    describe('delete linkages to models as part of an update operation', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
@@ -371,7 +371,7 @@ describe('loopback json api belongsTo relationships', function () {
       });
     });
 
-    describe.skip('replace linkages as part of an update operation', function () {
+    describe('replace linkages as part of an update operation', function () {
       beforeEach(function (done) {
         Comment.create({
           title: 'my comment 2',
@@ -425,7 +425,7 @@ describe('loopback json api belongsTo relationships', function () {
       });
     });
 
-    describe.skip('delete linkages to models as part of an update operation', function () {
+    describe('delete linkages to models as part of an update operation', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
@@ -446,7 +446,7 @@ describe('loopback json api belongsTo relationships', function () {
       });
     });
 
-    describe.skip('replace linkages as part of an update operation', function () {
+    describe('replace linkages as part of an update operation', function () {
       beforeEach(function (done) {
         Post.create({
           name: 'my post',
