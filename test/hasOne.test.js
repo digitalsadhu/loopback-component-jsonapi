@@ -193,12 +193,16 @@ describe('loopback json api hasOne relationships', function () {
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
         request(app).get('/posts?include=author')
           .end(function (err, res) {
-            expect(err).to.equal(null);
+						// Includes param
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
+            expect(res.body.included[0].id).to.equal(1);
+            expect(res.body.included[0].postId).to.equal(1);
+            expect(res.body.included[0].name).to.equal('Bob Jones');
+            expect(res.body.included[0].type).to.equal('author');
             done();
           });
       });
