@@ -46,12 +46,36 @@ In your loopback project:
 3. Add the following config to `component-config.json`
 ```json
 {
+  "loopback-component-jsonapi": {}
+}
+```
+
+## Advanced usage:
+In a fairly limited way, you can configure a how the component behaves.
+
+Example:
+```json
+{
   "loopback-component-jsonapi": {
     "restApiRoot": "/api",
-    "enable": true,
-    "keyForAttribute": "dash-case",
-    "keyForType": "dash-case",
-    "keyForRelation": "dash-case"
+    "enable": true
   }
 }
+```
+### restApiRoot
+Url prefix to be used in conjunction with host and resource paths.
+eg. http://127.0.0.1:3214/api/people
+Default: `/api`
+
+### enable
+Whether the component should be enabled or disabled.
+Default: true
+
+## Debugging
+You can enable debug logging by setting an environment variable:
+DEBUG=loopback-component-jsonapi
+
+Example:
+```
+DEBUG=loopback-component-jsonapi node .
 ```
