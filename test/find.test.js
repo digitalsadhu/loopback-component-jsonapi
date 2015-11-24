@@ -68,7 +68,7 @@ describe('loopback json api component find methods', function () {
     });
   });
 
-  describe('self links', function () {
+  describe('Self links', function () {
     beforeEach(function (done) {
       Post.create({
         title: 'my post',
@@ -141,7 +141,7 @@ describe('loopback json api component find methods', function () {
     });
   });
 
-  describe('empty responses', function () {
+  describe('Empty responses', function () {
     it('GET /models should return an empty JSON API resource object when there are no results', function (done) {
       request(app).get('/posts')
         .expect(200)
@@ -163,7 +163,7 @@ describe('loopback json api component find methods', function () {
     });
   });
 
-  describe('non empty reponses', function () {
+  describe('Non-empty reponses', function () {
     beforeEach(function (done) {
       Post.create({
         title: 'my post',
@@ -204,13 +204,54 @@ describe('loopback json api component find methods', function () {
           done();
         });
     });
+  });
 
-    describe('errors', function () {
-      it('GET /models/doesnt/exist should return a general 400 error', function (done) {
-        request(app).get('/posts/doesnt/exist')
-          .expect(400)
-          .end(done);
+  describe('Errors', function () {
+    it('GET /models/doesnt/exist should return a general 400 error', function (done) {
+      request(app).get('/posts/doesnt/exist')
+        .expect(400)
+        .end(done);
+    });
+  });
+
+  describe('Filtering should still be intact', function () {
+    beforeEach(function (done) {
+      Post.create({
+        title: 'deer can jump',
+        content: 'deer can jump really high in their natural habitat'
+      }, function () {
+        Post.create({
+          title: 'pigs dont fly',
+          content: 'contrary to the myth, pigs don\'t fly!'
+        }, function () {
+          Post.create({
+            title: 'unicorns come from rainbows',
+            content: 'at the end of a rainbow may be a pot of gold, but also a mythical unicorn'
+          }, done);
+        });
       });
+    });
+
+    it('should filter only one', function (done) {
+      request(app)
+        .get('/posts?filter[where][title]=deer+can+jump')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.data.length).to.equal(1);
+          done();
+        });
+    });
+
+    it('should filter two', function (done) {
+      request(app)
+        .get('/posts?filter[where][content][like]=myth')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.data.length).to.equal(2);
+          done();
+        });
     });
   });
 });
