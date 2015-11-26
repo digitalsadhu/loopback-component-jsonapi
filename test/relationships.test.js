@@ -157,7 +157,7 @@ describe('loopback json api belongsTo relationships', function () {
           content: 'my post content'
         }, done);
       });
-      it('should update model linkages', function (done) {
+      it('should not create new record', function (done) {
         request(app).patch('/posts/1').send({
           data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' }},
           relationships: {comments: {data: [
@@ -172,7 +172,7 @@ describe('loopback json api belongsTo relationships', function () {
           Comment.find({postId: 1}, function (err, comments) {
 
             expect(err).to.equal(undefined);
-            expect(comments.length).to.equal(2);
+            expect(comments.length).not.to.equal(2);
 
             done();
           });
