@@ -264,7 +264,7 @@ describe('loopback json api hasOne relationships', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
-            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' },
+            data: {type: 'posts', id: 1, attributes: {title: 'my post', content: 'my post content' },
             relationships: {author: {data: null}}}
           })
           .set('Accept', 'application/vnd.api+json')
