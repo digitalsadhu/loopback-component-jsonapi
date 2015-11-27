@@ -307,6 +307,8 @@ describe('loopback json api hasOne relationships', function () {
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null);
+            expect(res.body).not.to.have.keys('errors');
+            expect(res.status).to.equal(201);
             Person.findById(1, function (err, person) {
 
               expect(err).to.equal(undefined);
@@ -323,13 +325,15 @@ describe('loopback json api hasOne relationships', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
-            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' },
+            data: {type: 'posts', id: 1, attributes: {title: 'my post', content: 'my post content' },
             relationships: {author: {data: null}}}
           })
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null);
+            expect(res.body).not.to.have.keys('errors');
+            expect(res.status).to.equal(200);
             Person.findById(1, function (err, person) {
               expect(err).to.equal(undefined);
               expect(person).not.to.equal(null);
