@@ -2,6 +2,7 @@ var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
 var JSONAPIComponent = require('../');
+var _ = require('lodash');
 var app;
 var Post;
 var Comment;
@@ -48,7 +49,7 @@ describe('loopback json api belongsTo relationships', function () {
         }, done);
       });
     });
-
+/**/
     describe('link related models as part of a create operation', function () {
       it('should create and link models', function (done) {
         request(app).post('/posts')
@@ -189,6 +190,66 @@ describe('loopback json api belongsTo relationships', function () {
 
             done();
           });
+        });
+      });
+    });
+
+    describe('belongsTo relationship updating', function () {
+      beforeEach(function (done) {
+        Comment.create([{
+          title: 'my comment 2',
+          comment: 'my post comment 2'
+        }, {
+          title: 'my comment 3',
+          comment: 'my post comment 3'
+        }], function (er, comments) {
+          comments[0].post.create({
+            id: '3',
+            title: 'My post 2',
+            content: 'My post content 2'
+          });
+          comments[1].post.create({
+            id: '2',
+            title: 'My post 2',
+            content: 'My post content 2'
+          }, done);
+        });
+      });
+
+      it('should only update the foreign key on the belongsTo model', function (done) {
+
+        request(app).patch('/comments/3')
+        .send({
+          'data': {
+            'id': 3,
+            'attributes': {
+              'name': 'enter'
+            },
+            'relationships': {
+              'post': {
+                'data': {
+                  'type': 'posts',
+                  'id': 3
+                }
+              }
+            },
+            'type': 'comments'
+          }
+        })
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+
+          Comment.find({}, function (err, comments) {
+            expect(err).to.equal(undefined);
+            _.each(comments, function (comment) {
+              expect(comment.postId).not.to.equal(null);
+            });
+
+            done();
+          });
+
         });
       });
     });
