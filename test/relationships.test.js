@@ -246,6 +246,8 @@ describe('loopback json api hasOne relationships', function () {
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null);
+            expect(res.body).not.to.have.keys('errors');
+            expect(res.status).to.equal(201);
             Person.findById(1, function (err, person) {
 
               expect(err).to.equal(undefined);
@@ -269,6 +271,8 @@ describe('loopback json api hasOne relationships', function () {
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null);
+            expect(res.body).not.to.have.keys('errors');
+            expect(res.status).to.equal(200);
             Person.findById(1, function (err, person) {
               expect(err).to.equal(undefined);
               expect(person).not.to.equal(null);
