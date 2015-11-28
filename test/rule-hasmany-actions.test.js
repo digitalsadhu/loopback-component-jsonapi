@@ -30,7 +30,7 @@ describe('Rule `hasMany` Action relationships', function () {
     JSONAPIComponent(app);
   });
 
-  describe.only('updating relationships using a PATCH', function (done) {
+  describe('updating relationships using a PATCH', function (done) {
     beforeEach(function (done) {
       Action.create([
         {name: 'action 1', ruleId: 10},
