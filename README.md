@@ -12,8 +12,9 @@ JSONAPI support for loopback.
 [http://jsonapi.org/](http://jsonapi.org/)
 
 ## Status
-This project is a work in progress. Consider it alpha software.
-I am VERY interested in help to get this module over the line. See the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
+This project is a work in progress. Consider it beta software. For ember users, this should be
+basically working except for side loading which should be coming pretty soon.
+The functionality that is present is pretty well tested. 100 integration tests and counting!
 
 Currently supported:
 - Find all records via GET
@@ -24,12 +25,15 @@ Currently supported:
 - All errors have now been transformed into the correct JSON API format
 - Find related records via GET eg. /posts/1/comments (belongsTo, hasMany, hasOne)
 - Find relationships via GET eg. /posts/1/relationships/author (belongsTo, hasMany, hasOne)
+- Creating resource relationship linkages during a resource create
+- Updating/deleting resource relationship linkages during a resource update
 
 Not yet properly supported:
-- Create relationship via POST (hasMany, belongsTo, hasOne, etc)
-- Update relationship via PATCH (hasMany, belongsTo, hasOne, etc)
-- Delete relationship via DELETE (hasMany, belongsTo, hasOne, etc)
-- [Fetching includes](http://jsonapi.org/format/#fetching-includes)
+- Side loading data is in the works but is not yet supported
+- manipulating relationships directly via:
+  - POST /:resource/relationships/:relatedResource
+  - PATCH /:resource/relationships/:relatedResource
+  - DELETE /:resource/relationships/:relatedResource
 
 ## Requirements
 - loopback ^v2.0.0
@@ -37,6 +41,9 @@ Not yet properly supported:
 
 ## Sample Project
 We have created a sample project using [EmberJS](http://emberjs.com), [Loopback](http://loopback.io) and this compoment. It's called [emberloop](https://github.com/tsteuwer/emberloop).
+
+## Helping out
+We are VERY interested in help. See the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
 
 ## Usage
 In your loopback project:
