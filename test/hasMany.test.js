@@ -92,7 +92,12 @@ describe('loopback json api hasMany relationships', function () {
         post.comments.create({
           title: 'My comment',
           comment: 'My comment text'
-        }, done);
+        }, function() {
+					post.comments.create({
+						title: 'My second comment',
+						comment: 'My second comment text'
+					}, done);
+				});
       });
     });
 
@@ -111,7 +116,7 @@ describe('loopback json api hasMany relationships', function () {
             expect(res.body.links).to.be.an('object');
             expect(res.body.links.self).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
-            expect(res.body.data.length).to.equal(1);
+            expect(res.body.data.length).to.equal(2);
             expect(res.body.data[0].type).to.equal('comments');
             done();
           });
@@ -134,7 +139,7 @@ describe('loopback json api hasMany relationships', function () {
             expect(res.body.links.self).to.match(/posts\/1\/relationships\/comments/);
             expect(res.body.links.related).to.match(/posts\/1\/comments/);
             expect(res.body.data).to.be.an('array');
-            expect(res.body.data.length).to.equal(1);
+            expect(res.body.data.length).to.equal(2);
             expect(res.body.data[0]).to.deep.equal({
               type: 'comments',
               id: '1'
@@ -193,12 +198,31 @@ describe('loopback json api hasMany relationships', function () {
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=comments', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=comments', function (done) {
         request(app).get('/posts?include=comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.included).to.be.an('array');
-            expect(res.body.included.length).to.equal(1);
+            expect(res.body.included.length).to.equal(2);
+            expect(res.body.data[0].attributes.comments).to.deep.equal([1,2]);
+            expect(res.body.included[0]).to.deep.equal({
+							id: '1',
+							type: 'comments',
+							attributes: {
+								postId: 1,
+								title: 'My comment',
+								comment: 'My comment text'
+							}
+						});
+            expect(res.body.included[1]).to.deep.equal({
+							id: '2',
+							type: 'comments',
+							attributes: {
+								postId: 1,
+								title: 'My second comment',
+								comment: 'My second comment text'
+							}
+						});
             done();
           });
       });
