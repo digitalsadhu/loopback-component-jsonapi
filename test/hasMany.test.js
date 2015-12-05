@@ -283,12 +283,12 @@ describe('loopback json api hasMany relationships', function () {
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=comments', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=comments', function (done) {
         request(app).get('/posts/1?include=comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.included).to.be.an('array');
-            expect(res.body.included.length).to.equal(1);
+            expect(res.body.included.length).to.equal(2);
             done();
           });
       });

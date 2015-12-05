@@ -241,7 +241,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
         request(app).get('/comments?include=post')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -257,7 +257,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(done);
       });
 
-      it.skip('should not include foreign key data in attributes', function () {
+      it('should not include foreign key data in attributes', function () {
         request(app).get('/comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -316,7 +316,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=post', function (done) {
         request(app).get('/comments/1?include=post')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -332,7 +332,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(done);
       });
 
-      it.skip('should not include foreign key data in attributes', function () {
+      it('should not include foreign key data in attributes', function () {
         request(app).get('/comments/1')
           .end(function (err, res) {
             expect(err).to.equal(null);
