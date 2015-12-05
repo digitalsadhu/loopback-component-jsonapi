@@ -289,21 +289,21 @@ describe('loopback json api belongsTo relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/comments/1?filter={"include":"post"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/comments/1?filter[include]=post')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data.relationships).to.be.an('object');
             expect(res.body.data.relationships.post).to.be.an('object');
-            expect(res.body.data.relationships.post.data).to.deep.equal({
-              type: 'posts',
-              id: '1'
-            });
+            // expect(res.body.data.relationships.post.data).to.deep.equal({
+            //   type: 'posts',
+            //   id: '1'
+            // });
             expect(res.body.data.relationships.post.links).to.be.an('object');
             expect(res.body.data.relationships.post.links.related).to.match(/comments\/1\/post/);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('posts');
             expect(res.body.included[0].id).to.equal('1');
             done();
