@@ -92,12 +92,12 @@ describe('loopback json api hasMany relationships', function () {
         post.comments.create({
           title: 'My comment',
           comment: 'My comment text'
-        }, function() {
-					post.comments.create({
-						title: 'My second comment',
-						comment: 'My second comment text'
-					}, done);
-				});
+        }, function () {
+          post.comments.create({
+            title: 'My second comment',
+            comment: 'My second comment text'
+          }, done);
+        });
       });
     });
 
@@ -204,25 +204,25 @@ describe('loopback json api hasMany relationships', function () {
             expect(err).to.equal(null);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(2);
-            expect(res.body.data[0].attributes.comments).to.deep.equal([1,2]);
+            expect(res.body.data[0].attributes.comments).to.deep.equal([1, 2]);
             expect(res.body.included[0]).to.deep.equal({
-							id: '1',
-							type: 'comments',
-							attributes: {
-								postId: 1,
-								title: 'My comment',
-								comment: 'My comment text'
-							}
-						});
+              id: '1',
+              type: 'comments',
+              attributes: {
+                postId: 1,
+                title: 'My comment',
+                comment: 'My comment text'
+              }
+            });
             expect(res.body.included[1]).to.deep.equal({
-							id: '2',
-							type: 'comments',
-							attributes: {
-								postId: 1,
-								title: 'My second comment',
-								comment: 'My second comment text'
-							}
-						});
+              id: '2',
+              type: 'comments',
+              attributes: {
+                postId: 1,
+                title: 'My second comment',
+                comment: 'My second comment text'
+              }
+            });
             done();
           });
       });

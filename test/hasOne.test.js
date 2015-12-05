@@ -202,10 +202,10 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body.included[0]).to.deep.equal({
               id: '1',
               type: 'author',
-							attributes: {
-								postId: 1,
-								name: 'Bob Jones'
-							}
+              attributes: {
+                postId: 1,
+                name: 'Bob Jones'
+              }
             });
             done();
           });
