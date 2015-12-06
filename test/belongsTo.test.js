@@ -17,6 +17,7 @@ describe('loopback json api belongsTo relationships', function () {
       title: String,
       content: String
     });
+    Post.settings.plural = 'posts';
     app.model(Post);
 
     Comment = ds.createModel('comment', {
@@ -229,7 +230,7 @@ describe('loopback json api belongsTo relationships', function () {
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
             expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
-            expect(res.body.included[0].type).to.equal('posts');
+            expect(res.body.included[0].type).to.equal('post');
             expect(res.body.included[0].id).to.equal('1');
             done();
           });

@@ -101,7 +101,7 @@ describe('loopback json api hasMany relationships', function () {
           expect(res.body.included.length).to.equal(3);
           expect(res.body.included[0]).to.deep.equal({
             id: '1',
-            type: 'author',
+            type: 'authors',
             attributes: {
               firstName: 'Joe',
               lastName: 'Shmoe'
