@@ -255,3 +255,32 @@ describe('loopback json api component find methods', function () {
     });
   });
 });
+
+describe('non standard primary key naming', function () {
+  beforeEach(function (done) {
+    app = loopback();
+    app.set('legacyExplorer', false);
+    var ds = loopback.createDataSource('memory');
+    Post = ds.createModel('post', {
+      customId: {type: Number, id: true, generated: true},
+      title: String
+    });
+    app.model(Post);
+    app.use(loopback.rest());
+    JSONAPIComponent(app);
+    Post.create({title: 'my post'}, done);
+  });
+
+  it('should dynamically handle primary key', function (done) {
+    request(app)
+      .get('/posts')
+      .expect(200)
+      .end(function (err, res) {
+        expect(err).to.equal(null);
+        expect(res.body.data.length).to.equal(1);
+        expect(res.body.data[0].id).to.equal('1');
+        console.log(res.body);
+        done();
+      });
+  });
+});
