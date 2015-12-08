@@ -279,7 +279,6 @@ describe('non standard primary key naming', function () {
         expect(err).to.equal(null);
         expect(res.body.data.length).to.equal(1);
         expect(res.body.data[0].id).to.equal('1');
-        console.log(res.body);
         done();
       });
   });
