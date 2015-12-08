@@ -262,3 +262,34 @@ describe('loopback json api component update method', function () {
     });
   });
 });
+
+describe('non standard primary key naming', function () {
+  beforeEach(function (done) {
+    app = loopback();
+    app.set('legacyExplorer', false);
+    var ds = loopback.createDataSource('memory');
+    Post = ds.createModel('post', {
+      customId: {type: Number, id: true, generated: true},
+      title: String
+    });
+    app.model(Post);
+    app.use(loopback.rest());
+    JSONAPIComponent(app);
+    Post.create({title: 'my post'}, done);
+  });
+
+  it('should dynamically handle primary key', function (done) {
+    request(app).patch('/posts/1').send({
+      data: {id: 1, type: 'posts',
+        attributes: {title: 'my post 2'}
+      }})
+      .expect(200)
+      .end(function (err, res) {
+        expect(err).to.equal(null);
+        expect(res.body.data.id).to.equal('1');
+        expect(res.body.data.attributes.title).to.equal('my post 2');
+        expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1/);
+        done();
+      });
+  });
+});
