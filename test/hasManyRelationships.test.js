@@ -94,8 +94,8 @@ describe('loopback json api hasMany relationships', function () {
           expect(res.body.data.attributes).to.deep.equal({
             title: 'my post',
             content: 'my post content',
-            author: 1,
-            comments: [1, 2]
+            author: '1',
+            comments: [ '1', '2' ]
           });
           expect(res.body.included).to.be.an('array');
           expect(res.body.included.length).to.equal(3);
