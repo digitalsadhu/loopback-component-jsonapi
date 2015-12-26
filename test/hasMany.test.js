@@ -204,7 +204,7 @@ describe('loopback json api hasMany relationships', function () {
             expect(err).to.equal(null);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(2);
-            expect(res.body.data[0].attributes.comments).to.deep.equal([1, 2]);
+            expect(res.body.data[0].attributes.comments).to.deep.equal(['1', '2']);
             expect(res.body.included[0]).to.deep.equal({
               id: '1',
               type: 'comments',
