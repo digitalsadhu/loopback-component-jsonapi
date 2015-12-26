@@ -40,6 +40,7 @@
     "chai": "^3.3.0",
     "eslint": "^1.6.0",
     "loopback": "^2.22.2",
+    "loopback-boot": "^2.16.0",
     "loopback-datasource-juggler": "^2.40.1",
     "mocha": "^2.3.3",
     "supertest": "^1.1.0",
