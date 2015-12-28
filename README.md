@@ -12,9 +12,8 @@ JSONAPI support for loopback.
 [http://jsonapi.org/](http://jsonapi.org/)
 
 ## Status
-This project is a work in progress. Consider it beta software. For ember users, this should be
-basically working except for side loading which should be coming pretty soon.
-The functionality that is present is pretty well tested. 100 integration tests and counting!
+This project is a work in progress. Consider it beta software. For ember users, this should be basically.
+The functionality that is present is pretty well tested. 100+ integration tests and counting!
 
 Currently supported:
 - Find all records via GET
@@ -27,15 +26,16 @@ Currently supported:
 - Find relationships via GET eg. /posts/1/relationships/author (belongsTo, hasMany, hasOne)
 - Creating resource relationship linkages during a resource create
 - Updating/deleting resource relationship linkages during a resource update
+- [Side loading data](http://jsonapi.org/format/#fetching-includes) via `include` param 
 
 Not yet properly supported:
-- Side loading data is in the works but is not yet supported
 - manipulating relationships directly via:
   - POST /:resource/relationships/:relatedResource
   - PATCH /:resource/relationships/:relatedResource
   - DELETE /:resource/relationships/:relatedResource
 
 ## Requirements
+- JSON API v1.0
 - loopback ^v2.0.0
 - strong-remoting ^v2.22.0
 
