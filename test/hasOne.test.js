@@ -166,8 +166,8 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/posts?filter={"include":"author"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/posts?filter[include]=author')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data[0].relationships).to.be.an('object');
@@ -180,7 +180,7 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body.data[0].relationships.author.links.related).to.match(/posts\/1\/author/);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('people');
             expect(res.body.included[0].id).to.equal('1');
             done();
@@ -240,8 +240,8 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/posts/1?filter={"include":"author"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/posts/1?filter[include]=author')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data.relationships).to.be.an('object');
@@ -254,7 +254,7 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body.data.relationships.author.links.related).to.match(/posts\/1\/author/);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('people');
             expect(res.body.included[0].id).to.equal('1');
             done();

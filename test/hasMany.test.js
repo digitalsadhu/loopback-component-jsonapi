@@ -171,21 +171,24 @@ describe('loopback json api hasMany relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/posts?filter={"include":"comments"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/posts?filter[include]=comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data[0].relationships).to.be.an('object');
             expect(res.body.data[0].relationships.comments).to.be.an('object');
-            expect(res.body.data[0].relationships.comments.data).to.deep.equal({
+            expect(res.body.data[0].relationships.comments.data).to.deep.equal([{
               type: 'comments',
               id: '1'
-            });
+            }, {
+              type: 'comments',
+              id: '2'
+            }]);
             expect(res.body.data[0].relationships.comments.links).to.be.an('object');
             expect(res.body.data[0].relationships.comments.links.related).to.match(/posts\/1\/comments/);
             expect(res.body.included).to.be.an('array');
-            expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included.length).to.equal(2);
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('comments');
             expect(res.body.included[0].id).to.equal('1');
             done();
@@ -204,12 +207,11 @@ describe('loopback json api hasMany relationships', function () {
             expect(err).to.equal(null);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(2);
-            expect(res.body.data[0].attributes.comments).to.deep.equal(['1', '2']);
+            expect(res.body.data[0].attributes).to.not.have.keys('comments');
             expect(res.body.included[0]).to.deep.equal({
               id: '1',
               type: 'comments',
               attributes: {
-                postId: 1,
                 title: 'My comment',
                 comment: 'My comment text'
               }
@@ -218,7 +220,6 @@ describe('loopback json api hasMany relationships', function () {
               id: '2',
               type: 'comments',
               attributes: {
-                postId: 1,
                 title: 'My second comment',
                 comment: 'My second comment text'
               }
@@ -256,21 +257,24 @@ describe('loopback json api hasMany relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/posts/1?filter={"include":"comments"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/posts/1?filter[include]=comments')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data.relationships).to.be.an('object');
             expect(res.body.data.relationships.comments).to.be.an('object');
-            expect(res.body.data.relationships.comments.data).to.deep.equal({
+            expect(res.body.data.relationships.comments.data).to.deep.equal([{
               type: 'comments',
               id: '1'
-            });
+            }, {
+              type: 'comments',
+              id: '2'
+            }]);
             expect(res.body.data.relationships.comments.links).to.be.an('object');
             expect(res.body.data.relationships.comments.links.related).to.match(/posts\/1\/comments/);
             expect(res.body.included).to.be.an('array');
-            expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included.length).to.equal(2);
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('comments');
             expect(res.body.included[0].id).to.equal('1');
             done();
