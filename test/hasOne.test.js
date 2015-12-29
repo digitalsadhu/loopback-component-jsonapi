@@ -166,8 +166,8 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/posts?filter={"include":"author"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/posts?filter[include]=author')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data[0].relationships).to.be.an('object');
@@ -180,30 +180,38 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body.data[0].relationships.author.links.related).to.match(/posts\/1\/author/);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('people');
             expect(res.body.included[0].id).to.equal('1');
             done();
           });
       });
 
-      it.skip('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
-        request(app).get('/posts?filter={"include":"doesnotexist"}')
+      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+        request(app).get('/posts?filter[include]=doesnotexist')
           .expect(400)
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
         request(app).get('/posts?include=author')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
+            expect(res.body.included[0]).to.deep.equal({
+              id: '1',
+              type: 'people',
+              attributes: {
+                postId: 1,
+                name: 'Bob Jones'
+              }
+            });
             done();
           });
       });
 
-      it.skip('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
+      it('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
         request(app).get('/posts?include=doesnotexist')
           .expect(400)
           .end(done);
@@ -232,8 +240,8 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it.skip('should return included data as a compound document using key "included"', function (done) {
-        request(app).get('/posts/1?filter={"include":"author"}')
+      it('should return included data as a compound document using key "included"', function (done) {
+        request(app).get('/posts/1?filter[include]=author')
           .end(function (err, res) {
             expect(err).to.equal(null);
             expect(res.body.data.relationships).to.be.an('object');
@@ -246,20 +254,20 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body.data.relationships.author.links.related).to.match(/posts\/1\/author/);
             expect(res.body.included).to.be.an('array');
             expect(res.body.included.length).to.equal(1);
-            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes', 'links');
+            expect(res.body.included[0]).to.have.all.keys('type', 'id', 'attributes');
             expect(res.body.included[0].type).to.equal('people');
             expect(res.body.included[0].id).to.equal('1');
             done();
           });
       });
 
-      it.skip('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
-        request(app).get('/posts/1?filter={"include":"doesnotexist"}')
+      it('should return a 400 Bad Request error if a non existent relationship is specified.', function (done) {
+        request(app).get('/posts/1?filter[include]=doesnotexist')
           .expect(400)
           .end(done);
       });
 
-      it.skip('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
+      it('should allow specifying `include` in the url to meet JSON API spec. eg. include=author', function (done) {
         request(app).get('/posts/1?include=author')
           .end(function (err, res) {
             expect(err).to.equal(null);
@@ -269,7 +277,7 @@ describe('loopback json api hasOne relationships', function () {
           });
       });
 
-      it.skip('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
+      it('should return a 400 Bad Request error if a non existent relationship is specified using JSON API syntax.', function (done) {
         request(app).get('/posts/1?include=doesnotexist')
           .expect(400)
           .end(done);
