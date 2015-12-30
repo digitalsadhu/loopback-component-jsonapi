@@ -6,7 +6,7 @@ var app;
 var Post;
 
 describe('disabling loopback-component-jsonapi error handler', function () {
-  it('should retain the default error handler', function () {
+  it('should retain the default error handler', function (done) {
     app = loopback();
     app.set('legacyExplorer', false);
     var ds = loopback.createDataSource('memory');
@@ -25,7 +25,7 @@ describe('disabling loopback-component-jsonapi error handler', function () {
       expect(res.body.error).to.have.keys('name', 'status', 'message', 'statusCode', 'code', 'stack');
       done();
     });
-  })
+  });
 });
 
 describe('loopback json api errors', function () {
