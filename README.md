@@ -67,7 +67,13 @@ Example:
   "loopback-component-jsonapi": {
     "restApiRoot": "/api",
     "enable": true,
-    "handleErrors": true
+    "handleErrors": true,
+    "exclude": [
+      {"model": "comment"},
+      {"methods": "find"},
+      {"model": "post", "methods": "find"},
+      {"model": "person", "methods": ["find", "create"]}
+    ]
   }
 }
 ```
@@ -86,6 +92,34 @@ register a custom error handler which always returns errors in jsonapi compliant
 format. Validation errors include the correct properties in order to work
 out of the box with ember.
 Default: true
+
+### exclude
+Allows blacklisting of models and methods. (See example above)
+Define an array of blacklist objects. Blacklist objects can contain "model" key
+"methods" key or both. If just "model" is defined then all methods for the
+specified model will not use jsonapi. If just the "methods" key is defined then
+all methods specified on all models will be not use jsonapi. If a combination of
+"model" and "methods" keys are used then the specific combination of model and methods
+specified will not use jsonapi.
+
+#### Please note
+The default component behavior currently is to only modify the output of the following
+methods on all models to be json api compliant:
+- find
+- create
+- updateAttributes
+- deleteById
+- findById
+- __get__.*
+- __findRelationships__.*
+
+And the default current behavior for modifying input only applies to the following methods on
+all models:
+- create
+- updateAttributes
+
+Type: array
+Default: null
 
 ## Debugging
 You can enable debug logging by setting an environment variable:

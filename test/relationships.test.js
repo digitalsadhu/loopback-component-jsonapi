@@ -49,7 +49,7 @@ describe('loopback json api belongsTo relationships', function () {
         }, done);
       });
     });
-/**/
+
     describe('link related models as part of a create operation', function () {
       it('should create and link models', function (done) {
         request(app).post('/posts')
