@@ -73,7 +73,8 @@ Example:
       {"methods": "find"},
       {"model": "post", "methods": "find"},
       {"model": "person", "methods": ["find", "create"]}
-    ]
+    ],
+    "hideIrrelevantMethods": true
   }
 }
 ```
@@ -120,6 +121,21 @@ all models:
 
 Type: array
 Default: null
+
+### hideIrrelevantMethods
+By default, loopback-component-jsonapi disables a number of methods from each endpoint
+that are not jsonapi relevant. These methods are:
+- upsert
+- exists
+- findOne
+- count
+- createChangeStream
+- updateAll
+You can use this option to reenable these methods.
+Please note, these methods will not be modified by the component and so their output
+will not be in a jsonapi compliant format.
+Type: boolean
+Default: true
 
 ## Debugging
 You can enable debug logging by setting an environment variable:
