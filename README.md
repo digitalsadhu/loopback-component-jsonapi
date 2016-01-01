@@ -66,7 +66,8 @@ Example:
 {
   "loopback-component-jsonapi": {
     "restApiRoot": "/api",
-    "enable": true
+    "enable": true,
+    "handleErrors": true
   }
 }
 ```
@@ -77,6 +78,13 @@ Default: `/api`
 
 ### enable
 Whether the component should be enabled or disabled.
+Default: true
+
+### handleErrors
+When true, the component will unregister all other error handling and
+register a custom error handler which always returns errors in jsonapi compliant
+format. Validation errors include the correct properties in order to work
+out of the box with ember.
 Default: true
 
 ## Debugging

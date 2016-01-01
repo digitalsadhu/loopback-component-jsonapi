@@ -5,6 +5,29 @@ var JSONAPIComponent = require('../');
 var app;
 var Post;
 
+describe('disabling loopback-component-jsonapi error handler', function () {
+  it('should retain the default error handler', function (done) {
+    app = loopback();
+    app.set('legacyExplorer', false);
+    var ds = loopback.createDataSource('memory');
+    Post = ds.createModel('post', {
+      id: {type: Number, id: true},
+      title: String,
+      content: String
+    });
+    app.model(Post);
+    app.use(loopback.rest());
+    JSONAPIComponent(app, { handleErrors: false });
+
+    request(app).get('/posts/100').end(function (err, res) {
+      expect(err).to.equal(null);
+      expect(res.body).to.have.keys('error');
+      expect(res.body.error).to.have.keys('name', 'status', 'message', 'statusCode', 'code', 'stack');
+      done();
+    });
+  });
+});
+
 describe('loopback json api errors', function () {
   beforeEach(function () {
     app = loopback();
