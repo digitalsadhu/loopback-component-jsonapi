@@ -14,7 +14,8 @@ describe('loopback json api component create method', function () {
     Post = ds.createModel('post', {
       id: {type: Number, id: true},
       title: String,
-      content: String
+      content: String,
+      isDraft: Boolean
     });
     app.model(Post);
     app.use(loopback.rest());
@@ -136,7 +137,8 @@ describe('loopback json api component create method', function () {
             type: 'posts',
             attributes: {
               title: 'my post',
-              content: 'my post content'
+              content: 'my post content',
+              'is-draft': true
             }
           }
         })
@@ -147,8 +149,9 @@ describe('loopback json api component create method', function () {
           expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links');
           expect(res.body.data.id).to.equal('1');
           expect(res.body.data.type).to.equal('posts');
-          expect(res.body.data.attributes).to.have.all.keys('title', 'content');
+          expect(res.body.data.attributes).to.have.all.keys('title', 'content', 'is-draft');
           expect(res.body.data.attributes).to.not.have.keys('id');
+          expect(res.body.data.attributes['is-draft']).to.equal(true);
           done();
         });
     });
