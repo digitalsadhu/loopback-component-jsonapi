@@ -6,15 +6,12 @@
 [![Dependency Status](https://david-dm.org/digitalsadhu/loopback-component-jsonapi.svg)](https://david-dm.org/digitalsadhu/loopback-component-jsonapi)
 [![devDependency Status](https://david-dm.org/digitalsadhu/loopback-component-jsonapi/dev-status.svg)](https://david-dm.org/digitalsadhu/loopback-component-jsonapi#info=devDependencies)
 
-JSONAPI support for loopback.
-
-## JSON API Spec
-[http://jsonapi.org/](http://jsonapi.org/)
+[jsonapi.org](http://jsonapi.org/) support for loopback.
 
 ## Status
 This project is a work in progress. Consider it beta software. For ember users, the component
 should now be basically feature complete. Please test and report any issues.
-The functionality that is present is pretty well tested. 130+ integration tests and counting!
+The functionality that is present is pretty well tested. 140+ integration tests and counting!
 
 Currently supported:
 - Find all records via GET
@@ -44,7 +41,7 @@ Not yet supported:
 We have created a sample project using [EmberJS](http://emberjs.com), [Loopback](http://loopback.io) and this compoment. It's called [emberloop](https://github.com/tsteuwer/emberloop).
 
 ## Helping out
-We are VERY interested in help. See the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
+We are VERY interested in help. Get in touch via the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
 
 ## Usage
 In your loopback project:
@@ -52,6 +49,7 @@ In your loopback project:
 1. `npm install --save loopback-component-jsonapi`
 2. Create a `component-config.json` file in your server folder (if you don't already have one)
 3. Add the following config to `component-config.json`
+
 ```json
 {
   "loopback-component-jsonapi": {}
@@ -59,9 +57,10 @@ In your loopback project:
 ```
 
 ## Advanced usage:
-In a fairly limited way, you can configure a how the component behaves.
+We are aiming to make the component as configureable as possible. You can configure a how the component behaves with the options shown and listed below. If there is something else you would like to see be configureable, please submit an issue on the repository.
 
 Example:
+(all configuration options listed)
 ```json
 {
   "loopback-component-jsonapi": {
@@ -74,74 +73,158 @@ Example:
       {"model": "post", "methods": "find"},
       {"model": "person", "methods": ["find", "create"]}
     ],
-    "hideIrrelevantMethods": true
+    "hideIrrelevantMethods": true,
+    "attributes": {
+      "posts": ["title"]
+    }
   }
 }
 ```
 ### restApiRoot
-Url prefix to be used in conjunction with host and resource paths.
-eg. http://127.0.0.1:3214/api/people
-Default: `/api`
+Url prefix to be used in conjunction with host and resource paths. eg. http://127.0.0.1:3214/api/people
+
+#### example
+```js
+{
+  ...
+  "restApiRoot": "/api",
+  ...
+}
+```
+
+- Type: `string`
+- Default: `/api`
 
 ### enable
-Whether the component should be enabled or disabled.
-Default: true
+Whether the component should be enabled or disabled. Defaults to `false`, flip it to `true` if you need to turn the component off without removing the configuration for some reason.
+
+#### example
+```js
+{
+  ...
+  "enable": true,
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `true`
 
 ### handleErrors
 When true, the component will unregister all other error handling and
 register a custom error handler which always returns errors in jsonapi compliant
 format. Validation errors include the correct properties in order to work
 out of the box with ember.
-Default: true
+
+#### example
+```js
+{
+  ...
+  "handleErrors": true,
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `true`
 
 ### exclude
-Allows blacklisting of models and methods. (See example above)
+Allows blacklisting of models and methods.
 Define an array of blacklist objects. Blacklist objects can contain "model" key
 "methods" key or both. If just "model" is defined then all methods for the
-specified model will not use jsonapi. If just the "methods" key is defined then
-all methods specified on all models will be not use jsonapi. If a combination of
+specified model will not be serialized of deserialized using jsonapi. If just the "methods" key is defined then
+all methods specified on all models will be serialized or deserialized using jsonapi. If a combination of
 "model" and "methods" keys are used then the specific combination of model and methods
-specified will not use jsonapi.
+specified will not be serialized or deserialized using jsonapi.
 
-#### Please note
-The default component behavior currently is to only modify the output of the following
-methods on all models to be json api compliant:
-- find
-- create
-- updateAttributes
-- deleteById
-- findById
-- __get__.*
-- __findRelationships__.*
+#### example
+```js
+{
+  ...
+  "exclude": [
+    {"model": "comment"},
+    {"methods": "find"},
+    {"model": "post", "methods": "find"},
+    {"model": "person", "methods": ["find", "create"]}
+  ],
+  ...
+}
+```
 
-And the default current behavior for modifying input only applies to the following methods on
-all models:
-- create
-- updateAttributes
+- Type: `array`
+- Default: `null`
 
-Type: array
-Default: null
+#### Note
+The default component behavior is to modify the output of the following CRUD model methods
+methods on all models:
+- `find`
+- `create`
+- `updateAttributes`
+- `deleteById`
+- `findById`
+
+In addition the following wild card method names are matched and the output is modified in order to handle relationships eg. `/api/posts/1/comments`
+- `__get__.*`
+- `__findRelationships__.*`
+
+The default behavior for modifying input only applies to the following methods on all models:
+- `create`
+- `updateAttributes`
 
 ### hideIrrelevantMethods
-By default, loopback-component-jsonapi disables a number of methods from each endpoint
+By default, `loopback-component-jsonapi` disables a number of methods from each endpoint
 that are not jsonapi relevant. These methods are:
-- upsert
-- exists
-- findOne
-- count
-- createChangeStream
-- updateAll
-You can use this option to reenable these methods.
-Please note, these methods will not be modified by the component and so their output
+- `upsert`
+- `exists`
+- `findOne`
+- `count`
+- `createChangeStream`
+- `updateAll`
+
+You can use this option to prevent `loopback-component-jsonapi` from doing so. These methods are not modified by the component. Their output
 will not be in a jsonapi compliant format.
-Type: boolean
-Default: true
+
+#### example
+```js
+{
+  ...
+  "hideIrrelevantMethods": true,
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `true`
+
+### attributes
+By default, model properties will be converted to attributes in jsonapi terms.
+All model properties except the primary key and any foreign keys will be copied into
+the attributes object before output. If you wish to limit which properties will
+be output as attributes you can specify a whitelist of attributes for each type.
+
+#### example
+```js
+{
+  ...
+  "attributes": {
+    "posts": ["title", "content"],
+    "comments": ["createdAt", "updatedAt", "comment"]
+  }
+  ...
+}
+```
+
+- Type: `object`
+- Default: `null`
+
+#### note
+The attributes arrays are keyed by type not by model name. Type is the term used by json api to describe the resource type in question and while not required by json api it is usually plural. In `loopback-component-jsonapi` it is whatever the models `plural` is set to in `model.json`. So in our example above we defined: `"posts": ["title", "content"]` as the resource type for the `post` model is `posts`
 
 ## Debugging
 You can enable debug logging by setting an environment variable:
-DEBUG=loopback-component-jsonapi
+`DEBUG=loopback-component-jsonapi`
 
-Example:
+#### example:
 ```
 DEBUG=loopback-component-jsonapi node .
 ```
