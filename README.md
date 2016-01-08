@@ -76,7 +76,12 @@ Example:
     "hideIrrelevantMethods": true,
     "attributes": {
       "posts": ["title"]
-    }
+    },
+    "include": [
+      {"methods": "customMethod"},
+      {"model": "post", "methods": "customMethod"},
+      {"model": "person", "methods": ["customMethod1", "customMethod2"]}
+    ]
   }
 }
 ```
@@ -170,6 +175,31 @@ In addition the following wild card method names are matched and the output is m
 The default behavior for modifying input only applies to the following methods on all models:
 - `create`
 - `updateAttributes`
+
+### include
+Allows whitelisting of methods.
+Define an array of whitelist objects. Whitelist objects can contain a "methods" key
+or both a "models" key and a "methods" key. If just the "methods" key is defined then
+the methods specified will be serialized or deserialized using jsonapi on all models that have
+the specified methods. If a combination of
+"model" and "methods" keys are used then the specific combination of model and methods
+specified will be serialized or deserialized using jsonapi.
+
+#### example
+```js
+{
+  ...
+  "include": [
+    {"methods": "customMethod"},
+    {"model": "post", "methods": "customMethod"},
+    {"model": "person", "methods": ["customMethod1", "customMethod2"]}
+  ],
+  ...
+}
+```
+
+- Type: `array`
+- Default: `null`
 
 ### hideIrrelevantMethods
 By default, `loopback-component-jsonapi` disables a number of methods from each endpoint
