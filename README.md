@@ -220,6 +220,216 @@ be output as attributes you can specify a whitelist of attributes for each type.
 #### note
 The attributes arrays are keyed by type not by model name. Type is the term used by json api to describe the resource type in question and while not required by json api it is usually plural. In `loopback-component-jsonapi` it is whatever the models `plural` is set to in `model.json`. So in our example above we defined: `"posts": ["title", "content"]` as the resource type for the `post` model is `posts`
 
+## Custom Serialization
+For occasions where you need greater control over the serialization process, you can implement a custom serialization function for each model as needed. This function will be used instead of the regular serialization process.
+
+#### example
+```js
+module.exports = function (MyModel) {
+  MyModel.jsonApiSerialize = function (options, callback) {
+    // either return an error
+    var err = new Error('Unable to serialize record');
+    err.status = 500;
+    cb(err)
+
+    // or return serialized records
+    if (Array.isArray(options.records)) {
+      // serialize an array of records
+    } else {
+      // serialize a single record
+    }
+    cb(null, options);
+  }
+}
+```
+
+##### function parameters
+
+- `options` All config options set for the serialization process. See below.
+- `callback` Callback to call with error or serialized records
+
+###### `options.type`
+Resource type. Originally calculated from a models plural. Is used in the default
+serialization process to set the type property for each model in a jsonapi response.
+- eg. `posts`
+
+###### `options.method`
+The method that was called to get the data for the current request. This is not
+used in the serialization process but is provided for custom hook and serialization
+context.
+- Eg. `create`, `updateAttributes`
+
+###### `options.primaryKeyField`
+The name of the property that is the primary key for the model. This is usually just
+`id` unless defined differently in a model.json file.
+
+###### `options.requestedIncludes`
+The relationships that the user has requested be side loaded with the request.
+For example, for the request `GET /api/posts?include=comments` options.requestedIncludes
+would be `'comments'`.
+- Type: `string` or `array`
+- eg: `'comments'` or `['posts', 'comments']`
+
+###### `options.host`
+The host part of the url including any port information.
+- eg. `http://localhost:3000`
+
+###### `options.restApiRoot`
+The api prefix used before resource information. Can be used in conjunction with
+`options.host` and `options.type` to build up the full url for a resource.
+- eg. `/api`
+
+###### `options.topLevelLinks`
+JSON API links object used at the top level of the JSON API response structure.
+- eg. `{links: {self: 'http://localhost:3000/api/posts'}}`
+
+###### `options.dataLinks`
+links object used to generate links for individual resource items. The structure is
+and object with JSON API link keys such as `self` or `related` that are defined as
+a function that will be called for each resource.
+
+Eg.
+```js
+options.dataLinks: {
+  self: function (resource) {
+    return 'http://localhost:3000/posts/' + resource.id;
+  }
+}
+```
+As shown above, each resource gets passed to the function and the result of the
+function is assigned to the key in the final JSON API response.
+
+###### `options.relationships`
+This contains all the relationship definitions for the model being serialized.
+Relationship definition objects are in the same format as in loopback's `Model.relations`
+definition. An object with relationship name keys, each having properties:
+
+- `modelTo` loopback model object
+- `keyTo` name of key on to model
+- `modelFrom` loopback model object
+- `keyFrom` name of key on from model
+- `type` type of relationship (belongsTo, hasOne, hasMany)
+
+This information is used to build relationship urls and even setup side loaded
+data correctly during the serialization process.
+
+eg.
+```js
+options.relationships = {
+  comments: { modelTo: ...etc },
+  tags: { modelTo: ...etc }
+}
+```
+
+###### `options.results`
+This is the actual data to be serialized. In `beforeJsonApiSerialize` and
+`jsonApiSerialize` this will be the raw data as you would ordinarily get it from
+loopback. In `afterJsonApiSerialize` this will be the serialized data ready for
+any final modifications.
+
+###### `options.exclude`
+This is the exclude settings as defined in the `exclude` configuration option
+explained earlier. Use this in `beforeJsonApiSerialize` to make any model specific
+adjustments before serialization.
+
+###### `options.attributes`
+This is the attributes settings as defined in the `attributes` configuration option
+explained earlier. Use this in `beforeJsonApiSerialize` to make any model specific
+adjustments before serialization.
+
+## Serialization Hooks
+For occasions when you don't want to fully implement serialization for a model manually but
+you need to manipulate the serialization process, you can use the serialization
+hooks `beforeJsonApiSerialize` and `afterJsonApiSerialize`.
+
+### beforeJsonApiSerialize
+In order to modify the serialization process on a model by model basis, you can
+define a `Model.beforeJsonApiSerialize` function as shown below. The function
+will be called with an options object and a callback which must be called with either
+an error as the first argument or the modified options object as the second
+parameter.
+
+**Examples of things you might want to use this feature for**
+- modify the record(s) before serialization by modifying `options.results`
+- modify the resource type by modifying `options.type`
+- setup serialization differently depending on `options.method`
+- side load data (advanced)
+- modify the way relationships are serialized
+
+#### code example
+```js
+module.exports = function (MyModel) {
+  MyModel.beforeJsonApiSerialize = function (options, callback) {
+    // either return an error
+    var err = new Error('Unable to serialize record');
+    err.status = 500;
+    callback(err)
+
+    // or return modified records
+    if (Array.isArray(options.results)) {
+      // modify an array of records
+    } else {
+      // modify a single record
+    }
+    // returned options.records will be serialized by either the default serialization process
+    // or by a custom serialize function (described above) if one is present on the model.
+    callback(null, options);
+  }
+}
+```
+
+##### function parameters
+- `options` All config options set for the serialization process. See the "function parameters"
+section above for info on what options properties are available for modification.
+- `callback` Callback to call with error or options object.
+
+#### example use case
+Because the `beforeJsonApiSerialize` method is passed all the options that will
+be used during serialization, it is possible to tweak options to affect the
+serialization process. One example of this is modifying the `type` option to
+change the resource type that will be output.
+
+```js
+module.exports = function (MyModel) {
+  MyModel.beforeJsonApiSerialize = function (options, callback) {
+    options.type = 'mycustommodels';
+    cb(null, options);
+  }
+}
+```
+
+### afterJsonApiSerialize
+In order to modify the serialized data on a model by model basis, you can
+define a `Model.afterJsonApiSerialize` function as shown below. The function
+will be called with an options object and a callback which must be called with either
+an error as the first argument or the modified options object as the second
+parameter.
+
+#### example
+```js
+module.exports = function (MyModel) {
+  MyModel.afterJsonApiSerialize = function (options, callback) {
+    // either return an error
+    var err = new Error('Unable to modify serialized record');
+    err.status = 500;
+    callback(err)
+
+    // or return modified records
+    if (Array.isArray(options.results)) {
+      // modify an array of serialized records
+    } else {
+      // modify a single serialized record
+    }
+    // returned options.records will be output through the api.
+    callback(null, options);
+  }
+}
+```
+
+##### function parameters
+- `options` All config options set for the serialization process
+- `callback` Callback to call with modified serialized records
+
 ## Debugging
 You can enable debug logging by setting an environment variable:
 `DEBUG=loopback-component-jsonapi`
