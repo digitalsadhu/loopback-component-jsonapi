@@ -63,5 +63,17 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
           done();
         });
     });
+
+    it('should return the Post that this file belongs to when included flag is present', function (done) {
+      request(app).get('/files/1?include=parent')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.errors).to.equal(undefined);
+          expect(res.body.included).to.be.an('array');
+          expect(res.body.included[0].type).to.equal('posts');
+          expect(res.body.included[0].id).to.equal('1');
+          done();
+        });
+    });
   });
 });
