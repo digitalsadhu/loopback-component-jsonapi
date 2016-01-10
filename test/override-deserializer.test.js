@@ -113,7 +113,8 @@ describe('hook in to modify deserialization process', function () {
       .expect(201)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          Comment.findById(1).then(function (comment) {
+          Comment.findById(1, function (err, comment) {
+            expect(err).to.equal(undefined);
             expect(comment.postId).to.equal(2);
             done();
           });
