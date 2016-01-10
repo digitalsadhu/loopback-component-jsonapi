@@ -275,8 +275,37 @@ module.exports = function (MyModel) {
 
 ##### function parameters
 
-- `options` All config options set for the serialization process. See below.
+- `options` All config options set for the serialization process.
 - `callback` Callback to call with error or serialized records
+
+## Custom Deserialization
+For occasions where you need greater control over the deserialization process, you can implement a custom deserialization function for each model as needed. This function will be used instead of the regular deserialization process.
+
+#### example
+```js
+module.exports = function (MyModel) {
+  MyModel.jsonApiDeserialize = function (options, callback) {
+    // either return an error
+    var err = new Error('Unable to deserialize record');
+    err.status = 500;
+    cb(err)
+
+    //or
+    //options.data is the raw data
+    //options.result needs to be populated with deserialization result
+    options.result = options.data.data.attributes;
+
+    cb(null, options);
+  }
+}
+```
+
+##### function parameters
+
+- `options` All config options set for the deserialization process.
+- `callback` Callback to call with error or serialized records
+
+## The options object
 
 ###### `options.type`
 Resource type. Originally calculated from a models plural. Is used in the default
@@ -367,10 +396,80 @@ This is the attributes settings as defined in the `attributes` configuration opt
 explained earlier. Use this in `beforeJsonApiSerialize` to make any model specific
 adjustments before serialization.
 
-## Serialization Hooks
-For occasions when you don't want to fully implement serialization for a model manually but
-you need to manipulate the serialization process, you can use the serialization
-hooks `beforeJsonApiSerialize` and `afterJsonApiSerialize`.
+###### `options.data`
+The raw body data prior to deserialization from creates and updates. This can be
+manipulated prior to deserialization using `beforeJsonApiDeserialize`
+
+###### `options.result`
+The deserialized raw body data. This is used when saving
+models as part of a create or update operation. You can manipulate this prior to
+the save occuring in `afterJsonApiDeserialize`
+
+## Serialization/Deserialization Hooks
+For occasions when you don't want to fully implement (de)serialization for a model manually but
+you need to manipulate the serialization/deserialization process, you can use the
+hooks `beforeJsonApiSerialize`, `afterJsonApiSerialize`, `beforeJsonApiDeserialize` and `afterJsonApiDeserialize`.
+
+### beforeJsonApiDeserialize
+In order to modify the deserialization process on a model by model basis, you can
+define a `Model.beforeJsonApiDeserialize` function as shown below. The function
+will be called with an options object and a callback which must be called with either
+an error as the first argument or the modified options object as the second
+parameter.
+
+**Examples of things you might want to use this feature for**
+- modifying `options.data.data.attributes` prior to their being deserialized into model properties that
+will be saved
+- modifying `options.data.data.relationships` prior to their being used to save relationship linkages
+
+#### code example
+```js
+module.exports = function (MyModel) {
+  MyModel.beforeJsonApiDeserialize = function (options, callback) {
+    // either return an error
+    var err = new Error('Unwilling to deserialize record');
+    err.status = 500;
+    callback(err)
+
+    // or return modified data
+    options.data.data.attributes.title = 'modified title';
+
+    // returned options.data will be deserialized by either the default deserialization process
+    // or by a custom deserialize function if one is present on the model.
+    callback(null, options);
+  }
+}
+```
+
+### afterJsonApiDeserialize
+This function will be called with an options object and a callback which must be called with either
+an error as the first argument or the modified options object as the second parameter.
+
+**Examples of things you might want to use this feature for**
+- modifying `options.result` after their having being deserialized from `options.data.data.attributes`
+- modifying `options.data.data.relationships` prior to their being used to save relationship linkages
+
+#### code example
+```js
+module.exports = function (MyModel) {
+  MyModel.afterJsonApiDeserialize = function (options, callback) {
+    // either return an error
+    var err = new Error('something went wrong!');
+    err.status = 500;
+    callback(err)
+
+    // or return modified data prior to model being saved with options.result
+    options.result.title = 'modified title';
+
+    callback(null, options);
+  }
+}
+```
+
+##### function parameters
+- `options` All config options set for the deserialization process. See the "the options object"
+section above for info on what options properties are available for modification.
+- `callback` Callback to call with error or options object.
 
 ### beforeJsonApiSerialize
 In order to modify the serialization process on a model by model basis, you can
