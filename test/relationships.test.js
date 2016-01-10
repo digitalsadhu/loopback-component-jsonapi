@@ -92,7 +92,7 @@ describe('loopback json api belongsTo relationships', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
-            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' },
+            data: {type: 'posts', id: '1', attributes: {title: 'my post', content: 'my post content' },
             relationships: {comments: {data: []}}}
           })
           .set('Accept', 'application/vnd.api+json')
@@ -145,7 +145,7 @@ describe('loopback json api belongsTo relationships', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
-            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' },
+            data: {type: 'posts', id: '1', attributes: {title: 'my post', content: 'my post content' },
             relationships: {comments: {data: []}}}
           })
           .set('Accept', 'application/vnd.api+json')
@@ -350,7 +350,7 @@ describe('loopback json api hasOne relationships', function () {
       });
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1').send({
-          data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' },
+          data: {type: 'posts', id: '1', attributes: {title: 'my post', content: 'my post content' },
           relationships: {author: {data: {type: 'people', id: 2}}}}
         })
         .set('Accept', 'application/vnd.api+json')
@@ -437,7 +437,7 @@ describe('loopback json api hasMany relationships', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
-            data: {type: 'posts', attributes: {title: 'my post', content: 'my post content' },
+            data: {type: 'posts', id: '1', attributes: {title: 'my post', content: 'my post content' },
             relationships: {comments: {data: []}}}
           })
           .set('Accept', 'application/vnd.api+json')
