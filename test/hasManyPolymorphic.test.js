@@ -45,7 +45,7 @@ describe('loopback json api hasMany polymorphic relationships', function () {
         content: 'Content'
       }, function (err, post) {
         expect(err).to.equal(null);
-        File.create({
+        post.files.create({
           fileName: 'blah.jpg',
           parentId: post.id,
           parentType: 'post'
@@ -57,7 +57,7 @@ describe('loopback json api hasMany polymorphic relationships', function () {
       request(app).get('/posts/1')
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.errors).to.equal(undefined);
+          expect(res.body).to.not.have.key('errors');
           expect(res.body.data.relationships.files).to.be.an('object');
           done();
         });
@@ -67,7 +67,7 @@ describe('loopback json api hasMany polymorphic relationships', function () {
       request(app).get('/posts/1?include=files')
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.errors).to.equal(undefined);
+          expect(res.body).to.not.have.key('errors');
           expect(res.body.included).to.be.an('array');
           expect(res.body.included[0].type).to.equal('files');
           expect(res.body.included[0].id).to.equal('1');
@@ -79,11 +79,11 @@ describe('loopback json api hasMany polymorphic relationships', function () {
       request(app).get('/posts/1')
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.errors).to.equal(undefined);
+          expect(res.body).to.not.have.key('errors');
           request(app).get(res.body.data.relationships.files.links.related.split('api')[1])
             .end(function (err, res) {
               expect(err).to.equal(null);
-              expect(res.body.errors).to.equal(undefined);
+              expect(res.body).to.not.have.key('errors');
               expect(res.body.data).to.be.an('array');
               expect(res.body.data[0].type).to.equal('files');
               expect(res.body.data[0].id).to.equal('1');

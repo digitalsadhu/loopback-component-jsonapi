@@ -58,7 +58,7 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       request(app).get('/files/1')
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.errors).to.equal(undefined);
+          expect(res.body).to.not.have.key('errors');
           expect(res.body.data.relationships.parent).to.be.an('object');
           done();
         });
@@ -68,7 +68,7 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       request(app).get('/files/1?include=parent')
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.errors).to.equal(undefined);
+          expect(res.body).to.not.have.key('errors');
           expect(res.body.included).to.be.an('array');
           expect(res.body.included[0].type).to.equal('posts');
           expect(res.body.included[0].id).to.equal('1');
@@ -80,11 +80,11 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       request(app).get('/files/1')
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.errors).to.equal(undefined);
+          expect(res.body).to.not.have.key('errors');
           request(app).get(res.body.data.relationships.parent.links.related.split('api')[1])
             .end(function (err, res) {
               expect(err).to.equal(null);
-              expect(res.body.errors).to.equal(undefined);
+              expect(res.body).to.not.have.key('errors');
               expect(res.body.data.type).to.equal('posts');
               expect(res.body.data.id).to.equal('1');
               done();
