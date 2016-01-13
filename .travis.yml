@@ -13,6 +13,4 @@ before_script:
   - "npm i -g istanbul"
 
 script:
-  - "eslint ."
-  - "jsinspect"
   - "npm test"
