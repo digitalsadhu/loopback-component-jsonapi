@@ -10,6 +10,7 @@ before_script:
   - "npm i -g jsinspect"
   - "npm i -g eslint"
   - "npm i -g babel-eslint"
+  - "npm i -g istanbul"
 
 script:
   - "eslint ."
