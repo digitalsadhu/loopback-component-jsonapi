@@ -1,0 +1,12 @@
+coverage
+node_modules
+.git
+.editorconfig
+.eslintrc
+.gitignore
+.jsinspectrc
+**/*.yml
+LICENSE
+**/*.log
+**/*.md
+**/*.json
