@@ -2,7 +2,7 @@ var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
 var JSONAPIComponent = require('../');
-var app, Post, Comment, ds;
+var app, Post, Comment, Reply, ds;
 
 describe('loopback json api hasMany relationships', function () {
   beforeEach(function () {
@@ -25,6 +25,15 @@ describe('loopback json api hasMany relationships', function () {
     app.model(Comment);
     Post.hasMany(Comment, {as: 'comments', foreignKey: 'postId'});
     Comment.settings.plural = 'comments';
+
+    Reply = ds.createModel('reply', {
+      id: {type: Number, id: true},
+      commentId: Number,
+      content: String
+    });
+    Reply.settings.plural = 'replies';
+    app.model(Reply);
+    Comment.hasMany(Reply, {as: 'replies', foreignKey: 'commentId'});
 
     app.use(loopback.rest());
     JSONAPIComponent(app, {restApiRoot: '/'});
@@ -304,5 +313,37 @@ describe('loopback json api hasMany relationships', function () {
       });
     });
 
+  });
+
+  describe('Nested relationships', function () {
+    beforeEach(function (done) {
+      Post.create({
+        title: 'my post',
+        content: 'my post content'
+      }, function (err, post) {
+        expect(err).to.equal(null);
+        post.comments.create({
+          title: 'My comment',
+          comment: 'My comment text'
+        }, function (err, comment) {
+          expect(err).to.equal(null);
+          comment.replies.create({
+            content: 'My reply'
+          }, done);
+        });
+      });
+    });
+
+    it('should return relationship information when getting a nested model', function (done) {
+      request(app).get('/posts/1/comments')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body).to.not.have.key('errors');
+          expect(res.body.links).to.be.an('object');
+          expect(res.body.data[0].relationships.replies).to.be.an('object');
+          expect(res.body.data[0].relationships.replies.links.related).to.match(/comments\/1\/replies/);
+          done();
+        });
+    });
   });
 });
