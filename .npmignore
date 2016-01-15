@@ -1,0 +1,11 @@
+test
+coverage
+*.md
+**/*.md
+.DS_STORE
+.idea
+.editorconfig
+.travis.yml
+.jsinspectrc
+.eslintrc
+.eslintignore
