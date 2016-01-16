@@ -15,14 +15,14 @@ describe('include option', function () {
     Post = ds.createModel('post', { title: String });
     app.model(Post);
     Post.customMethod = function (cb) {
-      cb(null, {prop: 'value'});
+      cb(null, {prop: 'value', id: null});
     };
     Post.remoteMethod('customMethod', {
       http: {verb: 'get', path: '/custom'},
       returns: {root: true}
     });
     Post.customMethod2 = function (cb) {
-      cb(null, {prop: 'value'});
+      cb(null, {prop: 'value', id: null});
     };
     Post.remoteMethod('customMethod2', {
       http: {verb: 'get', path: '/custom2'},
@@ -32,7 +32,7 @@ describe('include option', function () {
     Comment = ds.createModel('comment', { comment: String });
     app.model(Comment);
     Comment.customMethod = function (cb) {
-      cb(null, {prop: 'value'});
+      cb(null, {prop: 'value', id: null});
     };
     Comment.remoteMethod('customMethod', {
       http: {verb: 'get', path: '/custom'},
@@ -60,7 +60,7 @@ describe('include option', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.data).to.have.keys('type', 'attributes', 'links');
+          expect(res.body.data).to.have.keys('id', 'type', 'attributes', 'links');
           done();
         });
     });
@@ -70,7 +70,7 @@ describe('include option', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.data).to.have.keys('type', 'attributes', 'links');
+          expect(res.body.data).to.have.keys('id', 'type', 'attributes', 'links');
           done();
         });
     });
@@ -90,7 +90,7 @@ describe('include option', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.data).to.have.keys('type', 'attributes', 'links');
+          expect(res.body.data).to.have.keys('id', 'type', 'attributes', 'links');
           done();
         });
     });
@@ -100,7 +100,7 @@ describe('include option', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body).to.deep.equal({ prop: 'value'});
+          expect(res.body).to.deep.equal({ prop: 'value', id: null });
           done();
         });
     });
@@ -120,7 +120,7 @@ describe('include option', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.data).to.have.keys('type', 'attributes', 'links');
+          expect(res.body.data).to.have.keys('id', 'type', 'attributes', 'links');
           done();
         });
     });
@@ -130,7 +130,7 @@ describe('include option', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null);
-          expect(res.body.data).to.have.keys('type', 'attributes', 'links');
+          expect(res.body.data).to.have.keys('id', 'type', 'attributes', 'links');
           done();
         });
     });
