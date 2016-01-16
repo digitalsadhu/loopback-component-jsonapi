@@ -186,7 +186,7 @@ the specified methods. If a combination of
 specified will be serialized or deserialized using jsonapi.
 
 Note: objects returned from a remote method that will be jsonapi serialized MUST include
-an id property.
+an id property. id property can be null.
 
 #### example
 ```js
