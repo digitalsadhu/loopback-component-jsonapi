@@ -46,6 +46,7 @@
     "loopback": "^2.22.2",
     "loopback-datasource-juggler": "^2.40.1",
     "mocha": "^2.3.3",
+    "rsvp": "3.1.0",
     "supertest": "^1.1.0",
     "xyz": "^0.5.0"
   }
