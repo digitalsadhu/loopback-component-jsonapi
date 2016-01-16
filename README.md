@@ -185,6 +185,9 @@ the specified methods. If a combination of
 "model" and "methods" keys are used then the specific combination of model and methods
 specified will be serialized or deserialized using jsonapi.
 
+Note: objects returned from a remote method that will be jsonapi serialized MUST include
+an id property.
+
 #### example
 ```js
 {
