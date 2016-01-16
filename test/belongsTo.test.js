@@ -129,7 +129,7 @@ describe('loopback json api belongsTo relationships', function () {
     });
   });
 
-  describe('Comment with an post', function (done) {
+  describe('Comment with a post', function (done) {
     beforeEach(function (done) {
       Comment.create({
         title: 'my comment',
@@ -368,6 +368,130 @@ describe('loopback json api belongsTo relationships', function () {
           });
       });
     });
+  });
 
+  describe('Two comments, one each belonging to two posts', function () {
+
+    describe('Creating comments and posts via code', function () {
+      beforeEach(function (done) {
+        Comment.create([{
+          title: 'First comment',
+          comment: 'Comment 1 text'
+        }, {
+          title: 'Second comment',
+          comment: 'Comment 2 text'
+        }], function (err, comments) {
+          expect(err).to.equal(null);
+          comments[0].post.create({
+            title: 'Post 1',
+            content: 'This is my first post'
+          }, function (err) {
+            expect(err).to.equal(null);
+            comments[1].post.create({
+              title: 'Post 2',
+              content: 'This is my second post'
+            }, done);
+          });
+        });
+      });
+
+      it('should have two posts', function (done) {
+        request(app).get('/posts')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data).to.be.an('array');
+            expect(res.body.data.length).to.equal(2);
+            done();
+          });
+      });
+
+      it('should have a single comment per post', function (done) {
+        request(app).get('/comments/1')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.relationships).to.not.be.an('array');
+            expect(res.body.data.relationships).to.have.key('post');
+            done();
+          });
+      });
+
+      it('should keep relationship consistent even with multiple requests for post', function (done) {
+        request(app).get('/comments/1/post')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.data.id).to.equal('1');
+            request(app).get('/comments/1/post')
+              .end(function (err, res) {
+                expect(err).to.equal(null);
+                expect(res.body.data.id).to.equal('1');
+                done();
+              });
+          });
+      });
+    });
+  });
+
+  describe('creating comments and posts via XHR requests', function () {
+    beforeEach(function (done) {
+      request(app).post('/posts/')
+        .send({
+          'data': {
+            'type': 'posts',
+            'attributes': { 'title': 'Post 1', 'content': 'This is my first post'}
+          }})
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/json')
+        .end(function (err) {
+          expect(err).to.equal(null);
+          request(app).post('/posts')
+            .send({
+              'data': {
+                'type': 'posts',
+                'attributes': {'title': 'Post 2', 'content': 'This is my second post'}
+              }})
+            .set('Accept', 'application/vnd.api+json')
+            .set('Content-Type', 'application/json')
+            .end(function (err) {
+              expect(err).to.equal(null);
+              request(app).post('/comments')
+                .send({'data': {
+                  'type': 'comments',
+                  'attributes': {'title': 'First comment', 'comment': 'Comment 1 text'},
+                  'relationships': {'post': {'data': {'type': 'posts', 'id': '1'}}}
+                }})
+                .set('Accept', 'application/vnd.api+json')
+                .set('Content-Type', 'application/json')
+                .end(function (err) {
+                  expect(err).to.equal(null);
+                  request(app).post('/comments')
+                    .send({'data': {
+                      'type': 'comments:',
+                      'attributes': {'title': 'Second comment', 'comment': 'Comment 2 text'},
+                      'relationships': {'post': {'data': {'type': ' posts', 'id': '2'}}}
+                    }})
+                    .set('Accept', 'application/vnd.api+json')
+                    .set('Content-Type', 'application/json')
+                    .end(function (err) {
+                      expect(err).to.equal(null);
+                      done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('should keep relationship consistent even with multiple requests for post', function (done) {
+      request(app).get('/comments/1/post')
+        .end(function (err, res) {
+          expect(err).to.equal(null);
+          expect(res.body.data.id).to.equal('1');
+          request(app).get('/comments/1/post')
+            .end(function (err, res) {
+              expect(err).to.equal(null);
+              expect(res.body.data.id).to.equal('1');
+              done();
+            });
+        });
+    });
   });
 });
