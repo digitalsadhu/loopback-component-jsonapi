@@ -292,9 +292,9 @@ module.exports = function (MyModel) {
     err.status = 500;
     cb(err)
 
-    //or
-    //options.data is the raw data
-    //options.result needs to be populated with deserialization result
+    // or
+    // options.data is the raw data
+    // options.result needs to be populated with deserialization result
     options.result = options.data.data.attributes;
 
     cb(null, options);
