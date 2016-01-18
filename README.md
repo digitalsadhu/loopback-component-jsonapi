@@ -9,7 +9,7 @@
 [jsonapi.org](http://jsonapi.org/) support for loopback.
 
 ## Status
-This project is a work in progress. Consider it beta software. For ember users, the component
+This project is a work in progress. Consider it beta software. For EmberJS users, the component
 should now be basically feature complete. Please test and report any issues.
 The functionality that is present is pretty well tested. 140+ integration tests and counting!
 
@@ -57,7 +57,7 @@ In your loopback project:
 ```
 
 ## Advanced usage:
-We are aiming to make the component as configureable as possible. You can configure a how the component behaves with the options shown and listed below. If there is something else you would like to see be configureable, please submit an issue on the repository.
+We are aiming to make the component as configurable as possible. You can configure how the component behaves with the options shown and listed below. If there is something else you would like to see be configurable, please submit an issue on the repository.
 
 Example:
 (all configuration options listed)
@@ -101,7 +101,7 @@ Url prefix to be used in conjunction with host and resource paths. eg. http://12
 - Default: `/api`
 
 ### enable
-Whether the component should be enabled or disabled. Defaults to `false`, flip it to `true` if you need to turn the component off without removing the configuration for some reason.
+Whether the component should be enabled or disabled. Defaults to `true`, flip it to `false` if you need to turn the component off without removing the configuration for some reason.
 
 #### example
 ```js
@@ -117,9 +117,9 @@ Whether the component should be enabled or disabled. Defaults to `false`, flip i
 
 ### handleErrors
 When true, the component will unregister all other error handling and
-register a custom error handler which always returns errors in jsonapi compliant
+register a custom error handler which always returns errors in JSON API compliant
 format. Validation errors include the correct properties in order to work
-out of the box with ember.
+out of the box with EmberJS.
 
 #### example
 ```js
@@ -137,10 +137,10 @@ out of the box with ember.
 Allows blacklisting of models and methods.
 Define an array of blacklist objects. Blacklist objects can contain "model" key
 "methods" key or both. If just "model" is defined then all methods for the
-specified model will not be serialized of deserialized using jsonapi. If just the "methods" key is defined then
-all methods specified on all models will be serialized or deserialized using jsonapi. If a combination of
+specified model will not be serialized of deserialized using JSON API. If just the "methods" key is defined then
+all methods specified on all models will not be serialized or deserialized using JSON API. If a combination of
 "model" and "methods" keys are used then the specific combination of model and methods
-specified will not be serialized or deserialized using jsonapi.
+specified will not be serialized or deserialized using JSON API.
 
 #### example
 ```js
@@ -160,8 +160,7 @@ specified will not be serialized or deserialized using jsonapi.
 - Default: `null`
 
 #### Note
-The default component behavior is to modify the output of the following CRUD model methods
-methods on all models:
+The default behavior is to modify (serialize to JSON API) the output of the following CRUD methods on all models:
 - `find`
 - `create`
 - `updateAttributes`
@@ -172,7 +171,7 @@ In addition the following wild card method names are matched and the output is m
 - `__get__.*`
 - `__findRelationships__.*`
 
-The default behavior for modifying input only applies to the following methods on all models:
+The default behavior is to modify (deserialize from JSON API) the input to the following CRUD methods on all models:
 - `create`
 - `updateAttributes`
 
@@ -180,12 +179,12 @@ The default behavior for modifying input only applies to the following methods o
 Allows whitelisting of methods.
 Define an array of whitelist objects. Whitelist objects can contain a "methods" key
 or both a "models" key and a "methods" key. If just the "methods" key is defined then
-the methods specified will be serialized or deserialized using jsonapi on all models that have
+the methods specified will be serialized or deserialized using JSON API on all models that have
 the specified methods. If a combination of
 "model" and "methods" keys are used then the specific combination of model and methods
-specified will be serialized or deserialized using jsonapi.
+specified will be serialized or deserialized using JSON API.
 
-Note: objects returned from a remote method that will be jsonapi serialized MUST include
+Note: objects returned from a remote method that will be JSON API serialized MUST include
 an id property. id property can be null.
 
 #### example
@@ -206,7 +205,7 @@ an id property. id property can be null.
 
 ### hideIrrelevantMethods
 By default, `loopback-component-jsonapi` disables a number of methods from each endpoint
-that are not jsonapi relevant. These methods are:
+that are not JSON API relevant. These methods are:
 - `upsert`
 - `exists`
 - `findOne`
@@ -215,7 +214,7 @@ that are not jsonapi relevant. These methods are:
 - `updateAll`
 
 You can use this option to prevent `loopback-component-jsonapi` from doing so. These methods are not modified by the component. Their output
-will not be in a jsonapi compliant format.
+will not be in a JSON API compliant format.
 
 #### example
 ```js
@@ -230,7 +229,7 @@ will not be in a jsonapi compliant format.
 - Default: `true`
 
 ### attributes
-By default, model properties will be converted to attributes in jsonapi terms.
+By default, model properties will be converted to attributes in JSON API terms.
 All model properties except the primary key and any foreign keys will be copied into
 the attributes object before output. If you wish to limit which properties will
 be output as attributes you can specify a whitelist of attributes for each type.
@@ -251,7 +250,7 @@ be output as attributes you can specify a whitelist of attributes for each type.
 - Default: `null`
 
 #### note
-The attributes arrays are keyed by type not by model name. Type is the term used by json api to describe the resource type in question and while not required by json api it is usually plural. In `loopback-component-jsonapi` it is whatever the models `plural` is set to in `model.json`. So in our example above we defined: `"posts": ["title", "content"]` as the resource type for the `post` model is `posts`
+The attributes arrays are keyed by type not by model name. Type is the term used by JSON API to describe the resource type in question and while not required by JSON API it is usually plural. In `loopback-component-jsonapi` it is whatever the models `plural` is set to in `model.json`. So in our example above we defined: `"posts": ["title", "content"]` as the resource type for the `post` model is `posts`
 
 ## Custom Serialization
 For occasions where you need greater control over the serialization process, you can implement a custom serialization function for each model as needed. This function will be used instead of the regular serialization process.
@@ -293,9 +292,9 @@ module.exports = function (MyModel) {
     err.status = 500;
     cb(err)
 
-    //or
-    //options.data is the raw data
-    //options.result needs to be populated with deserialization result
+    // or
+    // options.data is the raw data
+    // options.result needs to be populated with deserialization result
     options.result = options.data.data.attributes;
 
     cb(null, options);
@@ -312,7 +311,7 @@ module.exports = function (MyModel) {
 
 ###### `options.type`
 Resource type. Originally calculated from a models plural. Is used in the default
-serialization process to set the type property for each model in a jsonapi response.
+serialization process to set the type property for each model in a JSON API response.
 - eg. `posts`
 
 ###### `options.method`
@@ -342,11 +341,11 @@ The api prefix used before resource information. Can be used in conjunction with
 - eg. `/api`
 
 ###### `options.topLevelLinks`
-JSON API links object used at the top level of the JSON API response structure.
+Links object used at the top level of the JSON API response structure.
 - eg. `{links: {self: 'http://localhost:3000/api/posts'}}`
 
 ###### `options.dataLinks`
-links object used to generate links for individual resource items. The structure is
+Links object used to generate links for individual resource items. The structure is
 and object with JSON API link keys such as `self` or `related` that are defined as
 a function that will be called for each resource.
 
@@ -372,7 +371,7 @@ definition. An object with relationship name keys, each having properties:
 - `keyFrom` name of key on from model
 - `type` type of relationship (belongsTo, hasOne, hasMany)
 
-This information is used to build relationship urls and even setup side loaded
+This information is used to build relationship urls and even setup side-loaded
 data correctly during the serialization process.
 
 eg.
