@@ -9,7 +9,7 @@
 [jsonapi.org](http://jsonapi.org/) support for loopback.
 
 ## Status
-This project is a work in progress. Consider it beta software. For ember users, the component
+This project is a work in progress. Consider it beta software. For EmberJS users, the component
 should now be basically feature complete. Please test and report any issues.
 The functionality that is present is pretty well tested. 140+ integration tests and counting!
 
@@ -119,7 +119,7 @@ Whether the component should be enabled or disabled. Defaults to `false`, flip i
 When true, the component will unregister all other error handling and
 register a custom error handler which always returns errors in jsonapi compliant
 format. Validation errors include the correct properties in order to work
-out of the box with ember.
+out of the box with EmberJS.
 
 #### example
 ```js
