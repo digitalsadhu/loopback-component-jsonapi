@@ -57,7 +57,7 @@ In your loopback project:
 ```
 
 ## Advanced usage:
-We are aiming to make the component as configureable as possible. You can configure a how the component behaves with the options shown and listed below. If there is something else you would like to see be configureable, please submit an issue on the repository.
+We are aiming to make the component as configurable as possible. You can configure how the component behaves with the options shown and listed below. If there is something else you would like to see be configurable, please submit an issue on the repository.
 
 Example:
 (all configuration options listed)
