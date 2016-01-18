@@ -101,7 +101,7 @@ Url prefix to be used in conjunction with host and resource paths. eg. http://12
 - Default: `/api`
 
 ### enable
-Whether the component should be enabled or disabled. Defaults to `false`, flip it to `true` if you need to turn the component off without removing the configuration for some reason.
+Whether the component should be enabled or disabled. Defaults to `true`, flip it to `false` if you need to turn the component off without removing the configuration for some reason.
 
 #### example
 ```js
