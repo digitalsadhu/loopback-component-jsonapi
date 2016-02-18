@@ -2,10 +2,7 @@ var request = require('supertest');
 var loopback = require('loopback');
 var expect = require('chai').expect;
 var JSONAPIComponent = require('../');
-var ds;
-var app;
-var Post;
-var Comment;
+var ds, app, Post, Author, Comment, Category;
 
 describe('include option', function () {
   beforeEach(function () {
@@ -26,11 +23,30 @@ describe('include option', function () {
     Comment = ds.createModel('comment', {
       id: {type: Number, id: true},
       postId: Number,
+      authorId: Number,
       title: String,
       comment: String
     });
+
     app.model(Comment);
+
+    Author = ds.createModel('author', {
+      id: {type: Number, id: true},
+      name: String
+    });
+
+    app.model(Author);
+
+    Category = ds.createModel('category', {
+      id: {type: Number, id: true},
+      name: String
+    });
+
+    app.model(Author);
+
     Post.hasMany(Comment, {as: 'comments', foreignKey: 'postId'});
+    Post.belongsTo(Author, {as: 'author', foreignKey: 'authorId'});
+    Post.belongsTo(Category, {as: 'category', foreignKey: 'categoryId'});
     Comment.settings.plural = 'comments';
 
     app.use(loopback.rest());
@@ -51,12 +67,20 @@ describe('include option', function () {
           post.comments.create({
             title: 'My second comment',
             comment: 'My second comment text'
-          }, done);
+          }, function () {
+            post.author.create({
+              name: 'Joe'
+            }, function () {
+              post.category.create({
+                name: 'Programming'
+              }, done);
+            });
+          });
         });
       });
     });
 
-    describe('hasMany response', function () {
+    describe('response', function () {
 
       it('should have key `included`', function (done) {
         request(app).get('/posts/1')
@@ -76,7 +100,18 @@ describe('include option', function () {
           });
       });
 
+      it('with include paramter should have both models', function (done) {
+        request(app).get('/posts/1?filter[include]=author')
+          .end(function (err, res) {
+            expect(err).to.equal(null);
+            expect(res.body.included.length).equal(3);
+            expect(res.body.included[0].type).equal('authors');
+            expect(res.body.included[1].type).equal('comments');
+            done();
+          });
+      });
     });
+
   });
 
 });
