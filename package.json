@@ -1,6 +1,6 @@
 {
   "name": "loopback-component-jsonapi",
-  "version": "0.17.2",
+  "version": "0.18.0",
   "description": "JSONAPI support for loopback",
   "main": "lib/index.js",
   "scripts": {
