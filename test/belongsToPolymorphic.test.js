@@ -39,7 +39,7 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
     JSONAPIComponent(app);
   });
 
-  describe('File belonging to a Post', function () {
+  describe.only('File belonging to a Post', function () {
     beforeEach(function (done) {
       Post.create({
         title: 'Post One',
@@ -58,6 +58,7 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       request(app).get('/files/1')
         .end(function (err, res) {
           expect(err).to.equal(null);
+          console.log(res.body);
           expect(res.body).to.not.have.key('errors');
           expect(res.body.data.relationships.parent).to.be.an('object');
           done();
@@ -68,6 +69,7 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       request(app).get('/files/1?include=parent')
         .end(function (err, res) {
           expect(err).to.equal(null);
+          console.log(res.body);
           expect(res.body).to.not.have.key('errors');
           expect(res.body.included).to.be.an('array');
           expect(res.body.included[0].type).to.equal('posts');
@@ -80,6 +82,7 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       request(app).get('/files/1')
         .end(function (err, res) {
           expect(err).to.equal(null);
+          console.log(res.body);
           expect(res.body).to.not.have.key('errors');
           request(app).get(res.body.data.relationships.parent.links.related.split('api')[1])
             .end(function (err, res) {
