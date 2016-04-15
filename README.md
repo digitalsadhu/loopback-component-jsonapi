@@ -65,6 +65,7 @@ Example:
 {
   "loopback-component-jsonapi": {
     "restApiRoot": "/api",
+    "host": "https://www.mydomain.com",
     "enable": true,
     "handleErrors": true,
     "exclude": [
@@ -99,6 +100,22 @@ Url prefix to be used in conjunction with host and resource paths. eg. http://12
 
 - Type: `string`
 - Default: `/api`
+
+### host
+The url of the application, to be used when constructing links to relationships.  Useful where the service is proxied and the application believes
+it is running on a different url to that seen by the consuming service.
+
+#### example
+```js
+{
+  ...
+  "host": "https://www.mydomain.com",
+  ...
+}
+```
+
+- Type: `string`
+- Default: `null`
 
 ### enable
 Whether the component should be enabled or disabled. Defaults to `true`, flip it to `false` if you need to turn the component off without removing the configuration for some reason.
