@@ -7,7 +7,7 @@
     "test": "npm run lint && istanbul cover _mocha --report lcovonly --reporter=spec ./test/**/*.test.js && npm run inspect && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "tester": "mocha --reporter=spec ./test/**/*.test.js",
     "coverage": "istanbul cover _mocha ./test/**/*.test.js",
-    "lint": "eslint .",
+    "lint": "standard .",
     "version:major": "xyz -i major",
     "version:minor": "xyz -i minor",
     "version:patch": "xyz -i patch",
@@ -42,15 +42,18 @@
     "babel-eslint": "^6.1.0",
     "chai": "^3.3.0",
     "coveralls": "^2.11.9",
-    "eslint": "^2.13.1",
     "istanbul": "^0.4.2",
     "jsinspect": "^0.8.0",
     "loopback": "^2.22.2",
     "loopback-datasource-juggler": "^2.40.1",
     "mocha": "^2.3.3",
     "rsvp": "3.2.1",
+    "semantic-release": "^4.3.5",
+    "standard": "^7.1.2",
     "supertest": "^1.1.0",
-    "xyz": "^0.5.0",
-    "semantic-release": "^4.3.5"
+    "xyz": "^0.5.0"
+  },
+  "standard": {
+    "globals": [ "beforeEach", "it", "describe", "afterEach" ]
   }
 }
