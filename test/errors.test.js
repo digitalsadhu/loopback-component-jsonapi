@@ -60,13 +60,13 @@ describe('loopback json api errors', function () {
   })
 
   describe('status codes', function () {
-    it('GET /models/100 should return a generalized 400 not found error', function (done) {
+    it('GET /models/100 should return a 404 not found error', function (done) {
       request(app).get('/posts/100')
-        .expect(400)
+        .expect(404)
         .end(done)
     })
 
-    it('GET /models/100 should return a generalized 400 not found error', function (done) {
+    it('GET /models/100 should return a 404 not found error', function (done) {
       request(app).get('/posts/100')
         .end(function (err, res) {
           expect(err).to.equal(null)
@@ -83,17 +83,17 @@ describe('loopback json api errors', function () {
         })
     })
 
-    it('POST /models should return a general 400 status code if type key is not present', function (done) {
+    it('POST /models should return a 422 status code if type key is not present', function (done) {
       request(app).post('/posts')
-        .send({ data: { attributes: { title: 'my post', content: 'my post content' }}})
-        .expect(400)
+        .send({ data: { attributes: { title: 'my post', content: 'my post content' } } })
+        .expect(422)
         .set('Content-Type', 'application/json')
         .end(done)
     })
 
     it('POST /models should return a more specific 422 status code on the error object if type key is not present', function (done) {
       request(app).post('/posts')
-        .send({ data: { attributes: { title: 'my post', content: 'my post content' }}})
+        .send({ data: { attributes: { title: 'my post', content: 'my post content' } } })
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
           expect(err).to.equal(null)
@@ -110,12 +110,12 @@ describe('loopback json api errors', function () {
         })
     })
 
-    it('POST /models should return an 400 error if model title is not present', function (done) {
+    it('POST /models should return an 422 error if model title is not present', function (done) {
       Post.validatesPresenceOf('title')
 
       request(app).post('/posts')
         .send({ data: { type: 'posts' } })
-        .expect(400)
+        .expect(422)
         .set('Content-Type', 'application/json')
         .end(done)
     })

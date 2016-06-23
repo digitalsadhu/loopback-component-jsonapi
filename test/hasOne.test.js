@@ -283,6 +283,5 @@ describe('loopback json api hasOne relationships', function () {
           .end(done)
       })
     })
-
   })
 })

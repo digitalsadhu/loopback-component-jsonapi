@@ -30,7 +30,7 @@ describe('loopback json api component find methods', function () {
 
     it('GET /models/:id should have the JSON API Content-Type header set on individual resource responses', function (done) {
       request(app).get('/posts/1')
-        .expect(400)
+        .expect(404)
         .expect('Content-Type', 'application/vnd.api+json; charset=utf-8')
         .end(done)
     })
@@ -156,9 +156,9 @@ describe('loopback json api component find methods', function () {
         })
     })
 
-    it('GET model/:id should return a general 400 when there are no results', function (done) {
+    it('GET model/:id should return a general 404 when there are no results', function (done) {
       request(app).get('/posts/1')
-        .expect(400)
+        .expect(404)
         .end(done)
     })
   })
@@ -207,9 +207,9 @@ describe('loopback json api component find methods', function () {
   })
 
   describe('Errors', function () {
-    it('GET /models/doesnt/exist should return a general 400 error', function (done) {
+    it('GET /models/doesnt/exist should return a general 404 error', function (done) {
       request(app).get('/posts/doesnt/exist')
-        .expect(400)
+        .expect(404)
         .end(done)
     })
   })
