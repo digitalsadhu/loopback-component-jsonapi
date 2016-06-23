@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "inspect": "jsinspect .",
-    "test": "npm run lint && istanbul cover _mocha --reporter=spec ./test/**/*.test.js && npm run inspect",
+    "test": "npm run lint && istanbul cover _mocha --report lcovonly --reporter=spec ./test/**/*.test.js && npm run inspect && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "tester": "mocha --reporter=spec ./test/**/*.test.js",
     "coverage": "istanbul cover _mocha ./test/**/*.test.js",
     "lint": "eslint .",
@@ -41,6 +41,7 @@
   "devDependencies": {
     "babel-eslint": "^6.1.0",
     "chai": "^3.3.0",
+    "coveralls": "^2.11.9",
     "eslint": "^2.13.1",
     "istanbul": "^0.4.2",
     "jsinspect": "^0.8.0",

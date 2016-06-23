@@ -5,6 +5,7 @@
 [![npm version](https://badge.fury.io/js/loopback-component-jsonapi.svg)](http://badge.fury.io/js/loopback-component-jsonapi)
 [![Dependency Status](https://david-dm.org/digitalsadhu/loopback-component-jsonapi.svg)](https://david-dm.org/digitalsadhu/loopback-component-jsonapi)
 [![devDependency Status](https://david-dm.org/digitalsadhu/loopback-component-jsonapi/dev-status.svg)](https://david-dm.org/digitalsadhu/loopback-component-jsonapi#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/github/digitalsadhu/loopback-component-jsonapi/badge.svg?branch=master)](https://coveralls.io/github/digitalsadhu/loopback-component-jsonapi?branch=master)
 
 [jsonapi.org](http://jsonapi.org/) support for loopback.
 
