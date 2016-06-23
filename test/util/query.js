@@ -1,4 +1,4 @@
-var http = require('http');
+var http = require('http')
 
 module.exports = function (app) {
   return {
@@ -10,23 +10,23 @@ module.exports = function (app) {
           headers: options.headers || {},
           method: 'POST'
         }, function (res) {
-          res.setEncoding('utf8');
-          res.rawData = '';
+          res.setEncoding('utf8')
+          res.rawData = ''
           res.on('data', function (chunk) {
-            res.rawData += chunk;
-          });
+            res.rawData += chunk
+          })
           res.on('end', function () {
-            res.body = JSON.parse(res.rawData);
-            cb(null, res);
-          });
-        });
+            res.body = JSON.parse(res.rawData)
+            cb(null, res)
+          })
+        })
         req.on('error', function (err) {
-          cb(err);
-        });
-        var postData = JSON.stringify(data || {});
-        req.write(postData);
-        req.end();
-      });
+          cb(err)
+        })
+        var postData = JSON.stringify(data || {})
+        req.write(postData)
+        req.end()
+      })
     }
-  };
-};
+  }
+}
