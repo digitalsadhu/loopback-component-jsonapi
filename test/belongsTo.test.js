@@ -434,29 +434,31 @@ describe('loopback json api belongsTo relationships', function () {
     beforeEach(function (done) {
       request(app).post('/posts/')
         .send({
-          'data': {
-            'type': 'posts',
-            'attributes': { 'title': 'Post 1', 'content': 'This is my first post'}
-        }})
+          data: {
+            type: 'posts',
+            attributes: { title: 'Post 1', content: 'This is my first post' }
+          }
+        })
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/json')
         .end(function (err) {
           expect(err).to.equal(null)
           request(app).post('/posts')
             .send({
-              'data': {
-                'type': 'posts',
-                'attributes': {'title': 'Post 2', 'content': 'This is my second post'}
-            }})
+              data: {
+                type: 'posts',
+                attributes: {title: 'Post 2', content: 'This is my second post'}
+              }
+            })
             .set('Accept', 'application/vnd.api+json')
             .set('Content-Type', 'application/json')
             .end(function (err) {
               expect(err).to.equal(null)
               request(app).post('/comments')
                 .send({'data': {
-                    'type': 'comments',
-                    'attributes': {'title': 'First comment', 'comment': 'Comment 1 text'},
-                    'relationships': {'post': {'data': {'type': 'posts', 'id': '1'}}}
+                  'type': 'comments',
+                  'attributes': {'title': 'First comment', 'comment': 'Comment 1 text'},
+                  'relationships': {'post': {'data': {'type': 'posts', 'id': '1'}}}
                 }})
                 .set('Accept', 'application/vnd.api+json')
                 .set('Content-Type', 'application/json')
@@ -464,9 +466,9 @@ describe('loopback json api belongsTo relationships', function () {
                   expect(err).to.equal(null)
                   request(app).post('/comments')
                     .send({'data': {
-                        'type': 'comments:',
-                        'attributes': {'title': 'Second comment', 'comment': 'Comment 2 text'},
-                        'relationships': {'post': {'data': {'type': ' posts', 'id': '2'}}}
+                      'type': 'comments:',
+                      'attributes': {'title': 'Second comment', 'comment': 'Comment 2 text'},
+                      'relationships': {'post': {'data': {'type': ' posts', 'id': '2'}}}
                     }})
                     .set('Accept', 'application/vnd.api+json')
                     .set('Content-Type', 'application/json')

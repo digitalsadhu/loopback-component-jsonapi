@@ -312,7 +312,6 @@ describe('loopback json api hasMany relationships', function () {
           .end(done)
       })
     })
-
   })
 
   describe('Nested relationships', function () {

@@ -59,8 +59,7 @@ describe('Dont override config.js ', function () {
       })
       .set('Accept', 'application/vnd.api+json')
       .set('Content-Type', 'application/json')
-      .expect(400)
+      .expect(413)
       .end(done)
   })
-
 })

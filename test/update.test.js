@@ -70,7 +70,7 @@ describe('loopback json api component update method', function () {
         .end(done)
     })
 
-    it('PATCH /models/:id should return 400 when attempting to edit non existing resource', function (done) {
+    it('PATCH /models/:id should return 404 when attempting to edit non existing resource', function (done) {
       request(app).patch('/posts/10')
         .send({
           data: {
@@ -82,7 +82,7 @@ describe('loopback json api component update method', function () {
             }
           }
         })
-        .expect(400)
+        .expect(404)
         .end(done)
     })
   })
@@ -211,7 +211,7 @@ describe('loopback json api component update method', function () {
         })
     })
 
-    it('PATCH /models/:id should return an 400 error if `type` key is not present and include an errors array', function (done) {
+    it('PATCH /models/:id should return an 422 error if `type` key is not present and include an errors array', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
@@ -222,7 +222,7 @@ describe('loopback json api component update method', function () {
             }
           }
         })
-        .expect(400)
+        .expect(422)
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
           expect(err).to.equal(null)
@@ -236,7 +236,7 @@ describe('loopback json api component update method', function () {
         })
     })
 
-    it('PATCH /models/:id should return an 400 error if `id` key is not present and include an errors array', function (done) {
+    it('PATCH /models/:id should return an 422 error if `id` key is not present and include an errors array', function (done) {
       request(app).patch('/posts/1')
         .send({
           data: {
@@ -247,7 +247,7 @@ describe('loopback json api component update method', function () {
             }
           }
         })
-        .expect(400)
+        .expect(422)
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
           expect(err).to.equal(null)
