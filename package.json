@@ -1,6 +1,5 @@
 {
   "name": "loopback-component-jsonapi",
-  "version": "0.19.2",
   "description": "JSONAPI support for loopback",
   "main": "lib/index.js",
   "scripts": {
@@ -11,11 +10,12 @@
     "lint": "eslint .",
     "version:major": "xyz -i major",
     "version:minor": "xyz -i minor",
-    "version:patch": "xyz -i patch"
+    "version:patch": "xyz -i patch",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/digitalsadhu/loopback-component-jsonapi.git"
+    "url": "https://github.com/digitalsadhu/loopback-component-jsonapi.git"
   },
   "keywords": [
     "loopback",
@@ -50,6 +50,7 @@
     "mocha": "^2.3.3",
     "rsvp": "3.2.1",
     "supertest": "^1.1.0",
-    "xyz": "^0.5.0"
+    "xyz": "^0.5.0",
+    "semantic-release": "^4.3.5"
   }
 }
