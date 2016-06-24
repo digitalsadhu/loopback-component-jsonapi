@@ -61,7 +61,7 @@ describe('loopback json api component create method', function () {
       // waiting on a fix
       // see https://github.com/visionmedia/superagent/issues/753
       query(app).post('/posts', data, options, function (err, res) {
-        if (err) console.log(err)
+        expect(err).to.equal(null)
         expect(res.headers['content-type']).to.match(/application\/vnd\.api\+json/)
         expect(res.statusCode).to.equal(201)
         expect(res.body).to.have.all.keys('data')

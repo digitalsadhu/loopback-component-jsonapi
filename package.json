@@ -39,7 +39,6 @@
     "type-is": "^1.6.9"
   },
   "devDependencies": {
-    "babel-eslint": "^6.1.0",
     "chai": "^3.3.0",
     "coveralls": "^2.11.9",
     "istanbul": "^0.4.2",
