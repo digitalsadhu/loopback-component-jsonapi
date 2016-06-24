@@ -270,6 +270,55 @@ be output as attributes you can specify a whitelist of attributes for each type.
 #### note
 The attributes arrays are keyed by type not by model name. Type is the term used by JSON API to describe the resource type in question and while not required by JSON API it is usually plural. In `loopback-component-jsonapi` it is whatever the models `plural` is set to in `model.json`. So in our example above we defined: `"posts": ["title", "content"]` as the resource type for the `post` model is `posts`
 
+### foreignKeys
+Allows configuration of whether the component should expose foreign keys (which the jsonapi spec considers
+implementation details) from the attributes hash.
+
+#### examples
+
+Always expose foreign keys for all models
+```js
+{
+  ...
+  foreignKeys: true,
+  ...
+}
+```
+
+Never expose foreign keys for any models (default behaviour)
+```js
+{
+  ...
+  foreignKeys: false,
+  ...
+}
+```
+
+Only expose foreign keys for the commeht model
+```js
+{
+  ...
+  foreignKeys: [
+    {model: 'comment'}
+  ],
+  ...
+}
+```
+
+Only expose foreign keys for the comment model findById method. eg. `GET /api/comments/1`
+```js
+{
+  ...
+  foreignKeys: [
+    {model: 'comment', method: 'findById'}
+  ],
+  ...
+}
+```
+
+- Type: `boolean|array`
+- Default: `false`
+
 ## Custom Serialization
 For occasions where you need greater control over the serialization process, you can implement a custom serialization function for each model as needed. This function will be used instead of the regular serialization process.
 
