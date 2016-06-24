@@ -276,7 +276,7 @@ implementation details) from the attributes hash.
 
 #### examples
 
-1. Always expose foreign keys for all models
+Always expose foreign keys for all models
 ```js
 {
   ...
@@ -285,7 +285,7 @@ implementation details) from the attributes hash.
 }
 ```
 
-2. Never expose foreign keys for any models (default behaviour)
+Never expose foreign keys for any models (default behaviour)
 ```js
 {
   ...
@@ -294,7 +294,7 @@ implementation details) from the attributes hash.
 }
 ```
 
-3. Only expose foreign keys for the commeht model
+Only expose foreign keys for the commeht model
 ```js
 {
   ...
@@ -305,7 +305,7 @@ implementation details) from the attributes hash.
 }
 ```
 
-4. Only expose foreign keys for the comment model findById method. eg. `GET /api/comments/1`
+Only expose foreign keys for the comment model findById method. eg. `GET /api/comments/1`
 ```js
 {
   ...
