@@ -1,11 +1,11 @@
-var request = require("supertest");
+var request = require('supertest')
 var loopback = require('loopback')
-var expect = require('chai').expect;
+var expect = require('chai').expect
 var JSONAPIComponent = require('../')
 var RSVP = require('rsvp')
 
 var app
-var Movie, Category, MovieCategoryAssoc;
+var Movie, Category, MovieCategoryAssoc
 
 describe('hasManyThrough upsert', function () {
   beforeEach(function (done) {
@@ -40,7 +40,7 @@ describe('hasManyThrough upsert', function () {
     MovieCategoryAssoc.belongsTo(Category)
     makeData().then(done())
     app.use(loopback.rest())
-    JSONAPIComponent(app, {restApiRoot: ''})     
+    JSONAPIComponent(app, {restApiRoot: ''})
   })
 
   it('should make initial data', function (done) {
@@ -53,29 +53,28 @@ describe('hasManyThrough upsert', function () {
         expect(res).to.have.deep.property('body.data[0]').and.have.property('attributes.name').and.equal('Crime')
         done(err)
       })
-
   })
 
-  it('should handle POST', function(done){
+  it('should handle POST', function (done) {
     var agent = request(app)
     agent
       .post('/movies')
       .send({
-        "data": {
-          "type": "movies",
-          "attributes": {
-            "name": "Ace Ventura: Pet Detective"
+        'data': {
+          'type': 'movies',
+          'attributes': {
+            'name': 'Ace Ventura: Pet Detective'
           },
-          "relationships": {
-            "categories": {
-              "data": [
-                {"type": "categories", "id": 4}
+          'relationships': {
+            'categories': {
+              'data': [
+                {'type': 'categories', 'id': 4}
               ]
             }
           }
         }
-      }).end(function(){
-        agent.get('/movieCategoryAssocs').end(function(err, res){
+      }).end(function () {
+        agent.get('/movieCategoryAssocs').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res).to.have.deep.property('body.data').and.have.property('length').and.equal(3)
           done()
@@ -83,29 +82,29 @@ describe('hasManyThrough upsert', function () {
       })
   })
 
-  it('should handle PATCH', function(done){
+  it('should handle PATCH', function (done) {
     var agent = request(app)
     agent
       .patch('/movies/1')
       .send({
-        "data": {
-          "id": 1,
-          "type": "movies",
-          "attributes": {
-            "name": "The Shawshank Redemption"
+        'data': {
+          'id': 1,
+          'type': 'movies',
+          'attributes': {
+            'name': 'The Shawshank Redemption'
           },
-          "relationships": {
-            "categories": {
-              "data": [
-                {"type": "categories", "id": 1},
-                {"type": "categories", "id": 2},
-                {"type": "categories", "id": 3}
+          'relationships': {
+            'categories': {
+              'data': [
+                {'type': 'categories', 'id': 1},
+                {'type': 'categories', 'id': 2},
+                {'type': 'categories', 'id': 3}
               ]
             }
           }
         }
-      }).end(function(){
-        agent.get('/movieCategoryAssocs').end(function(err, res){
+      }).end(function () {
+        agent.get('/movieCategoryAssocs').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res).to.have.deep.property('body.data').and.have.property('length').and.equal(3)
           done()
@@ -113,33 +112,33 @@ describe('hasManyThrough upsert', function () {
       })
   })
 
-  it('should handle PATCH with less assocs', function(done){
+  it('should handle PATCH with less assocs', function (done) {
     var agent = request(app)
     agent
       .patch('/movies/1')
       .send({
-        "data": {
-          "id": 1,
-          "type": "movies",
-          "attributes": {
-            "name": "The Shawshank Redemption"
+        'data': {
+          'id': 1,
+          'type': 'movies',
+          'attributes': {
+            'name': 'The Shawshank Redemption'
           },
-          "relationships": {
-            "categories": {
-              "data": [
-                {"type": "categories", "id": 1},
-                {"type": "categories", "id": 4}
+          'relationships': {
+            'categories': {
+              'data': [
+                {'type': 'categories', 'id': 1},
+                {'type': 'categories', 'id': 4}
               ]
             }
           }
         }
-      }).end(function(err, res){
+      }).end(function (err, res) {
         expect(err).to.equal(null)
-        agent.get('/movieCategoryAssocs').end(function(err, res){
+        agent.get('/movieCategoryAssocs').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res).to.have.deep.property('body.data').and.have.property('length').and.equal(2)
-          
-          agent.get('/movies/1/categories').end(function(err, res){
+
+          agent.get('/movies/1/categories').end(function (err, res) {
             expect(err).to.equal(null)
             expect(res).to.have.deep.property('body.data').and.have.property('length').and.equal(2)
             expect(res).to.have.deep.property('body.data[1].attributes.name').and.equal('Comedy')
@@ -148,9 +147,7 @@ describe('hasManyThrough upsert', function () {
         })
       })
   })
-
 })
-
 
 function makeData (done) {
   var createMovie = denodeifyCreate(Movie)
@@ -158,7 +155,7 @@ function makeData (done) {
   var createAssoc = denodeifyCreate(MovieCategoryAssoc)
 
   return RSVP.hash({
-    movie: createMovie({ name: 'The Shawshank Redemption'}),
+    movie: createMovie({name: 'The Shawshank Redemption'}),
     categories: RSVP.all([
       createCategory({ name: 'Crime' }),
       createCategory({ name: 'Drama' }),
