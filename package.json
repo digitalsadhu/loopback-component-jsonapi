@@ -43,7 +43,7 @@
     "coveralls": "^2.11.9",
     "istanbul": "^0.4.2",
     "jsinspect": "^0.8.0",
-    "loopback": "^2.22.2",
+    "loopback": "^2.29.1",
     "loopback-datasource-juggler": "^2.40.1",
     "mocha": "^2.3.3",
     "rsvp": "3.2.1",
@@ -53,6 +53,11 @@
     "xyz": "^0.5.0"
   },
   "standard": {
-    "globals": [ "beforeEach", "it", "describe", "afterEach" ]
+    "globals": [
+      "beforeEach",
+      "it",
+      "describe",
+      "afterEach"
+    ]
   }
 }
