@@ -58,7 +58,7 @@ In your loopback project:
 ```
 
 ## Advanced usage:
-We are aiming to make the component as configurable as possible. You can configure how the component behaves with the options shown and listed below. If there is something else you would like to see be configurable, please submit an issue on the repository.
+We are aiming to make the component as configurable as possible. You can configure how the component behaves with the options shown and listed below. If there is something else you would like to see be configurable, please submit an issue on the repository. For remote methods, `root` must be set to `true`.
 
 Example:
 (all configuration options listed)
@@ -87,6 +87,7 @@ Example:
   }
 }
 ```
+
 ### restApiRoot
 Url prefix to be used in conjunction with host and resource paths. eg. http://127.0.0.1:3214/api/people
 
