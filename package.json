@@ -45,7 +45,7 @@
     "jsinspect": "^0.8.0",
     "loopback": "^2.29.1",
     "loopback-datasource-juggler": "^2.40.1",
-    "mocha": "^2.3.3",
+    "mocha": "^3.0.0",
     "rsvp": "3.2.1",
     "semantic-release": "^4.3.5",
     "standard": "^7.1.2",
