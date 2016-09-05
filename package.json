@@ -41,7 +41,7 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "coveralls": "^2.11.9",
-    "istanbul": "^0.4.2",
+    "istanbul": "^0.4.5",
     "jsinspect": "^0.8.0",
     "loopback": "^2.29.1",
     "loopback-datasource-juggler": "^2.40.1",
