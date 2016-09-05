@@ -44,7 +44,7 @@
     "istanbul": "^0.4.2",
     "jsinspect": "^0.8.0",
     "loopback": "^2.29.1",
-    "loopback-datasource-juggler": "^2.40.1",
+    "loopback-datasource-juggler": "^2.49.0",
     "mocha": "^3.0.2",
     "rsvp": "3.2.1",
     "semantic-release": "^4.3.5",
