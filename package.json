@@ -48,7 +48,7 @@
     "mocha": "^3.0.2",
     "rsvp": "3.2.1",
     "semantic-release": "^4.3.5",
-    "standard": "^7.1.2",
+    "standard": "^8.0.0",
     "supertest": "^2.0.0",
     "xyz": "^1.0.0"
   },
