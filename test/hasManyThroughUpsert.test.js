@@ -38,7 +38,11 @@ describe('hasManyThrough upsert', function () {
 
     MovieCategoryAssoc.belongsTo(Movie)
     MovieCategoryAssoc.belongsTo(Category)
-    makeData().then(done())
+    makeData().then(function () {
+      done()
+    }).catch(function (err) {
+      done(err)
+    })
     app.use(loopback.rest())
     JSONAPIComponent(app, {restApiRoot: ''})
   })
@@ -112,6 +116,35 @@ describe('hasManyThrough upsert', function () {
       })
   })
 
+  it('should handle string IDs', function(done){
+    var agent = request(app)
+    agent
+      .patch('/movies/1')
+      .send({
+        "data": {
+          "id": '1',
+          "type": "movies",
+          "attributes": {
+            "name": "The Shawshank Redemption"
+          },
+          "relationships": {
+            "categories": {
+              "data": [
+                {"type": "categories", "id": '1'},
+                {"type": "categories", "id": '4'}
+              ]
+            }
+          }
+        }
+      }).end(function(){
+        agent.get('/movieCategoryAssocs/1').end(function(err, res){
+          expect(err).to.equal(null)
+          expect(res).to.have.deep.property('body.data').and.have.property('id').and.equal('1')
+          done()
+        })
+      })
+  })
+
   it('should handle PATCH with less assocs', function (done) {
     var agent = request(app)
     agent
@@ -149,7 +182,7 @@ describe('hasManyThrough upsert', function () {
   })
 })
 
-function makeData (done) {
+function makeData () {
   var createMovie = denodeifyCreate(Movie)
   var createCategory = denodeifyCreate(Category)
   var createAssoc = denodeifyCreate(MovieCategoryAssoc)
