@@ -254,6 +254,57 @@ describe('loopback json api component find methods', function () {
         })
     })
   })
+    describe('Paging should filter', function () {
+    beforeEach(function (done) {
+      Post.create({
+        title: 'deer can jump',
+        content: 'deer can jump really high in their natural habitat'
+      }, function () {
+        Post.create({
+          title: 'pigs dont fly',
+          content: "contrary to the myth, pigs don't fly!"
+        }, function () {
+          Post.create({
+            title: 'unicorns come from rainbows',
+            content: 'at the end of a rainbow may be a pot of gold, but also a mythical unicorn'
+          }, done)
+        })
+      })
+    })
+
+    it('should filter only one', function (done) {
+      request(app)
+        .get('/posts?page[limit]=1')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body.data.length).to.equal(1)
+          done()
+        })
+    })
+
+    it('should filter two', function (done) {
+      request(app)
+        .get('/posts?page[limit]=2')
+        .expect(200)
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body.data.length).to.equal(2)
+          done()
+        })
+    })
+
+    it('should skip first', function (done) {
+      request(app)
+        .get('/posts?page[limit]=1&page[offset]=1')
+        .expect(200)
+        .end(function (err, res) {
+          expect(res.body.data.length).to.equal(1)
+          expect(res.body.data[0].id).to.equal('2')
+          done()
+        })
+    })
+  })
 })
 
 describe('non standard primary key naming', function () {
