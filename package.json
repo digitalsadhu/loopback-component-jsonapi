@@ -50,7 +50,7 @@
     "semantic-release": "^4.3.5",
     "standard": "^10.0.2",
     "supertest": "^2.0.0",
-    "xyz": "^1.0.0"
+    "xyz": "^2.0.0"
   },
   "standard": {
     "globals": [
