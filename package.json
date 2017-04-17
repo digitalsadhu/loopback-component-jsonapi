@@ -29,10 +29,10 @@
   "homepage": "https://github.com/digitalsadhu/loopback-component-jsonapi#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
-    "debug": "^2.2.0",
+    "debug": "^2.4.0",
     "http-status-codes": "^1.0.5",
     "inflection": "^1.7.2",
-    "lodash": "^4.15.0",
+    "lodash": "^4.17.1",
     "type-is": "^1.6.9"
   },
   "devDependencies": {
@@ -46,7 +46,7 @@
     "rsvp": "3.5.0",
     "semantic-release": "^4.3.5",
     "standard": "^10.0.2",
-    "supertest": "^2.0.0"
+    "supertest": "^3.0.0"
   },
   "standard": {
     "globals": [
