@@ -32,7 +32,7 @@
   "homepage": "https://github.com/digitalsadhu/loopback-component-jsonapi#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
-    "debug": "^2.2.0",
+    "debug": "^2.4.0",
     "http-status-codes": "^1.0.5",
     "inflection": "^1.7.2",
     "lodash": "^4.15.0",
