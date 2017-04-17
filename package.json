@@ -8,9 +8,6 @@
     "tester": "mocha --reporter=spec ./test/**/*.test.js",
     "coverage": "istanbul cover _mocha ./test/**/*.test.js",
     "lint": "standard .",
-    "version:major": "xyz -i major",
-    "version:minor": "xyz -i minor",
-    "version:patch": "xyz -i patch",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
@@ -49,8 +46,7 @@
     "rsvp": "3.5.0",
     "semantic-release": "^4.3.5",
     "standard": "^10.0.2",
-    "supertest": "^2.0.0",
-    "xyz": "^1.0.0"
+    "supertest": "^2.0.0"
   },
   "standard": {
     "globals": [
