@@ -35,7 +35,7 @@
     "debug": "^2.4.0",
     "http-status-codes": "^1.0.5",
     "inflection": "^1.7.2",
-    "lodash": "^4.15.0",
+    "lodash": "^4.17.1",
     "type-is": "^1.6.9"
   },
   "devDependencies": {
