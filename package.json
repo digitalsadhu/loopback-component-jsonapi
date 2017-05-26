@@ -35,7 +35,7 @@
     "type-is": "^1.6.14"
   },
   "devDependencies": {
-    "chai": "^3.3.0",
+    "chai": "^4.0.0",
     "coveralls": "^2.11.9",
     "istanbul": "^0.4.5",
     "loopback": "^2.32.0",
