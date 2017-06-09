@@ -39,7 +39,7 @@
     "coveralls": "^2.11.9",
     "istanbul": "^0.4.5",
     "loopback": "^2.32.0",
-    "loopback-datasource-juggler": "^2.50.0",
+    "loopback-datasource-juggler": "^3.1.1",
     "mocha": "^3.0.2",
     "rsvp": "3.5.0",
     "semantic-release": "^6.3.2",
