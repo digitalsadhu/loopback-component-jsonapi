@@ -5,6 +5,7 @@ var query = require('./util/query')
 var JSONAPIComponent = require('../')
 var app
 var Post
+var Comment
 
 describe('loopback json api component create method', function () {
   beforeEach(function () {
@@ -17,6 +18,13 @@ describe('loopback json api component create method', function () {
       content: String
     })
     app.model(Post)
+
+    Comment = ds.createModel('comment', {
+      id: {type: Number, id: true},
+      content: String
+    })
+    app.model(Comment)
+
     app.use(loopback.rest())
     JSONAPIComponent(app, { restApiRoot: '' })
   })
@@ -151,6 +159,34 @@ describe('loopback json api component create method', function () {
           expect(res.body.data.attributes).to.not.have.keys('id')
           done()
         })
+    })
+
+    it('POST /models with null relationship data', function (done) {
+      request(app).post('/posts').send({
+        data: {
+          type: 'posts',
+          attributes: {
+            title: 'my post',
+            content: 'my post content'
+          },
+          relationships: {
+            comments: {
+              data: null
+            }
+          }
+        }
+      })
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        expect(err).to.equal(null)
+        expect(res.body).to.have.all.keys('data')
+        expect(res.body.data).to.have.all.keys('id', 'type', 'attributes', 'links')
+        expect(res.body.data.id).to.equal('1')
+        expect(res.body.data.type).to.equal('posts')
+        expect(res.body.data.attributes).to.have.all.keys('title', 'content')
+        expect(res.body.data.attributes).to.not.have.keys('id')
+        done()
+      })
     })
   })
 })
