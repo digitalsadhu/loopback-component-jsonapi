@@ -5,7 +5,7 @@ var JSONAPIComponent = require('../')
 var app
 var ds
 var Post
-var File
+var Resource
 
 describe('loopback json api hasMany polymorphic relationships', function () {
   beforeEach(function () {
@@ -13,14 +13,14 @@ describe('loopback json api hasMany polymorphic relationships', function () {
     app.set('legacyExplorer', false)
     ds = loopback.createDataSource('memory')
 
-    File = ds.createModel('file', {
+    Resource = ds.createModel('resource', {
       id: {type: Number, id: true},
       fileName: String,
       parentId: Number,
       parentType: String
     })
-    File.settings.plural = 'files'
-    app.model(File)
+    Resource.settings.plural = 'resources'
+    app.model(Resource)
 
     Post = ds.createModel('post', {
       id: {type: Number, id: true},
@@ -28,8 +28,8 @@ describe('loopback json api hasMany polymorphic relationships', function () {
       content: String
     })
     Post.settings.plural = 'posts'
-    Post.hasMany(File, {
-      as: 'files',
+    Post.hasMany(Resource, {
+      as: 'resources',
       polymorphic: 'parent'
     })
     app.model(Post)
@@ -38,14 +38,14 @@ describe('loopback json api hasMany polymorphic relationships', function () {
     JSONAPIComponent(app)
   })
 
-  describe('Post hasMany Files', function () {
+  describe('Post hasMany Resources', function () {
     beforeEach(function (done) {
       Post.create({
         title: 'Post One',
         content: 'Content'
       }, function (err, post) {
         expect(err).to.equal(null)
-        post.files.create({
+        post.resources.create({
           fileName: 'blah.jpg',
           parentId: post.id,
           parentType: 'post'
@@ -53,39 +53,39 @@ describe('loopback json api hasMany polymorphic relationships', function () {
       })
     })
 
-    it('should have a relationship to Files', function (done) {
+    it('should have a relationship to Resources', function (done) {
       request(app).get('/posts/1')
         .end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body).to.not.have.key('errors')
-          expect(res.body.data.relationships.files).to.be.an('object')
+          expect(res.body.data.relationships.resources).to.be.an('object')
           done()
         })
     })
 
-    it('should return the Files that belong to this Post when included flag is present', function (done) {
-      request(app).get('/posts/1?include=files')
+    it('should return the Resources that belong to this Post when included flag is present', function (done) {
+      request(app).get('/posts/1?include=resources')
         .end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body).to.not.have.key('errors')
           expect(res.body.included).to.be.an('array')
-          expect(res.body.included[0].type).to.equal('files')
+          expect(res.body.included[0].type).to.equal('resources')
           expect(res.body.included[0].id).to.equal('1')
           done()
         })
     })
 
-    it('should return the Files that belong to this Post when following the relationship link', function (done) {
+    it('should return the Resources that belong to this Post when following the relationship link', function (done) {
       request(app).get('/posts/1')
         .end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body).to.not.have.key('errors')
-          request(app).get(res.body.data.relationships.files.links.related.split('api')[1])
+          request(app).get(res.body.data.relationships.resources.links.related.split('api')[1])
             .end(function (err, res) {
               expect(err).to.equal(null)
               expect(res.body).to.not.have.key('errors')
               expect(res.body.data).to.be.an('array')
-              expect(res.body.data[0].type).to.equal('files')
+              expect(res.body.data[0].type).to.equal('resources')
               expect(res.body.data[0].id).to.equal('1')
               done()
             })

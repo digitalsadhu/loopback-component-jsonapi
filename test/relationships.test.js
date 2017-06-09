@@ -77,7 +77,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.findById(1, function (err, comment) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comment).not.to.equal(null)
               expect(comment.postId).to.equal(2)
 
@@ -91,15 +91,26 @@ describe('loopback json api belongsTo relationships', function () {
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1')
           .send({
-            data: {type: 'posts', id: '1', attributes: {title: 'my post', content: 'my post content' },
-            relationships: {comments: {data: []}}}
+            data: {
+              type: 'posts',
+              id: '1',
+              attributes: {
+                title: 'my post',
+                content: 'my post content'
+              },
+              relationships: {
+                comments: {
+                  data: []
+                }
+              }
+            }
           })
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.findById(1, function (err, comment) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comment).not.to.equal(null)
               expect(comment.postId).to.equal(null)
 
@@ -129,7 +140,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.find({postId: 1}, function (err, comments) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comments.length).to.equal(2)
 
               done()
@@ -150,7 +161,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.findById(1, function (err, comment) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comment).not.to.equal(null)
               expect(comment.postId).to.equal(null)
 
@@ -180,7 +191,7 @@ describe('loopback json api belongsTo relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.find({postId: 1}, function (err, comments) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comments.length).not.to.equal(2)
 
               done()
@@ -236,7 +247,7 @@ describe('loopback json api belongsTo relationships', function () {
             expect(err).to.equal(null)
 
             Comment.find({}, function (err, comments) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               _.each(comments, function (comment) {
                 expect(comment.postId).not.to.equal(null)
               })
@@ -269,9 +280,10 @@ describe('loopback json api hasOne relationships', function () {
       postId: Number,
       name: String
     })
-    app.model(Person)
-    Post.hasOne(Person, {as: 'author', foreignKey: 'postId'})
     Person.settings.plural = 'people'
+    app.model(Person)
+
+    Post.hasOne(Person, {as: 'author', foreignKey: 'postId'})
 
     app.use(loopback.rest())
     JSONAPIComponent(app)
@@ -304,7 +316,7 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body).not.to.have.keys('errors')
             expect(res.status).to.equal(201)
             Person.findById(1, function (err, person) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(person).not.to.equal(null)
               expect(person.postId).to.equal(2)
 
@@ -328,7 +340,7 @@ describe('loopback json api hasOne relationships', function () {
             expect(res.body).not.to.have.keys('errors')
             expect(res.status).to.equal(200)
             Person.findById(1, function (err, person) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(person).not.to.equal(null)
               expect(person.postId).to.equal(null)
               done()
@@ -339,27 +351,40 @@ describe('loopback json api hasOne relationships', function () {
 
     describe('replace linkages as part of an update operation', function () {
       beforeEach(function (done) {
-        Person.create({name: 'Rachel McAdams'}, done)
+        Person.create({id: 191, name: 'Rachel McAdams'}, done)
       })
       it('should update model linkages', function (done) {
         request(app).patch('/posts/1').send({
-          data: {type: 'posts', id: '1', attributes: {title: 'my post', content: 'my post content' },
-          relationships: {author: {data: {type: 'people', id: 2}}}}
+          data: {
+            type: 'posts',
+            id: '1',
+            attributes: {
+              title: 'my post',
+              content: 'my post content'
+            },
+            relationships: {
+              author: {
+                data: {
+                  type: 'people',
+                  id: 191
+                }
+              }
+            }
+          }
         })
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null)
             Person.find({where: {postId: 1}}, function (err, people) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(people.length).to.equal(1)
-              expect(people[0].id).to.equal(2)
+              expect(people[0].id).to.equal(191)
               done()
             })
           })
       })
     })
-
   })
 })
 
@@ -417,7 +442,7 @@ describe('loopback json api hasMany relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.findById(1, function (err, comment) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comment).not.to.equal(null)
               expect(comment.postId).to.equal(2)
               done()
@@ -438,7 +463,7 @@ describe('loopback json api hasMany relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.findById(1, function (err, comment) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comment).not.to.equal(null)
               expect(comment.postId).to.equal(null)
               done()
@@ -467,7 +492,7 @@ describe('loopback json api hasMany relationships', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             Comment.find({postId: 1}, function (err, comments) {
-              expect(err).to.equal(undefined)
+              expect(err).to.equal(null)
               expect(comments.length).to.equal(2)
               done()
             })
