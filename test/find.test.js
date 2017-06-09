@@ -92,7 +92,6 @@ describe('loopback json api component find methods', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null)
-          expect(res.body).to.have.deep.property('links.self')
           expect(res.body.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts$/)
           done()
         })
@@ -103,7 +102,6 @@ describe('loopback json api component find methods', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null)
-          expect(res.body).to.have.deep.property('data.links.self')
           expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/1$/)
           done()
         })
@@ -114,7 +112,6 @@ describe('loopback json api component find methods', function () {
         .expect(200)
         .end(function (err, res) {
           expect(err).to.equal(null)
-          expect(res.body).to.have.deep.property('data.links.self')
           expect(res.body.data.links.self).to.match(/http:\/\/127\.0\.0\.1.*\/posts\/2$/)
           done()
         })

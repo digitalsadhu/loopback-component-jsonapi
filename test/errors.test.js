@@ -22,7 +22,7 @@ describe('disabling loopback-component-jsonapi error handler', function () {
     request(app).get('/posts/100').end(function (err, res) {
       expect(err).to.equal(null)
       expect(res.body).to.have.keys('error')
-      expect(res.body.error).to.have.keys('name', 'status', 'message', 'statusCode', 'code', 'stack')
+      expect(res.body.error).to.have.keys('name', 'message', 'statusCode')
       done()
     })
   })
