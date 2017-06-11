@@ -6,7 +6,7 @@
     "test": "npm run lint && istanbul cover _mocha --report lcovonly --reporter=spec ./test/**/*.test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "tester": "mocha --reporter=spec ./test/**/*.test.js",
     "coverage": "istanbul cover _mocha ./test/**/*.test.js",
-    "lint": "standard ./test/**/*.js ./lib/**/*.js --verbose | snazzy",
+    "lint": "standard './test/**/*.js' './lib/**/*.js' --verbose | snazzy",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
