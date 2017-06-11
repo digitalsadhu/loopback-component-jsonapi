@@ -13,10 +13,10 @@ describe('Dont override config.js ', function () {
     app.use(loopback.rest())
 
     var remotes = app.remotes()
-    remotes.options.json = {limit: '100B'}
+    remotes.options.json = { limit: '100B' }
     var ds = loopback.createDataSource('memory')
     Image = ds.createModel('image', {
-      id: {type: Number, id: true},
+      id: { type: Number, id: true },
       source: String
     })
 
@@ -32,7 +32,8 @@ describe('Dont override config.js ', function () {
   })
 
   it('should accept payload < 100B', function (done) {
-    request(app).post('/images')
+    request(app)
+      .post('/images')
       .send({
         data: {
           type: 'images',
@@ -48,7 +49,8 @@ describe('Dont override config.js ', function () {
   })
 
   it('should not accept payload > 100B', function (done) {
-    request(app).post('/images')
+    request(app)
+      .post('/images')
       .send({
         data: {
           type: 'images',

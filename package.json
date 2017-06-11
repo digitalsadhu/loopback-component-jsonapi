@@ -6,8 +6,15 @@
     "test": "npm run lint && istanbul cover _mocha --report lcovonly --reporter=spec ./test/**/*.test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "tester": "mocha --reporter=spec ./test/**/*.test.js",
     "coverage": "istanbul cover _mocha ./test/**/*.test.js",
-    "lint": "standard ./test/**/*.js ./lib/**/*.js --verbose | snazzy",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "lint": "standard './test/**/*.js' './lib/**/*.js' --verbose | snazzy",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run prettier-standard-formatter",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -30,8 +37,11 @@
     "body-parser": "^1.17.0",
     "debug": "^2.4.0",
     "http-status-codes": "^1.0.5",
+    "husky": "^0.13.4",
     "inflection": "^1.7.2",
+    "lint-staged": "^3.6.1",
     "lodash": "^4.17.1",
+    "prettier-standard-formatter": "^0.222222222222222.333333333333333",
     "snazzy": "^7.0.0",
     "type-is": "^1.6.14"
   },
