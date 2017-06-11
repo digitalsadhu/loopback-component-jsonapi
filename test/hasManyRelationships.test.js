@@ -113,4 +113,29 @@ describe('loopback json api hasMany relationships', function () {
         })
     })
   })
+
+  describe('Duplicate models in `includes`', function () {
+    beforeEach(function () {
+      const Foo = ds.createModel('foo', {title: String})
+      app.model(Foo)
+      const Bar = ds.createModel('bar', {title: String})
+      app.model(Bar)
+      Foo.hasMany(Bar)
+      Foo.belongsTo(Bar)
+
+      return Promise.all([
+        Foo.create({title: 'one', barId: 1}),
+        Bar.create({title: 'one', barId: 1, fooId: 1})
+      ])
+    })
+
+    it('should not occur', function () {
+      return request(app).get('/foos/1/?include=bars,bar')
+        .expect(200)
+        .then(function (res) {
+          expect(res.body.included.length).to.equal(1,
+            'Should be exactly 1 item in included array')
+        })
+    })
+  })
 })
