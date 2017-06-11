@@ -130,7 +130,10 @@ describe('hasManyThrough upsert', function () {
           },
           relationships: {
             categories: {
-              data: [{ type: 'categories', id: '1' }, { type: 'categories', id: '4' }]
+              data: [
+                { type: 'categories', id: '1' },
+                { type: 'categories', id: '4' }
+              ]
             }
           }
         }
@@ -157,7 +160,10 @@ describe('hasManyThrough upsert', function () {
           },
           relationships: {
             categories: {
-              data: [{ type: 'categories', id: 1 }, { type: 'categories', id: 4 }]
+              data: [
+                { type: 'categories', id: 1 },
+                { type: 'categories', id: 4 }
+              ]
             }
           }
         }
@@ -192,12 +198,19 @@ function makeData () {
       createCategory({ name: 'History' }),
       createCategory({ name: 'Comedy' })
     ])
-  }).then(function (models) {
-    return RSVP.all([
-      createAssoc({ movieId: models.movie.id, categoryId: models.categories[0].id }),
-      createAssoc({ movieId: models.movie.id, categoryId: models.categories[2].id })
-    ])
   })
+    .then(function (models) {
+      return RSVP.all([
+        createAssoc({
+          movieId: models.movie.id,
+          categoryId: models.categories[0].id
+        }),
+        createAssoc({
+          movieId: models.movie.id,
+          categoryId: models.categories[2].id
+        })
+      ])
+    })
 
   function denodeifyCreate (Model) {
     return RSVP.denodeify(Model.create.bind(Model))

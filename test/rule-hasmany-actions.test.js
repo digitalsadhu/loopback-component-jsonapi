@@ -25,27 +25,28 @@ describe('Rule `hasMany` Action relationships', function () {
     Rule.settings.plural = 'rules'
     app.model(Rule)
 
-    Rule.hasMany(Action, {as: 'actions', foreignKey: 'ruleId'})
+    Rule.hasMany(Action, { as: 'actions', foreignKey: 'ruleId' })
     app.use(loopback.rest())
     JSONAPIComponent(app)
   })
 
   describe('updating relationships using a PATCH', function (done) {
     beforeEach(function (done) {
-      Action.create([
-        {name: 'action 1', ruleId: 10},
-        {name: 'action 2', ruleId: 10},
-        {name: 'action 3', ruleId: 10}
-      ], function (err, actions) {
-        if (err) console.error(err)
-        Rule.create([
-          {name: 'rule 1'},
-          {name: 'rule 2'}
-        ], done)
-      })
+      Action.create(
+        [
+          { name: 'action 1', ruleId: 10 },
+          { name: 'action 2', ruleId: 10 },
+          { name: 'action 3', ruleId: 10 }
+        ],
+        function (err, actions) {
+          if (err) console.error(err)
+          Rule.create([{ name: 'rule 1' }, { name: 'rule 2' }], done)
+        }
+      )
     })
     it('should update foreign keys on Action model', function () {
-      request(app).patch('/rules/2')
+      request(app)
+        .patch('/rules/2')
         .send({
           data: {
             id: 2,
@@ -54,10 +55,7 @@ describe('Rule `hasMany` Action relationships', function () {
             },
             relationships: {
               actions: {
-                data: [
-                  {type: 'actions', id: 2},
-                  {type: 'actions', id: 3}
-                ]
+                data: [{ type: 'actions', id: 2 }, { type: 'actions', id: 3 }]
               }
             },
             type: 'rules'

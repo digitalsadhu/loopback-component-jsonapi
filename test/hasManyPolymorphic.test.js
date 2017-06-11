@@ -14,7 +14,7 @@ describe('loopback json api hasMany polymorphic relationships', function () {
     ds = loopback.createDataSource('memory')
 
     Resource = ds.createModel('resource', {
-      id: {type: Number, id: true},
+      id: { type: Number, id: true },
       fileName: String,
       parentId: Number,
       parentType: String
@@ -23,7 +23,7 @@ describe('loopback json api hasMany polymorphic relationships', function () {
     app.model(Resource)
 
     Post = ds.createModel('post', {
-      id: {type: Number, id: true},
+      id: { type: Number, id: true },
       title: String,
       content: String
     })
@@ -40,32 +40,38 @@ describe('loopback json api hasMany polymorphic relationships', function () {
 
   describe('Post hasMany Resources', function () {
     beforeEach(function (done) {
-      Post.create({
-        title: 'Post One',
-        content: 'Content'
-      }, function (err, post) {
-        expect(err).to.equal(null)
-        post.resources.create({
-          fileName: 'blah.jpg',
-          parentId: post.id,
-          parentType: 'post'
-        }, done)
-      })
+      Post.create(
+        {
+          title: 'Post One',
+          content: 'Content'
+        },
+        function (err, post) {
+          expect(err).to.equal(null)
+          post.resources.create(
+            {
+              fileName: 'blah.jpg',
+              parentId: post.id,
+              parentType: 'post'
+            },
+            done
+          )
+        }
+      )
     })
 
     it('should have a relationship to Resources', function (done) {
-      request(app).get('/posts/1')
-        .end(function (err, res) {
-          expect(err).to.equal(null)
-          expect(res.body).to.not.have.key('errors')
-          expect(res.body.data.relationships.resources).to.be.an('object')
-          done()
-        })
+      request(app).get('/posts/1').end(function (err, res) {
+        expect(err).to.equal(null)
+        expect(res.body).to.not.have.key('errors')
+        expect(res.body.data.relationships.resources).to.be.an('object')
+        done()
+      })
     })
 
-    it('should return the Resources that belong to this Post when included flag is present', function (done) {
-      request(app).get('/posts/1?include=resources')
-        .end(function (err, res) {
+    it(
+      'should return the Resources that belong to this Post when included flag is present',
+      function (done) {
+        request(app).get('/posts/1?include=resources').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body).to.not.have.key('errors')
           expect(res.body.included).to.be.an('array')
@@ -73,14 +79,19 @@ describe('loopback json api hasMany polymorphic relationships', function () {
           expect(res.body.included[0].id).to.equal('1')
           done()
         })
-    })
+      }
+    )
 
-    it('should return the Resources that belong to this Post when following the relationship link', function (done) {
-      request(app).get('/posts/1')
-        .end(function (err, res) {
+    it(
+      'should return the Resources that belong to this Post when following the relationship link',
+      function (done) {
+        request(app).get('/posts/1').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body).to.not.have.key('errors')
-          request(app).get(res.body.data.relationships.resources.links.related.split('api')[1])
+          request(app)
+            .get(
+              res.body.data.relationships.resources.links.related.split('api')[1]
+            )
             .end(function (err, res) {
               expect(err).to.equal(null)
               expect(res.body).to.not.have.key('errors')
@@ -90,6 +101,7 @@ describe('loopback json api hasMany polymorphic relationships', function () {
               done()
             })
         })
-    })
+      }
+    )
   })
 })

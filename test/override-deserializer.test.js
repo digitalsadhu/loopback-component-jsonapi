@@ -12,10 +12,18 @@ describe('hook in to modify deserialization process', function () {
     app.set('legacyExplorer', false)
     var ds = loopback.createDataSource('memory')
 
-    Post = ds.createModel('post', { title: String, content: String, other: String })
+    Post = ds.createModel('post', {
+      title: String,
+      content: String,
+      other: String
+    })
     app.model(Post)
 
-    Comment = ds.createModel('comment', { title: String, comment: String, other: String })
+    Comment = ds.createModel('comment', {
+      title: String,
+      comment: String,
+      other: String
+    })
     app.model(Comment)
 
     Comment.belongsTo(Post)
@@ -23,9 +31,19 @@ describe('hook in to modify deserialization process', function () {
 
     app.use(loopback.rest())
 
-    Post.create({title: 'my post', content: 'my post content', other: 'my post other'}, function () {
-      Comment.create({title: 'my comment title', comment: 'my comment', other: 'comment other'}, done)
-    })
+    Post.create(
+      { title: 'my post', content: 'my post content', other: 'my post other' },
+      function () {
+        Comment.create(
+          {
+            title: 'my comment title',
+            comment: 'my comment',
+            other: 'comment other'
+          },
+          done
+        )
+      }
+    )
 
     JSONAPIComponent(app)
   })
@@ -40,8 +58,11 @@ describe('hook in to modify deserialization process', function () {
     afterEach(function () {
       delete Post.beforeJsonApiDeserialize
     })
-    it('should allow options to be modified before serialization', function (done) {
-      request(app).post('/posts')
+    it('should allow options to be modified before serialization', function (
+      done
+    ) {
+      request(app)
+        .post('/posts')
         .send({
           data: {
             type: 'posts',
@@ -60,24 +81,28 @@ describe('hook in to modify deserialization process', function () {
           done()
         })
     })
-    it('should not affect models without a beforeJsonApiDeserialize method', function (done) {
-      request(app).post('/comments')
-        .send({
-          data: {
-            type: 'comments',
-            attributes: {
-              title: 'my comment title',
-              comment: 'my comment content'
+    it(
+      'should not affect models without a beforeJsonApiDeserialize method',
+      function (done) {
+        request(app)
+          .post('/comments')
+          .send({
+            data: {
+              type: 'comments',
+              attributes: {
+                title: 'my comment title',
+                comment: 'my comment content'
+              }
             }
-          }
-        })
-        .expect(201)
-        .end(function (err, res) {
-          expect(err).to.equal(null)
-          expect(res.body.data.attributes.title).to.equal('my comment title')
-          done()
-        })
-    })
+          })
+          .expect(201)
+          .end(function (err, res) {
+            expect(err).to.equal(null)
+            expect(res.body.data.attributes.title).to.equal('my comment title')
+            done()
+          })
+      }
+    )
   })
 
   describe('before deserialization manipulating relationships', function () {
@@ -86,7 +111,8 @@ describe('hook in to modify deserialization process', function () {
         options.data.data.relationships = {
           comments: {
             data: {
-              type: 'comments', id: '1'
+              type: 'comments',
+              id: '1'
             }
           }
         }
@@ -96,30 +122,34 @@ describe('hook in to modify deserialization process', function () {
     afterEach(function () {
       delete Post.beforeJsonApiDeserialize
     })
-    it('should save relationships manipulated in beforeJsonApiDeserialize', function (done) {
-      request(app).post('/posts')
-        .send({
-          data: {
-            type: 'posts',
-            attributes: {
-              title: 'my post',
-              content: 'my post content'
-            },
-            relationships: {fake: {}}
-          }
-        })
-        .set('Accept', 'application/vnd.api+json')
-        .set('Content-Type', 'application/json')
-        .expect(201)
-        .end(function (err, res) {
-          expect(err).to.equal(null)
-          Comment.findById(1, function (err, comment) {
-            expect(err).to.equal(null)
-            expect(comment.postId).to.equal(2)
-            done()
+    it(
+      'should save relationships manipulated in beforeJsonApiDeserialize',
+      function (done) {
+        request(app)
+          .post('/posts')
+          .send({
+            data: {
+              type: 'posts',
+              attributes: {
+                title: 'my post',
+                content: 'my post content'
+              },
+              relationships: { fake: {} }
+            }
           })
-        })
-    })
+          .set('Accept', 'application/vnd.api+json')
+          .set('Content-Type', 'application/json')
+          .expect(201)
+          .end(function (err, res) {
+            expect(err).to.equal(null)
+            Comment.findById(1, function (err, comment) {
+              expect(err).to.equal(null)
+              expect(comment.postId).to.equal(2)
+              done()
+            })
+          })
+      }
+    )
   })
 
   describe('after deserialization', function () {
@@ -132,8 +162,11 @@ describe('hook in to modify deserialization process', function () {
     afterEach(function () {
       delete Post.afterJsonApiDeserialize
     })
-    it('should allow options to be modified after serialization', function (done) {
-      request(app).post('/posts')
+    it('should allow options to be modified after serialization', function (
+      done
+    ) {
+      request(app)
+        .post('/posts')
         .send({
           data: {
             type: 'posts',
@@ -152,24 +185,28 @@ describe('hook in to modify deserialization process', function () {
           done()
         })
     })
-    it('should not affect models without a afterJsonApiDeserialize method', function (done) {
-      request(app).post('/comments')
-        .send({
-          data: {
-            type: 'comments',
-            attributes: {
-              title: 'my comment title',
-              comment: 'my comment content'
+    it(
+      'should not affect models without a afterJsonApiDeserialize method',
+      function (done) {
+        request(app)
+          .post('/comments')
+          .send({
+            data: {
+              type: 'comments',
+              attributes: {
+                title: 'my comment title',
+                comment: 'my comment content'
+              }
             }
-          }
-        })
-        .expect(201)
-        .end(function (err, res) {
-          expect(err).to.equal(null)
-          expect(res.body.data.attributes.title).to.equal('my comment title')
-          done()
-        })
-    })
+          })
+          .expect(201)
+          .end(function (err, res) {
+            expect(err).to.equal(null)
+            expect(res.body.data.attributes.title).to.equal('my comment title')
+            done()
+          })
+      }
+    )
   })
 
   describe('custom deserialization', function () {
@@ -184,7 +221,8 @@ describe('hook in to modify deserialization process', function () {
       delete Post.jsonApiDeserialize
     })
     it('should allow custom deserialization', function (done) {
-      request(app).post('/posts')
+      request(app)
+        .post('/posts')
         .send({
           data: {
             type: 'posts',
@@ -203,8 +241,11 @@ describe('hook in to modify deserialization process', function () {
           done()
         })
     })
-    it('should not affect models without a jsonApiDeserialize method', function (done) {
-      request(app).post('/comments')
+    it('should not affect models without a jsonApiDeserialize method', function (
+      done
+    ) {
+      request(app)
+        .post('/comments')
         .send({
           data: {
             type: 'comments',

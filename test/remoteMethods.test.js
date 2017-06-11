@@ -10,20 +10,17 @@ describe('loopback json api remote methods', function () {
     app.set('legacyExplorer', false)
     var ds = loopback.createDataSource('memory')
     Post = ds.createModel('post', {
-      id: {type: Number, id: true},
+      id: { type: Number, id: true },
       title: String,
       content: String
     })
     Post.greet = function (msg, cb) {
       cb(null, 'Greetings... ' + msg)
     }
-    Post.remoteMethod(
-      'greet',
-      {
-        accepts: {arg: 'msg', type: 'string'},
-        returns: {arg: 'greeting', type: 'string'}
-      }
-    )
+    Post.remoteMethod('greet', {
+      accepts: { arg: 'msg', type: 'string' },
+      returns: { arg: 'greeting', type: 'string' }
+    })
     app.model(Post)
     app.use(loopback.rest())
     JSONAPIComponent(app)
@@ -31,8 +28,9 @@ describe('loopback json api remote methods', function () {
 
   describe('remote method for application/json', function () {
     it('POST /posts/greet should return remote method message', function (done) {
-      request(app).post('/posts/greet')
-        .send({'msg': 'John'})
+      request(app)
+        .post('/posts/greet')
+        .send({ msg: 'John' })
         .set('Content-Type', 'application/json')
         .expect(200)
         .end(function (err, res) {
