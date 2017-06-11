@@ -12,41 +12,88 @@
 [jsonapi.org](http://jsonapi.org/) support for loopback.
 
 ## Status
-This project is a work in progress. Consider it beta software. For EmberJS users, the component
-should now be basically feature complete. Please test and report any issues.
-The functionality that is present is pretty well tested. 140+ integration tests and counting!
 
-Currently supported:
-- Find all records via GET
-- Find a record by ID via GET
-- Create via POST
-- Update a record via PATCH
-- Delete a record via DELETE
-- All errors have now been transformed into the correct JSON API format
-- Find related records via GET eg. /posts/1/comments (belongsTo, hasMany, hasOne)
-- Find relationships via GET eg. /posts/1/relationships/author (belongsTo, hasMany, hasOne)
-- Creating resource relationship linkages during a resource create
-- Updating/deleting resource relationship linkages during a resource update
-- [Side loading data](http://jsonapi.org/format/#fetching-includes) via `include` param
+This project is now pretty stable and is used in production in a number of our projects.
+There are known issues (see below and the issue tracker) these can mostly be worked around or
+are pretty minor. Open an issue on the issue tracker if you need clarification on anything or
+need help.
 
-Not yet supported:
-- manipulating relationships directly via:
-  - POST /:resource/relationships/:relatedResource
-  - PATCH /:resource/relationships/:relatedResource
-  - DELETE /:resource/relationships/:relatedResource
+### Known issues
 
-## Requirements
+This module doesn't do complex compound documents very well yet. This means that if you try to do complex
+includes in a single request you will likely run into trouble.
+
+We wrote another module called [loopback-jsonapi-model-serializer](https://www.npmjs.com/package/loopback-jsonapi-model-serializer)
+that does JSONAPI serialization very well (but nothing else) for loopback which you can use to get
+around such issues for now. The long term goal is to swap out the serialization layer in
+`loopback-component-jsonapi` with `loopback-jsonapi-model-serializer`
+
+## Tested against:
+
+- Node 4, 6 and 8
 - JSON API v1.0
-- loopback ^v2.0.0
-- strong-remoting ^v2.22.0
+- loopback ^3.8.0
 
 ## Sample Project
 We have created a sample project using [EmberJS](http://emberjs.com), [Loopback](http://loopback.io) and this compoment. It's called [emberloop](https://github.com/tsteuwer/emberloop).
 
 ## Helping out
 We are VERY interested in help. Get in touch via the [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
+Please read the following about contributing:
 
-## Usage
+### Semantic Release
+
+This project uses [Semantic Release](https://github.com/semantic-release/semantic-release) to manage the release process.
+This means that:
+A. There is no semver project version in `package.json`. This is managed in CI.
+B. Commit messages need to follow conventions. See [here](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for commit message guidelines.
+The important things to remember are:
+A. If you are fixing a bug prefix your commit message with `fix(<thing being fixed goes here>):`
+B. If you are adding a non breaking feature, prefix your commit with `feat(<name of feature goes here>):`
+C. If you are making a breaking change of any kind, prefix additional information on the 3rd line of the commit message with: `BREAKING CHANGE:`
+See examples of this on the [Semantic Release](https://github.com/semantic-release/semantic-release) github pages.
+And don't hesitate to reach out on our [issue tracker](https://github.com/digitalsadhu/loopback-component-jsonapi/issues)
+if you want further clarification.
+
+### Standard js and "prettier standard"
+
+This project is follows the [Standard js](https://standardjs.com/) styleguide. Linting happens on CI and any time you run tests via `npm test`
+You can run the linting on its own with `npm run lint`
+
+Additionally, code formatting is done whenever you run git commit. This is made possibly by [lint-staged](https://github.com/okonet/lint-staged) and [husky](https://github.com/typicode/husky) with actual formatting done by
+[prettier](https://github.com/prettier/prettier)
+
+### Pull requests and code review
+
+All code is reviewed by one or more of the project maintainers before merging. Before becoming a maintainer, contributers
+need to fork the master branch of this repo, make their changes and submit a pull request.
+
+Once a contributor becomes a maintainer, it is preferred that they create new branches on the loopback-component-jsonapi
+repo and submit those as pull requests
+
+### Tests
+
+We take testing seriously. The project contains over 200 tests at time of writing this. In most cases we wont merge
+anything without tests. (Within reason of course)
+
+### Project maintainers
+
+We follow the principle of "Open open source" which means if you contribute even a single PR to the project, we make you
+a project maintainer.
+
+## Debugging
+You can enable debug logging by setting an environment variable:
+`DEBUG=loopback-component-jsonapi`
+
+#### example:
+```
+DEBUG=loopback-component-jsonapi node .
+```
+
+# API Documentation
+
+## Getting started
+
 In your loopback project:
 
 1. `npm install --save loopback-component-jsonapi`
@@ -630,12 +677,3 @@ module.exports = function (MyModel) {
 ##### function parameters
 - `options` All config options set for the serialization process
 - `callback` Callback to call with modified serialized records
-
-## Debugging
-You can enable debug logging by setting an environment variable:
-`DEBUG=loopback-component-jsonapi`
-
-#### example:
-```
-DEBUG=loopback-component-jsonapi node .
-```
