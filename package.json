@@ -2,7 +2,6 @@
   "name": "loopback-component-jsonapi",
   "description": "JSONAPI support for loopback",
   "main": "lib/index.js",
-  "version": "1.0.0",
   "scripts": {
     "test": "npm run lint && istanbul cover _mocha --report lcovonly --reporter=spec ./test/**/*.test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "tester": "mocha --reporter=spec ./test/**/*.test.js",
