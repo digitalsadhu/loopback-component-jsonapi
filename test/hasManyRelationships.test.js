@@ -104,6 +104,13 @@ describe('loopback json api hasMany relationships', function () {
             attributes: {
               firstName: 'Joe',
               lastName: 'Shmoe'
+            },
+            relationships: {
+              posts: {
+                links: {
+                  related: res.body.included[0].relationships.posts.links.related
+                }
+              }
             }
           })
           expect(res.body.included[1]).to.deep.equal({
@@ -112,6 +119,17 @@ describe('loopback json api hasMany relationships', function () {
             attributes: {
               title: 'My comment',
               comment: 'My comment text'
+            },
+            relationships: {
+              post: {
+                data: {
+                  id: 1,
+                  type: 'posts'
+                },
+                links: {
+                  related: res.body.included[1].relationships.post.links.related
+                }
+              }
             }
           })
           expect(res.body.included[2]).to.deep.equal({
@@ -120,6 +138,17 @@ describe('loopback json api hasMany relationships', function () {
             attributes: {
               title: 'My second comment',
               comment: 'My second comment text'
+            },
+            relationships: {
+              post: {
+                data: {
+                  id: 1,
+                  type: 'posts'
+                },
+                links: {
+                  related: res.body.included[2].relationships.post.links.related
+                }
+              }
             }
           })
           done()
