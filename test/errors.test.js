@@ -2,6 +2,7 @@
 
 var request = require('supertest')
 var loopback = require('loopback')
+var _ = require('lodash')
 var expect = require('chai').expect
 var JSONAPIComponent = require('../')
 var app
@@ -24,7 +25,7 @@ describe('disabling loopback-component-jsonapi error handler', function () {
     request(app).get('/posts/100').end(function (err, res) {
       expect(err).to.equal(null)
       expect(res.body).to.have.keys('error')
-      expect(res.body.error).to.have.keys('name', 'message', 'statusCode')
+      expect(res.body.error).to.have.keys('name', 'message', 'statusCode', 'code')
       done()
     })
   })
@@ -87,7 +88,7 @@ describe('loopback json api errors', function () {
           status: 404,
           code: 'MODEL_NOT_FOUND',
           detail: 'Unknown "post" id "100".',
-          source: '',
+          source: {},
           title: 'Error'
         })
         done()
@@ -129,7 +130,7 @@ describe('loopback json api errors', function () {
               status: 422,
               code: 'presence',
               detail: 'JSON API resource object must contain `data.type` property',
-              source: '',
+              source: {},
               title: 'ValidationError'
             })
             done()
@@ -177,4 +178,50 @@ describe('loopback json api errors', function () {
       }
     )
   })
+})
+
+describe('loopback json api errors with `errorStackInResponse` enabled', function () {
+  beforeEach(function () {
+    app = loopback()
+    app.set('legacyExplorer', false)
+    var ds = loopback.createDataSource('memory')
+    Post = ds.createModel('post', {
+      id: { type: Number, id: true },
+      title: String,
+      content: String
+    })
+    app.model(Post)
+    app.use(loopback.rest())
+    JSONAPIComponent(app, { restApiRoot: '', errorStackInResponse: true })
+  })
+
+  it(
+    'POST /models should return a more specific 422 status code on the error object if type key is not present',
+    function (done) {
+      request(app)
+        .post('/posts')
+        .send({
+          data: {
+            attributes: { title: 'my post', content: 'my post content' }
+          }
+        })
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body).to.have.keys('errors')
+          expect(res.body.errors.length).to.equal(1)
+
+          expect(res.body.errors[0].source).to.haveOwnProperty('stack')
+          expect(res.body.errors[0].source.stack.length).to.be.above(100)
+
+          expect(_.omit(res.body.errors[0], 'source')).to.deep.equal({
+            status: 422,
+            code: 'presence',
+            detail: 'JSON API resource object must contain `data.type` property',
+            title: 'ValidationError'
+          })
+          done()
+        })
+    }
+  )
 })

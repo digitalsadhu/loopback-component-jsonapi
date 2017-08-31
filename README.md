@@ -118,6 +118,7 @@ Example:
     "host": "https://www.mydomain.com",
     "enable": true,
     "handleErrors": true,
+    "errorStackInResponse": false,
     "exclude": [
       {"model": "comment"},
       {"methods": "find"},
@@ -200,6 +201,25 @@ out of the box with EmberJS.
 
 - Type: `boolean`
 - Default: `true`
+
+### errorStackInResponse
+Along handleErrors, When true, this option will send the error stack if available within the error
+reponse. It will be stored under the `source.stack` key.
+
+**Be careful, this option should never be enabled in production environment. It can propagate some
+sensitive datas.**
+
+#### example
+```js
+{
+  ...
+  "errorStackInResponse": NODE_ENV === 'development',
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `false`
 
 ### exclude
 Allows blacklisting of models and methods.
