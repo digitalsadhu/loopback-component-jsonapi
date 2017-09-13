@@ -1,3 +1,5 @@
+'use strict'
+
 /* global describe, beforeEach, it */
 
 var request = require('supertest')
