@@ -90,7 +90,9 @@ describe('loopback json api hasMany polymorphic relationships', function () {
           expect(res.body).to.not.have.key('errors')
           request(app)
             .get(
-              res.body.data.relationships.resources.links.related.split('api')[1]
+              res.body.data.relationships.resources.links.related.split('api')[
+                1
+              ]
             )
             .end(function (err, res) {
               expect(err).to.equal(null)

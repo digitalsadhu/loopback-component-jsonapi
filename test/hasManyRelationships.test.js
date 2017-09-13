@@ -108,7 +108,9 @@ describe('loopback json api hasMany relationships', function () {
             relationships: {
               posts: {
                 links: {
-                  related: res.body.included[0].relationships.posts.links.related
+                  related: res.body.included[
+                    0
+                  ].relationships.posts.links.related
                 }
               }
             }

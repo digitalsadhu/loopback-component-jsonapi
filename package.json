@@ -8,11 +8,12 @@
     "coverage": "istanbul cover _mocha ./test/**/*.test.js",
     "lint": "standard './test/**/*.js' './lib/**/*.js' --verbose | snazzy",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "formatter": "prettier-standard-formatter ."
   },
   "lint-staged": {
     "*.js": [
-      "npm run prettier-standard-formatter",
+      "npm run formatter",
       "git add"
     ]
   },

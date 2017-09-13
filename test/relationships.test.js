@@ -123,7 +123,6 @@ describe('loopback json api belongsTo relationships', function () {
                 expect(err).to.equal(null)
                 expect(comment).not.to.equal(null)
                 expect(comment.postId).to.equal(null)
-
                 done()
               })
             })
@@ -361,28 +360,25 @@ describe('loopback json api hasOne relationships', function () {
     })
 
     describe('link related models as part of a create operation', function () {
-      it('should create and link models', function (done) {
-        request(app)
+      it('should create and link models', function () {
+        const payload = {
+          data: {
+            type: 'posts',
+            attributes: { title: 'my post', content: 'my post content' },
+            relationships: { author: { data: { type: 'people', id: 1 } } }
+          }
+        }
+        return request(app)
           .post('/posts')
-          .send({
-            data: {
-              type: 'posts',
-              attributes: { title: 'my post', content: 'my post content' },
-              relationships: { author: { data: { type: 'people', id: 1 } } }
-            }
-          })
+          .send(payload)
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
-          .end(function (err, res) {
-            expect(err).to.equal(null)
+          .then(res => {
             expect(res.body).not.to.have.keys('errors')
             expect(res.status).to.equal(201)
-            Person.findById(1, function (err, person) {
-              expect(err).to.equal(null)
+            return Person.findById(1).then(person => {
               expect(person).not.to.equal(null)
-              expect(person.postId).to.equal(2)
-
-              done()
+              expect(person.postId).to.equal(Number(res.body.data.id))
             })
           })
       })
@@ -420,39 +416,37 @@ describe('loopback json api hasOne relationships', function () {
     )
 
     describe('replace linkages as part of an update operation', function () {
-      beforeEach(function (done) {
-        Person.create({ id: 191, name: 'Rachel McAdams' }, done)
+      beforeEach(() => {
+        return Person.create({ id: 191, name: 'Rachel McAdams' })
       })
-      it('should update model linkages', function (done) {
-        request(app)
-          .patch('/posts/1')
-          .send({
-            data: {
-              type: 'posts',
-              id: '1',
-              attributes: {
-                title: 'my post',
-                content: 'my post content'
-              },
-              relationships: {
-                author: {
-                  data: {
-                    type: 'people',
-                    id: 191
-                  }
+      it('should update model linkages', () => {
+        const payload = {
+          data: {
+            type: 'posts',
+            id: '1',
+            attributes: {
+              title: 'my post',
+              content: 'my post content'
+            },
+            relationships: {
+              author: {
+                data: {
+                  type: 'people',
+                  id: '191'
                 }
               }
             }
-          })
+          }
+        }
+        return request(app)
+          .patch('/posts/1')
+          .send(payload)
           .set('Accept', 'application/vnd.api+json')
           .set('Content-Type', 'application/json')
-          .end(function (err, res) {
-            expect(err).to.equal(null)
-            Person.find({ where: { postId: 1 } }, function (err, people) {
-              expect(err).to.equal(null)
+          .then(res => {
+            return Person.find({ where: { postId: 1 } }).then(people => {
               expect(people.length).to.equal(1)
               expect(people[0].id).to.equal(191)
-              done()
             })
           })
       })

@@ -280,7 +280,9 @@ describe('loopback json api hasMany relationships', function () {
                 relationships: {
                   replies: {
                     links: {
-                      related: res.body.included[0].relationships.replies.links.related
+                      related: res.body.included[
+                        0
+                      ].relationships.replies.links.related
                     }
                   }
                 }
@@ -295,7 +297,9 @@ describe('loopback json api hasMany relationships', function () {
                 relationships: {
                   replies: {
                     links: {
-                      related: res.body.included[1].relationships.replies.links.related
+                      related: res.body.included[
+                        1
+                      ].relationships.replies.links.related
                     }
                   }
                 }
