@@ -88,20 +88,16 @@ describe('loopback json api hasMany polymorphic relationships', function () {
         request(app).get('/posts/1').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body).to.not.have.key('errors')
-          request(app)
-            .get(
-              res.body.data.relationships.resources.links.related.split('api')[
-                1
-              ]
-            )
-            .end(function (err, res) {
-              expect(err).to.equal(null)
-              expect(res.body).to.not.have.key('errors')
-              expect(res.body.data).to.be.an('array')
-              expect(res.body.data[0].type).to.equal('resources')
-              expect(res.body.data[0].id).to.equal('1')
-              done()
-            })
+          const relationships = res.body.data.relationships
+          const url = relationships.resources.links.related.split('api')[1]
+          request(app).get(url).end(function (err, res) {
+            expect(err).to.equal(null)
+            expect(res.body).to.not.have.key('errors')
+            expect(res.body.data).to.be.an('array')
+            expect(res.body.data[0].type).to.equal('resources')
+            expect(res.body.data[0].id).to.equal('1')
+            done()
+          })
         })
       }
     )

@@ -267,6 +267,10 @@ describe('loopback json api hasMany relationships', function () {
           function (done) {
             request(app).get('/posts?include=comments').end(function (err, res) {
               expect(err).to.equal(null)
+              const relatedReplies = id => {
+                const included = res.body.included
+                return included[id].relationships.replies.links.related
+              }
               expect(res.body.included).to.be.an('array')
               expect(res.body.included.length).to.equal(2)
               expect(res.body.data[0].attributes).to.not.have.keys('comments')
@@ -280,9 +284,7 @@ describe('loopback json api hasMany relationships', function () {
                 relationships: {
                   replies: {
                     links: {
-                      related: res.body.included[
-                        0
-                      ].relationships.replies.links.related
+                      related: relatedReplies(0)
                     }
                   }
                 }
@@ -297,9 +299,7 @@ describe('loopback json api hasMany relationships', function () {
                 relationships: {
                   replies: {
                     links: {
-                      related: res.body.included[
-                        1
-                      ].relationships.replies.links.related
+                      related: relatedReplies(1)
                     }
                   }
                 }

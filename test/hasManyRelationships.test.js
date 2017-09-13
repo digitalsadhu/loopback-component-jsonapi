@@ -98,6 +98,9 @@ describe('loopback json api hasMany relationships', function () {
           })
           expect(res.body.included).to.be.an('array')
           expect(res.body.included.length).to.equal(3)
+          const relatedPostLink = id => {
+            return res.body.included[0].relationships.posts.links.related
+          }
           expect(res.body.included[0]).to.deep.equal({
             id: '1',
             type: 'authors',
@@ -108,9 +111,7 @@ describe('loopback json api hasMany relationships', function () {
             relationships: {
               posts: {
                 links: {
-                  related: res.body.included[
-                    0
-                  ].relationships.posts.links.related
+                  related: relatedPostLink(0)
                 }
               }
             }
