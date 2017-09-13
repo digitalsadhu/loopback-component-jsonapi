@@ -1,6 +1,6 @@
 'use strict'
 
-// const request = require('supertest')
+const request = require('supertest')
 const loopback = require('loopback')
 const expect = require('chai').expect
 const JSONAPIComponent = require('../')
@@ -64,39 +64,41 @@ describe('relationship utils', () => {
     startApp()
   })
 
-  // describe('Ensure correct hasMany model linkages updated', function () {
-  //   it('should update model linkages', () => {
-  //     const payload = {
-  //       data: {
-  //         type: 'posts',
-  //         attributes: { title: 'my post', content: 'my post content' },
-  //         relationships: {
-  //           comments: {
-  //             data: [
-  //               { type: 'comments', id: 2 },
-  //               { type: 'comments', id: 3 },
-  //               { type: 'comments', id: 4 }
-  //             ]
-  //           }
-  //         }
-  //       }
-  //     }
-  //     return Comment.create([{id: 1, postId: 1}, {id: 2, postId: 1}, {id: 3, postId: 1}, {id: 4}])
-  //       .then(() => {
-  //         return request(app).post('/posts')
-  //         .send(payload)
-  //         .set('Accept', 'application/vnd.api+json')
-  //         .set('Content-Type', 'application/json')
-  //         .then(res => Comment.find({ postId: 1 }))
-  //         .then(comments => {
-  //           expect(comments.length).to.equal(3)
-  //           expect(comments[0].id).to.equal(2)
-  //           expect(comments[1].id).to.equal(3)
-  //           expect(comments[2].id).to.equal(4)
-  //         })
-  //       })
-  //   })
-  // })
+  describe('Ensure correct hasMany model linkages updated', function () {
+    it('should update model linkages', () => {
+      setupHasMany()
+      const payload = {
+        data: {
+          type: 'posts',
+          attributes: { title: 'my post', content: 'my post content' },
+          relationships: {
+            comments: {
+              data: [
+                { type: 'comments', id: 2 },
+                { type: 'comments', id: 3 },
+                { type: 'comments', id: 4 }
+              ]
+            }
+          }
+        }
+      }
+      return Comment.create([{ postId: 1 }, { postId: 1 }, { postId: 1 }, {}])
+        .then(() => {
+          return request(app)
+            .post('/posts')
+            .send(payload)
+            .set('Accept', 'application/vnd.api+json')
+            .set('Content-Type', 'application/json')
+            .then(res => Comment.find({ where: { postId: res.body.data.id } }))
+            .then(comments => {
+              expect(comments.length).to.equal(3)
+              expect(comments[0].id).to.equal(2)
+              expect(comments[1].id).to.equal(3)
+              expect(comments[2].id).to.equal(4)
+            })
+        })
+    })
+  })
 
   describe('updateHasMany()', function () {
     it('should update model linkages', () => {
