@@ -178,8 +178,10 @@ describe('relationship utils', () => {
   describe('linkRelatedModels()', function () {
     it('belongsTo', () => {
       setupBelongsTo()
+      const from = { model: Comment, id: 1 }
+      const to = { model: Post, data: 1 }
       return Comment.create({}, {})
-        .then(() => linkRelatedModels('post', Comment, 1, Post, 1))
+        .then(() => linkRelatedModels('post', from, to))
         .then(() => Comment.find({ where: { postId: 1 } }))
         .then(comments => {
           expect(comments.length).to.equal(1)
@@ -188,8 +190,10 @@ describe('relationship utils', () => {
     })
     it('hasMany', () => {
       setupHasMany()
+      const from = { model: Post, id: 1 }
+      const to = { model: Comment, data: [2, 3, 4] }
       return Comment.create([{ postId: 1 }, { postId: 1 }, { postId: 1 }, {}])
-        .then(() => linkRelatedModels('comments', Post, 1, Comment, [2, 3, 4]))
+        .then(() => linkRelatedModels('comments', from, to))
         .then(() => Comment.find({ where: { postId: 1 } }))
         .then(comments => {
           expect(comments.length).to.equal(3)
@@ -200,6 +204,8 @@ describe('relationship utils', () => {
     })
     it('hasManyThrough', () => {
       setupHasManyThrough()
+      const from = { model: Post, id: 1 }
+      const to = { model: Comment, data: [2, 3, 4] }
       return Promise.all([
         Post.create({}),
         Comment.create([{}, {}, {}, {}]),
@@ -209,7 +215,7 @@ describe('relationship utils', () => {
             { postId: 1, commentId: 3 }
         ])
       ])
-        .then(() => linkRelatedModels('comments', Post, 1, Comment, [2, 3, 4]))
+        .then(() => linkRelatedModels('comments', from, to))
         .then(() => PostComment.find({ where: { postId: 1 } }))
         .then(postComments => {
           expect(postComments.length).to.equal(3)
@@ -220,8 +226,10 @@ describe('relationship utils', () => {
     })
     it('hasOne', () => {
       setupHasOne()
+      const from = { model: Post, id: 1 }
+      const to = { model: Comment, data: 1 }
       return Comment.create([{}, {}])
-        .then(() => linkRelatedModels('comment', Post, 1, Comment, 1))
+        .then(() => linkRelatedModels('comment', from, to))
         .then(() => Comment.find({ where: { postId: 1 } }))
         .then(comments => {
           expect(comments.length).to.equal(1)
@@ -230,8 +238,10 @@ describe('relationship utils', () => {
     })
     it('hasOne null', () => {
       setupHasOne()
+      const from = { model: Post, id: 1 }
+      const to = { model: Comment, data: null }
       return Comment.create([{ postId: 1 }])
-        .then(() => linkRelatedModels('comment', Post, 1, Comment, null))
+        .then(() => linkRelatedModels('comment', from, to))
         .then(() => Comment.find({ where: { postId: null } }))
         .then(comments => {
           expect(comments.length).to.equal(1)
