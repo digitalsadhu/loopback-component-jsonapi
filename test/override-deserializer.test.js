@@ -1,3 +1,5 @@
+'use strict'
+
 var request = require('supertest')
 var loopback = require('loopback')
 var expect = require('chai').expect
@@ -110,10 +112,12 @@ describe('hook in to modify deserialization process', function () {
       Post.beforeJsonApiDeserialize = function (options, cb) {
         options.data.data.relationships = {
           comments: {
-            data: {
-              type: 'comments',
-              id: '1'
-            }
+            data: [
+              {
+                type: 'comments',
+                id: '1'
+              }
+            ]
           }
         }
         cb(null, options)

@@ -1,3 +1,5 @@
+'use strict'
+
 var request = require('supertest')
 var loopback = require('loopback')
 var JSONAPIComponent = require('../')

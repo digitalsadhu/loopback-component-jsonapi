@@ -1,3 +1,5 @@
+'use strict'
+
 /* global describe, beforeEach, it */
 
 var request = require('supertest')
@@ -7,7 +9,7 @@ var JSONAPIComponent = require('../')
 var RSVP = require('rsvp')
 
 var app
-var Movie, Category, MovieCategoryAssoc
+var Movie, Category, MovieCategory
 
 describe('hasManyThrough upsert', function () {
   beforeEach(function (done) {
@@ -25,21 +27,21 @@ describe('hasManyThrough upsert', function () {
       name: String
     })
 
-    MovieCategoryAssoc = ds.createModel('movieCategoryAssoc', {
+    MovieCategory = ds.createModel('movieCategory', {
       id: { type: Number, id: true }
     })
 
     // add models
     app.model(Movie)
     app.model(Category)
-    app.model(MovieCategoryAssoc)
+    app.model(MovieCategory)
 
     // set up relationships
-    Movie.hasMany(Category, { through: MovieCategoryAssoc })
-    Category.hasMany(Movie, { through: MovieCategoryAssoc })
+    Movie.hasMany(Category, { through: MovieCategory })
+    Category.hasMany(Movie, { through: MovieCategory })
 
-    MovieCategoryAssoc.belongsTo(Movie)
-    MovieCategoryAssoc.belongsTo(Category)
+    MovieCategory.belongsTo(Movie)
+    MovieCategory.belongsTo(Category)
     makeData()
       .then(function () {
         done()
@@ -78,7 +80,7 @@ describe('hasManyThrough upsert', function () {
         }
       })
       .end(function () {
-        agent.get('/movieCategoryAssocs').end(function (err, res) {
+        agent.get('/movieCategories').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body.data.length).to.equal(3)
           done()
@@ -109,7 +111,7 @@ describe('hasManyThrough upsert', function () {
         }
       })
       .end(function () {
-        agent.get('/movieCategoryAssocs').end(function (err, res) {
+        agent.get('/movieCategories').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body.data.length).to.equal(3)
           done()
@@ -117,34 +119,32 @@ describe('hasManyThrough upsert', function () {
       })
   })
 
-  it('should handle string IDs', function (done) {
-    var agent = request(app)
-    agent
-      .patch('/movies/1')
-      .send({
-        data: {
-          id: '1',
-          type: 'movies',
-          attributes: {
-            name: 'The Shawshank Redemption'
-          },
-          relationships: {
-            categories: {
-              data: [
-                { type: 'categories', id: '1' },
-                { type: 'categories', id: '4' }
-              ]
-            }
+  it('should handle string IDs', () => {
+    const agent = request(app)
+    const payload = {
+      data: {
+        id: '1',
+        type: 'movies',
+        attributes: {
+          name: 'The Shawshank Redemption'
+        },
+        relationships: {
+          categories: {
+            data: [
+              { type: 'categories', id: '1' },
+              { type: 'categories', id: '4' }
+            ]
           }
         }
+      }
+    }
+    return agent.patch('/movies/1').send(payload).then(() => {
+      return agent.get('/movies/1/categories').then(res => {
+        expect(res.body.data.length).to.equal(2)
+        expect(res.body.data[0].id).to.equal('1')
+        expect(res.body.data[1].id).to.equal('4')
       })
-      .end(function () {
-        agent.get('/movieCategoryAssocs/1').end(function (err, res) {
-          expect(err).to.equal(null)
-          expect(res.body.data.id).to.equal('1')
-          done()
-        })
-      })
+    })
   })
 
   it('should handle PATCH with less assocs', function (done) {
@@ -170,7 +170,7 @@ describe('hasManyThrough upsert', function () {
       })
       .end(function (err, res) {
         expect(err).to.equal(null)
-        agent.get('/movieCategoryAssocs').end(function (err, res) {
+        agent.get('/movieCategories').end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body.data.length).to.equal(2)
 
@@ -188,7 +188,7 @@ describe('hasManyThrough upsert', function () {
 function makeData () {
   var createMovie = denodeifyCreate(Movie)
   var createCategory = denodeifyCreate(Category)
-  var createAssoc = denodeifyCreate(MovieCategoryAssoc)
+  var createAssoc = denodeifyCreate(MovieCategory)
 
   return RSVP.hash({
     movie: createMovie({ name: 'The Shawshank Redemption' }),

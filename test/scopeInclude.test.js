@@ -1,3 +1,5 @@
+'use strict'
+
 var request = require('supertest')
 var loopback = require('loopback')
 var expect = require('chai').expect
@@ -138,9 +140,13 @@ describe('include option', function () {
             done()
           })
       })
-      it('should include categories with empty attributes object', function (done) {
+      it('should include categories with empty attributes object', function (
+        done
+      ) {
         request(app)
-          .get('/posts/1?filter={"include":[{"relation":"category", "scope": {"fields": ["id"]}}]}')
+          .get(
+            '/posts/1?filter={"include":[{"relation":"category", "scope": {"fields": ["id"]}}]}'
+          )
           .end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.included.length).equal(3)
