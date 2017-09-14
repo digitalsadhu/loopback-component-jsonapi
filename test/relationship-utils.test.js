@@ -241,23 +241,21 @@ describe('relationship utils', () => {
   })
 
   describe('detectUpdateStrategy()', function () {
+    it('hasManyThrough', () => {
+      setupHasManyThrough()
+      expect(detectUpdateStrategy(Post, 'comments')).to.equal(0)
+    })
     it('hasMany', () => {
       setupHasMany()
-      expect(detectUpdateStrategy(Post, 'comments')).to.equal('updateHasMany')
-    })
-    it('belongsTo', () => {
-      setupBelongsTo()
-      expect(detectUpdateStrategy(Comment, 'post')).to.equal('updateBelongsTo')
+      expect(detectUpdateStrategy(Post, 'comments')).to.equal(1)
     })
     it('hasOne', () => {
       setupHasOne()
-      expect(detectUpdateStrategy(Post, 'comment')).to.equal('updateHasOne')
+      expect(detectUpdateStrategy(Post, 'comment')).to.equal(2)
     })
-    it('hasManyThrough', () => {
-      setupHasManyThrough()
-      expect(detectUpdateStrategy(Post, 'comments')).to.equal(
-        'updateHasManyThrough'
-      )
+    it('belongsTo', () => {
+      setupBelongsTo()
+      expect(detectUpdateStrategy(Comment, 'post')).to.equal(3)
     })
   })
 })
