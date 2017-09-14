@@ -320,7 +320,7 @@ describe('loopback json api belongsTo relationships', function () {
           }
         )
 
-        it('should not include foreign key data in attributes', function () {
+        it('should not include foreign key data in attributes', function (done) {
           request(app).get('/comments').end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.data[0].attributes).to.not.have.keys('postId')
@@ -427,7 +427,7 @@ describe('loopback json api belongsTo relationships', function () {
           }
         )
 
-        it('should not include foreign key data in attributes', function () {
+        it('should not include foreign key data in attributes', function (done) {
           request(app).get('/comments/1').end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.data.attributes).to.not.have.keys('postId')
