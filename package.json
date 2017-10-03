@@ -53,7 +53,7 @@
     "loopback": "^3.8.0",
     "loopback-datasource-juggler": "^3.9.1",
     "mocha": "^3.0.2",
-    "rsvp": "3.6.0",
+    "rsvp": "4.7.0",
     "semantic-release": "^8.0.0",
     "standard": "^10.0.2",
     "supertest": "^3.0.0"
