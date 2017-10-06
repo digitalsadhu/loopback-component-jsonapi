@@ -52,7 +52,7 @@
     "istanbul": "^0.4.5",
     "loopback": "^3.8.0",
     "loopback-datasource-juggler": "^3.9.1",
-    "mocha": "^3.0.2",
+    "mocha": "^4.0.1",
     "rsvp": "3.6.0",
     "semantic-release": "^8.0.0",
     "standard": "^10.0.2",
