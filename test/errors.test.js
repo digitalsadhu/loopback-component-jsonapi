@@ -25,7 +25,7 @@ describe('disabling loopback-component-jsonapi error handler', function () {
     request(app).get('/posts/100').end(function (err, res) {
       expect(err).to.equal(null)
       expect(res.body).to.have.keys('error')
-      expect(res.body.error).to.have.keys('name', 'message', 'statusCode', 'code')
+      expect(res.body.error).to.contain.keys('name', 'message', 'statusCode')
       done()
     })
   })
@@ -180,7 +180,16 @@ describe('loopback json api errors', function () {
   })
 })
 
-describe('loopback json api errors with `errorStackInResponse` enabled', function () {
+describe('loopback json api errors with advanced reporting', function () {
+  var errorMetaMock = {
+    status: 418,
+    meta: { rfc: 'RFC2324' },
+    code: "i'm a teapot",
+    detail: 'April 1st, 1998',
+    title: "I'm a teapot",
+    source: { model: 'Post', method: 'find' }
+  }
+
   beforeEach(function () {
     app = loopback()
     app.set('legacyExplorer', false)
@@ -190,13 +199,43 @@ describe('loopback json api errors with `errorStackInResponse` enabled', functio
       title: String,
       content: String
     })
+
+    Post.find = function () {
+      var err = new Error(errorMetaMock.detail)
+      err.name = errorMetaMock.title
+      err.meta = errorMetaMock.meta
+      err.source = errorMetaMock.source
+      err.statusCode = errorMetaMock.status
+      err.code = errorMetaMock.code
+      throw err
+    }
+
     app.model(Post)
     app.use(loopback.rest())
     JSONAPIComponent(app, { restApiRoot: '', errorStackInResponse: true })
   })
 
   it(
-    'POST /models should return a more specific 422 status code on the error object if type key is not present',
+    'should return the given meta and source in the error response when an Error with a meta and source object is thrown',
+    function (done) {
+      request(app)
+        .get('/posts')
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body).to.have.keys('errors')
+          expect(res.body.errors.length).to.equal(1)
+
+          expect(_.omit(res.body.errors[0], 'source.stack')).to.deep.equal(
+            errorMetaMock
+          )
+          done()
+        })
+    }
+  )
+
+  it(
+    'should return the corresponding stack in error when `errorStackInResponse` enabled',
     function (done) {
       request(app)
         .post('/posts')

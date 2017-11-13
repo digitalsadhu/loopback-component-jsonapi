@@ -439,6 +439,45 @@ module.exports = function (MyModel) {
 }
 ```
 
+## Custom Errors
+Generic errors respond with a 500, but sometime you want to have a better control over the error that is returned to the client, taking advantages of fields provided by JSONApi.
+
+**It is recommanded to extend the base Error constructor, before throwing errors, ex: BadRequestError**
+
+`meta` and `source` fields needs to be objects.
+
+#### example
+```js
+module.exports = function (MyModel) {
+  MyModel.find = function () {
+    var err = new Error('April 1st, 1998');
+    
+    err.status = 418;
+    err.name = 'I\'m a teapot';
+    err.source = { model: 'Post', method: 'find' };
+    err.detail = 'April 1st, 1998';
+    err.code = 'i\'m a teapot';
+    err.meta = { rfc: 'RFC2324' };
+
+    throw err
+  }
+}
+
+// This will be returned as :
+// {
+//   errors: [
+//     {
+//       status: 418,
+//       meta: { rfc: 'RFC2324' },
+//       code: 'i\'m a teapot',
+//       detail: 'April 1st, 1998',
+//       title: 'I\'m a teapot',
+//       source: { model: 'Post', method: 'find' }
+//     }
+//   ]
+// }
+```
+
 ##### function parameters
 
 - `options` All config options set for the deserialization process.
