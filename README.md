@@ -204,10 +204,9 @@ out of the box with EmberJS.
 
 ### errorStackInResponse
 Along handleErrors, When true, this option will send the error stack if available within the error
-reponse. It will be stored under the `source.stack` key.
+response. It will be stored under the `source.stack` key.
 
-**Be careful, this option should never be enabled in production environment. It can propagate some
-sensitive datas.**
+**Please be careful, this option should never be enabled in a production environment. Doing so can expose sensitive data.**
 
 #### example
 ```js
@@ -440,9 +439,9 @@ module.exports = function (MyModel) {
 ```
 
 ## Custom Errors
-Generic errors respond with a 500, but sometime you want to have a better control over the error that is returned to the client, taking advantages of fields provided by JSONApi.
+Generic errors respond with a 500, but sometimes you want to have a better control over the error that is returned to the client, taking advantages of fields provided by JSONApi.
 
-**It is recommanded to extend the base Error constructor, before throwing errors, ex: BadRequestError**
+**It is recommended that you extend the base Error constructor before throwing errors. Eg. BadRequestError**
 
 `meta` and `source` fields needs to be objects.
 
