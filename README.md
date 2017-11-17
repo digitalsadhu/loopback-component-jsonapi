@@ -118,6 +118,7 @@ Example:
     "host": "https://www.mydomain.com",
     "enable": true,
     "handleErrors": true,
+    "errorStackInResponse": false,
     "exclude": [
       {"model": "comment"},
       {"methods": "find"},
@@ -200,6 +201,24 @@ out of the box with EmberJS.
 
 - Type: `boolean`
 - Default: `true`
+
+### errorStackInResponse
+Along handleErrors, When true, this option will send the error stack if available within the error
+response. It will be stored under the `source.stack` key.
+
+**Please be careful, this option should never be enabled in a production environment. Doing so can expose sensitive data.**
+
+#### example
+```js
+{
+  ...
+  "errorStackInResponse": NODE_ENV === 'development',
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `false`
 
 ### exclude
 Allows blacklisting of models and methods.
@@ -417,6 +436,45 @@ module.exports = function (MyModel) {
     cb(null, options);
   }
 }
+```
+
+## Custom Errors
+Generic errors respond with a 500, but sometimes you want to have a better control over the error that is returned to the client, taking advantages of fields provided by JSONApi.
+
+**It is recommended that you extend the base Error constructor before throwing errors. Eg. BadRequestError**
+
+`meta` and `source` fields needs to be objects.
+
+#### example
+```js
+module.exports = function (MyModel) {
+  MyModel.find = function () {
+    var err = new Error('April 1st, 1998');
+    
+    err.status = 418;
+    err.name = 'I\'m a teapot';
+    err.source = { model: 'Post', method: 'find' };
+    err.detail = 'April 1st, 1998';
+    err.code = 'i\'m a teapot';
+    err.meta = { rfc: 'RFC2324' };
+
+    throw err
+  }
+}
+
+// This will be returned as :
+// {
+//   errors: [
+//     {
+//       status: 418,
+//       meta: { rfc: 'RFC2324' },
+//       code: 'i\'m a teapot',
+//       detail: 'April 1st, 1998',
+//       title: 'I\'m a teapot',
+//       source: { model: 'Post', method: 'find' }
+//     }
+//   ]
+// }
 ```
 
 ##### function parameters

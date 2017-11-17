@@ -2,6 +2,7 @@
 
 var request = require('supertest')
 var loopback = require('loopback')
+var _ = require('lodash')
 var expect = require('chai').expect
 var JSONAPIComponent = require('../')
 var app
@@ -24,7 +25,7 @@ describe('disabling loopback-component-jsonapi error handler', function () {
     request(app).get('/posts/100').end(function (err, res) {
       expect(err).to.equal(null)
       expect(res.body).to.have.keys('error')
-      expect(res.body.error).to.have.keys('name', 'message', 'statusCode')
+      expect(res.body.error).to.contain.keys('name', 'message', 'statusCode')
       done()
     })
   })
@@ -87,7 +88,7 @@ describe('loopback json api errors', function () {
           status: 404,
           code: 'MODEL_NOT_FOUND',
           detail: 'Unknown "post" id "100".',
-          source: '',
+          source: {},
           title: 'Error'
         })
         done()
@@ -129,7 +130,7 @@ describe('loopback json api errors', function () {
               status: 422,
               code: 'presence',
               detail: 'JSON API resource object must contain `data.type` property',
-              source: '',
+              source: {},
               title: 'ValidationError'
             })
             done()
@@ -177,4 +178,89 @@ describe('loopback json api errors', function () {
       }
     )
   })
+})
+
+describe('loopback json api errors with advanced reporting', function () {
+  var errorMetaMock = {
+    status: 418,
+    meta: { rfc: 'RFC2324' },
+    code: "i'm a teapot",
+    detail: 'April 1st, 1998',
+    title: "I'm a teapot",
+    source: { model: 'Post', method: 'find' }
+  }
+
+  beforeEach(function () {
+    app = loopback()
+    app.set('legacyExplorer', false)
+    var ds = loopback.createDataSource('memory')
+    Post = ds.createModel('post', {
+      id: { type: Number, id: true },
+      title: String,
+      content: String
+    })
+
+    Post.find = function () {
+      var err = new Error(errorMetaMock.detail)
+      err.name = errorMetaMock.title
+      err.meta = errorMetaMock.meta
+      err.source = errorMetaMock.source
+      err.statusCode = errorMetaMock.status
+      err.code = errorMetaMock.code
+      throw err
+    }
+
+    app.model(Post)
+    app.use(loopback.rest())
+    JSONAPIComponent(app, { restApiRoot: '', errorStackInResponse: true })
+  })
+
+  it(
+    'should return the given meta and source in the error response when an Error with a meta and source object is thrown',
+    function (done) {
+      request(app)
+        .get('/posts')
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body).to.have.keys('errors')
+          expect(res.body.errors.length).to.equal(1)
+
+          expect(_.omit(res.body.errors[0], 'source.stack')).to.deep.equal(
+            errorMetaMock
+          )
+          done()
+        })
+    }
+  )
+
+  it(
+    'should return the corresponding stack in error when `errorStackInResponse` enabled',
+    function (done) {
+      request(app)
+        .post('/posts')
+        .send({
+          data: {
+            attributes: { title: 'my post', content: 'my post content' }
+          }
+        })
+        .set('Content-Type', 'application/json')
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body).to.have.keys('errors')
+          expect(res.body.errors.length).to.equal(1)
+
+          expect(res.body.errors[0].source).to.haveOwnProperty('stack')
+          expect(res.body.errors[0].source.stack.length).to.be.above(100)
+
+          expect(_.omit(res.body.errors[0], 'source')).to.deep.equal({
+            status: 422,
+            code: 'presence',
+            detail: 'JSON API resource object must contain `data.type` property',
+            title: 'ValidationError'
+          })
+          done()
+        })
+    }
+  )
 })
