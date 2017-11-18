@@ -3,7 +3,6 @@
 var request = require('supertest')
 var loopback = require('loopback')
 var expect = require('chai').expect
-var query = require('./util/query')
 var JSONAPIComponent = require('../')
 var app
 var Post
@@ -54,7 +53,7 @@ describe('loopback json api component create method', function () {
     )
     it(
       'POST /models should have the JSON API Content-Type header set on response',
-      function (done) {
+      function () {
         var data = {
           data: {
             type: 'posts',
@@ -65,32 +64,24 @@ describe('loopback json api component create method', function () {
           }
         }
 
-        var options = {
-          headers: {
-            Accept: 'application/vnd.api+json',
-            'Content-Type': 'application/vnd.api+json'
-          }
-        }
-
-        // use http module via util to make this post to check headers are working since
-        // superagent/supertest breaks when trying to use JSON API Content-Type header
-        // waiting on a fix
-        // see https://github.com/visionmedia/superagent/issues/753
-        query(app).post('/posts', data, options, function (err, res) {
-          expect(err).to.equal(null)
-          expect(res.headers['content-type']).to.match(
-            /application\/vnd\.api\+json/
-          )
-          expect(res.statusCode).to.equal(201)
-          expect(res.body).to.have.all.keys('data')
-          expect(res.body.data).to.have.all.keys(
-            'type',
-            'id',
-            'links',
-            'attributes'
-          )
-          done()
-        })
+        return request(app)
+          .post('/posts')
+          .send(data)
+          .set('accept', 'application/vnd.api+json')
+          .set('content-type', 'application/vnd.api+json')
+          .then(res => {
+            expect(res.headers['content-type']).to.match(
+              /application\/vnd\.api\+json/
+            )
+            expect(res.statusCode).to.equal(201)
+            expect(res.body).to.have.all.keys('data')
+            expect(res.body.data).to.have.all.keys(
+              'type',
+              'id',
+              'links',
+              'attributes'
+            )
+          })
       }
     )
 
