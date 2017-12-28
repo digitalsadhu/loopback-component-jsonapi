@@ -119,6 +119,7 @@ Example:
     "enable": true,
     "handleErrors": true,
     "errorStackInResponse": false,
+    "handleCustomRemote": false,
     "exclude": [
       {"model": "comment"},
       {"methods": "find"},
@@ -213,6 +214,26 @@ response. It will be stored under the `source.stack` key.
 {
   ...
   "errorStackInResponse": NODE_ENV === 'development',
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `false`
+
+### handleCustomRemote
+Allow all (custom) remotes to be serialized by default.
+
+This option can be overrided with:
+1. `jsonapi` remote option (have highest priority)
+2. `exclude` component option
+3. `include` component option
+
+#### example
+```js
+{
+  ...
+  "handleCustomRemote": true,
   ...
 }
 ```
@@ -387,6 +408,55 @@ Only expose foreign keys for the comment model findById method. eg. `GET /api/co
 
 - Type: `boolean|array`
 - Default: `false`
+
+## Custom remote
+
+### `jsonapi` remote options
+Sometime you need to control if custom remote should be serialized or not.
+**By default a custom remote will NOT be handled by JSONApi.**
+
+To enabled/disable JSONApi for specific remotes, you have multiple solutions:
+
+1. Use `jsonapi` remote option
+2. Use `exlude` on component options (see above)
+3. Use `include` on component options (see above)
+4. Use `handleCustomRemote` on component options (see above)
+
+**This option has precedence** and it forces the remote to BE or to NOT BE deserialized/serialized by JSONApi.
+
+#### examples
+```js
+Post.remoteMethod('greet', {
+  jsonapi: true
+  returns: { root: true }
+})
+```
+Ensure the response of `Post.greet` will follow the JSONApi format.
+
+```js
+Post.remoteMethod('greet', {
+  jsonapi: false
+  returns: { arg: 'greeting', type: 'string' }
+})
+```
+Ensure the response of `Post.greet` will not follow the JSONApi format.
+
+#### Note
+You should always pass `root: true` to the `returns` object when you use JSONApi, especialy when you expect to respond with an array.
+
+### Override serialization type
+You may want for a custom method of a given model to return instance(s) from another model. When you do so, you need to enforce the return `type` of this other model in the definition of the remote method.
+
+*If an unknown type or no type are given, the model name will be used.*
+
+#### example
+
+```js
+Post.remoteMethod('prototype.ownComments', {
+  jsonapi: true
+  returns: { root: true, type: 'comment' }
+})
+```
 
 ## Custom Serialization
 For occasions where you need greater control over the serialization process, you can implement a custom serialization function for each model as needed. This function will be used instead of the regular serialization process.
