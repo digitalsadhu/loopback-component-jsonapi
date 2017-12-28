@@ -6,7 +6,7 @@ var expect = require('chai').expect
 var JSONAPIComponent = require('../')
 var app, Post, Archive
 
-describe.only('loopback json api remote methods', function () {
+describe('loopback json api remote methods', function () {
   var autocompleteTitleData = ['Post 1', 'Post 2']
 
   var archiveData = {
@@ -126,6 +126,33 @@ describe.only('loopback json api remote methods', function () {
 
     testAutocompleteJsonAPI()
     testArchivesJsonAPI()
+    testLastJsonAPI()
+  })
+
+  describe('when `exclude` is set', function (done) {
+    beforeEach(function () {
+      JSONAPIComponent(app, {
+        handleCustomRemote: true,
+        exclude: [{ methods: ['last', 'autocomplete', 'archives'] }],
+        include: [{ methods: 'last' }]
+      })
+    })
+
+    testArchivesJsonAPI()
+    testAutocompleteJsonAPI()
+    testLastRaw()
+  })
+
+  describe('when `include` is set', function (done) {
+    beforeEach(function () {
+      JSONAPIComponent(app, {
+        handleCustomRemote: false,
+        include: [{ methods: 'last' }]
+      })
+    })
+
+    testArchivesJsonAPI()
+    testAutocompleteJsonAPI()
     testLastJsonAPI()
   })
 
