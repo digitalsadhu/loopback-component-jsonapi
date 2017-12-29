@@ -119,7 +119,7 @@ Example:
     "enable": true,
     "handleErrors": true,
     "errorStackInResponse": false,
-    "handleCustomRemote": false,
+    "handleCustomRemoteMethods": false,
     "exclude": [
       {"model": "comment"},
       {"methods": "find"},
@@ -221,19 +221,19 @@ response. It will be stored under the `source.stack` key.
 - Type: `boolean`
 - Default: `false`
 
-### handleCustomRemote
-Allow all (custom) remotes to be serialized by default.
+### handleCustomRemoteMethods
+Allow all (custom) remote methods to be serialized by default.
 
-This option can be overrided with:
-1. `jsonapi` remote option (have highest priority)
-2. `exclude` component option
-3. `include` component option
+This option can be overridden in any of the following ways:
+1. Setting a jsonapi property to true or false in a remote method definition.
+2. Globally adding the remote method to the component's exclude array.
+3. Globally adding the remote method to the component's include array.
 
 #### example
 ```js
 {
   ...
-  "handleCustomRemote": true,
+  "handleCustomRemoteMethods": true,
   ...
 }
 ```
@@ -409,20 +409,17 @@ Only expose foreign keys for the comment model findById method. eg. `GET /api/co
 - Type: `boolean|array`
 - Default: `false`
 
-## Custom remote
+## Custom remote methods
 
-### `jsonapi` remote options
-Sometime you need to control if custom remote should be serialized or not.
-**By default a custom remote will NOT be handled by JSONApi.**
+### `jsonapi` remote method options
+Sometimes you need to be able to control when a custom remote method should be handled by the component. By default, `loopback-component-jsonapi` will not handle (serialize or deserialize) custom remote methods. In order to tell the component to handle a custom remote method, you have the following options (In priority order):
 
-To enabled/disable JSONApi for specific remotes, you have multiple solutions:
+1. Set `jsonapi` to `true` when defining a custom remote method.
+2. Add the methods name to the component's `exclude` array setting. (see above)
+3. Add the methods name to the component's `include` array setting. (see above)
+4. Set `handleCustomRemoteMethods` to `true` in the component's settings. (see above)
 
-1. Use `jsonapi` remote option
-2. Use `exlude` on component options (see above)
-3. Use `include` on component options (see above)
-4. Use `handleCustomRemote` on component options (see above)
-
-**This option has precedence** and it forces the remote to BE or to NOT BE deserialized/serialized by JSONApi.
+This option takes precedence and sets the component to handle or not handle the custom remote method.
 
 #### examples
 ```js
@@ -431,7 +428,7 @@ Post.remoteMethod('greet', {
   returns: { root: true }
 })
 ```
-Ensure the response of `Post.greet` will follow the JSONApi format.
+Ensures that the response from Post.greet will follow JSONApi format.
 
 ```js
 Post.remoteMethod('greet', {
@@ -439,13 +436,13 @@ Post.remoteMethod('greet', {
   returns: { arg: 'greeting', type: 'string' }
 })
 ```
-Ensure the response of `Post.greet` will not follow the JSONApi format.
+Ensures that the response from Post.greet will never follow JSONApi format.
 
 #### Note
-You should always pass `root: true` to the `returns` object when you use JSONApi, especialy when you expect to respond with an array.
+You must always pass `root: true` to the `returns` object when using `loopback-component-jsonapi`. This is especialy important when you expect the response to be an array.
 
-### Override serialization type
-You may want for a custom method of a given model to return instance(s) from another model. When you do so, you need to enforce the return `type` of this other model in the definition of the remote method.
+### Overriding serialization type
+When `loopback-component-jsonapi` serializes a custom remote method, by default it will assume that the data being serialized is of the same type as the model the custom remote method is being defined on. Eg. For a remote method on a `Comment` model, it will be assumed that the data being returned from the remote method will be a comment or an array of comments. When this is not the case, you will need to set the type property in the `returns` object in the remote method definition.
 
 *If an unknown type or no type are given, the model name will be used.*
 
