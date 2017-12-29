@@ -121,7 +121,7 @@ describe('loopback json api remote methods', function () {
 
   describe('when `serializeCustomRemote` is set', function (done) {
     beforeEach(function () {
-      JSONAPIComponent(app, { handleCustomRemote: true })
+      JSONAPIComponent(app, { handleCustomRemoteMethods: true })
     })
 
     testAutocompleteJsonAPI()
@@ -132,7 +132,7 @@ describe('loopback json api remote methods', function () {
   describe('when `exclude` is set', function (done) {
     beforeEach(function () {
       JSONAPIComponent(app, {
-        handleCustomRemote: true,
+        handleCustomRemoteMethods: true,
         exclude: [{ methods: ['last', 'autocomplete', 'archives'] }],
         include: [{ methods: 'last' }]
       })
@@ -146,7 +146,7 @@ describe('loopback json api remote methods', function () {
   describe('when `include` is set', function (done) {
     beforeEach(function () {
       JSONAPIComponent(app, {
-        handleCustomRemote: false,
+        handleCustomRemoteMethods: false,
         include: [{ methods: 'last' }]
       })
     })
@@ -220,7 +220,7 @@ describe('loopback json api remote methods', function () {
   /* Static test */
   function testLastRaw () {
     it(
-      'GET /posts/last should return a raw Post (exclude is more important than include and handleCustomRemote)',
+      'GET /posts/last should return a raw Post (exclude is more important than include and handleCustomRemoteMethods)',
       function (done) {
         request(app).get('/posts/last').expect(200).end(function (err, res) {
           expect(err).to.equal(null)
