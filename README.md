@@ -119,6 +119,7 @@ Example:
     "enable": true,
     "handleErrors": true,
     "errorStackInResponse": false,
+    "handleCustomRemoteMethods": false,
     "exclude": [
       {"model": "comment"},
       {"methods": "find"},
@@ -213,6 +214,26 @@ response. It will be stored under the `source.stack` key.
 {
   ...
   "errorStackInResponse": NODE_ENV === 'development',
+  ...
+}
+```
+
+- Type: `boolean`
+- Default: `false`
+
+### handleCustomRemoteMethods
+Allow all (custom) remote methods to be serialized by default.
+
+This option can be overridden in any of the following ways:
+1. Setting a jsonapi property to true or false in a remote method definition.
+2. Globally adding the remote method to the component's exclude array.
+3. Globally adding the remote method to the component's include array.
+
+#### example
+```js
+{
+  ...
+  "handleCustomRemoteMethods": true,
   ...
 }
 ```
@@ -387,6 +408,52 @@ Only expose foreign keys for the comment model findById method. eg. `GET /api/co
 
 - Type: `boolean|array`
 - Default: `false`
+
+## Custom remote methods
+
+### `jsonapi` remote method options
+Sometimes you need to be able to control when a custom remote method should be handled by the component. By default, `loopback-component-jsonapi` will not handle (serialize or deserialize) custom remote methods. In order to tell the component to handle a custom remote method, you have the following options (In priority order):
+
+1. Set `jsonapi` to `true` when defining a custom remote method.
+2. Add the methods name to the component's `exclude` array setting. (see above)
+3. Add the methods name to the component's `include` array setting. (see above)
+4. Set `handleCustomRemoteMethods` to `true` in the component's settings. (see above)
+
+This option takes precedence and sets the component to handle or not handle the custom remote method.
+
+#### examples
+```js
+Post.remoteMethod('greet', {
+  jsonapi: true
+  returns: { root: true }
+})
+```
+Ensures that the response from Post.greet will follow JSONApi format.
+
+```js
+Post.remoteMethod('greet', {
+  jsonapi: false
+  returns: { arg: 'greeting', type: 'string' }
+})
+```
+Ensures that the response from Post.greet will never follow JSONApi format.
+
+#### Note
+You must always pass `root: true` to the `returns` object when using `loopback-component-jsonapi`. This is especialy important when you expect the response to be an array.
+
+### Overriding serialization type
+When `loopback-component-jsonapi` serializes a custom remote method, by default it will assume that the data being serialized is of the same type as the model the custom remote method is being defined on. Eg. For a remote method on a `Comment` model, it will be assumed that the data being returned from the remote method will be a comment or an array of comments. When this is not the case, you will need to set the type property in the `returns` object in the remote method definition.
+
+*If an unknown type or no type are given, the model name will be used.*
+
+#### example
+
+```js
+Post.remoteMethod('prototype.ownComments', {
+  jsonapi: true
+  returns: { root: true, type: 'comment' }
+})
+```
 
 ## Custom Serialization
 For occasions where you need greater control over the serialization process, you can implement a custom serialization function for each model as needed. This function will be used instead of the regular serialization process.
