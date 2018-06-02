@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^6.0.2",
-    "@commitlint/config-conventional": "^6.0.2",
+    "@commitlint/config-conventional": "^7.0.0",
     "@commitlint/prompt": "^6.0.2",
     "chai": "^4.1.2",
     "commitizen": "^2.9.6",
