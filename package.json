@@ -59,7 +59,7 @@
     "coveralls": "^3.0.0",
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
-    "loopback": "^3.16.2",
+    "loopback": "^3.22.0",
     "loopback-datasource-juggler": "^3.13.0",
     "mocha": "^4.0.1",
     "rsvp": "4.7.0",
