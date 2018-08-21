@@ -57,13 +57,15 @@ describe('nested include option', function () {
               name: 'Joe'
             },
             function (err, author) {
+              expect(err).to.equal(null)
               post.comments.create(
                 {
                   title: 'My comment',
                   comment: 'My comment text',
                   authorId: author.getId()
                 },
-                function () {
+                function (err) {
+                  expect(err).to.equal(null)
                   post.comments.create(
                     {
                       title: 'My second comment',
