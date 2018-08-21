@@ -100,62 +100,76 @@ describe('loopback json api hasMany relationships', function () {
           })
           expect(res.body.included).to.be.an('array')
           expect(res.body.included.length).to.equal(3)
-          const relatedPostLink = id => {
-            return res.body.included[0].relationships.posts.links.related
+
+          const validateData = (slug, included) => {
+            switch (slug) {
+              case 'authors1':
+                return expect(included).to.deep.equal({
+                  id: '1',
+                  type: 'authors',
+                  attributes: {
+                    firstName: 'Joe',
+                    lastName: 'Shmoe'
+                  },
+                  relationships: {
+                    posts: {
+                      links: {
+                        related: included.relationships.posts.links.related
+                      }
+                    }
+                  }
+                })
+              case 'comments1':
+                return expect(included).to.deep.equal({
+                  id: '1',
+                  type: 'comments',
+                  attributes: {
+                    title: 'My comment',
+                    comment: 'My comment text'
+                  },
+                  relationships: {
+                    post: {
+                      data: {
+                        id: 1,
+                        type: 'posts'
+                      },
+                      links: {
+                        related: included.relationships.post.links.related
+                      }
+                    }
+                  }
+                })
+              case 'comments2':
+                return expect(included).to.deep.equal({
+                  id: '2',
+                  type: 'comments',
+                  attributes: {
+                    title: 'My second comment',
+                    comment: 'My second comment text'
+                  },
+                  relationships: {
+                    post: {
+                      data: {
+                        id: 1,
+                        type: 'posts'
+                      },
+                      links: {
+                        related: included.relationships.post.links.related
+                      }
+                    }
+                  }
+                })
+            }
           }
-          expect(res.body.included[0]).to.deep.equal({
-            id: '1',
-            type: 'authors',
-            attributes: {
-              firstName: 'Joe',
-              lastName: 'Shmoe'
-            },
-            relationships: {
-              posts: {
-                links: {
-                  related: relatedPostLink(0)
-                }
-              }
-            }
-          })
-          expect(res.body.included[1]).to.deep.equal({
-            id: '1',
-            type: 'comments',
-            attributes: {
-              title: 'My comment',
-              comment: 'My comment text'
-            },
-            relationships: {
-              post: {
-                data: {
-                  id: 1,
-                  type: 'posts'
-                },
-                links: {
-                  related: res.body.included[1].relationships.post.links.related
-                }
-              }
-            }
-          })
-          expect(res.body.included[2]).to.deep.equal({
-            id: '2',
-            type: 'comments',
-            attributes: {
-              title: 'My second comment',
-              comment: 'My second comment text'
-            },
-            relationships: {
-              post: {
-                data: {
-                  id: 1,
-                  type: 'posts'
-                },
-                links: {
-                  related: res.body.included[2].relationships.post.links.related
-                }
-              }
-            }
-          })
+
+          const verifiedIncluded = []
+          for (const included of res.body.included) {
+            const slug = included.type + included.id
+            expect(verifiedIncluded).to.not.include(slug)
+            validateData(slug, included)
+            verifiedIncluded.push(slug)
+          }
+
           done()
         })
     })

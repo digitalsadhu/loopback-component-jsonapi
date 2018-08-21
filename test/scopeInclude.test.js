@@ -118,14 +118,17 @@ describe('include option', function () {
         })
       })
 
-      it('with include paramter should have both models', function (done) {
+      it('with include parameter should have both models', function (done) {
         request(app)
           .get('/posts/1?filter[include]=author')
           .end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.included.length).equal(3)
-            expect(res.body.included[0].type).equal('authors')
-            expect(res.body.included[1].type).equal('comments')
+
+            var types = res.body.included.map(r => r.type)
+            types.sort()
+            expect(types).to.deep.equal(['authors', 'comments', 'comments'])
+
             done()
           })
       })
@@ -150,8 +153,17 @@ describe('include option', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.included.length).equal(3)
-            expect(res.body.included[0].type).equal('categories')
-            expect(res.body.included[0].attributes).to.include({})
+
+            var hasCategory = false
+            res.body.included.forEach(r => {
+              if (r.type === 'categories') {
+                hasCategory = true
+                expect(r.attributes).to.include({})
+              }
+            })
+
+            expect(hasCategory).to.equal(true, 'categories to be present')
+
             done()
           })
       })
