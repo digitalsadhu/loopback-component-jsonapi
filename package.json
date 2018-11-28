@@ -63,7 +63,7 @@
     "loopback-datasource-juggler": "^3.13.0",
     "mocha": "^4.0.1",
     "rsvp": "4.7.0",
-    "semantic-release": "^12.2.2",
+    "semantic-release": "^15.12.3",
     "standard": "^10.0.3",
     "supertest": "^3.0.0",
     "travis-deploy-once": "^4.3.1"
