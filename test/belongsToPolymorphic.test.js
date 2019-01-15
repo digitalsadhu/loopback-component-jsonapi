@@ -106,4 +106,101 @@ describe('loopback json api belongsTo polymorphic relationships', function () {
       }
     )
   })
+
+  describe('File with no relationship to a Post', function () {
+    beforeEach(function (done) {
+      FileModel.create(
+        {
+          fileName: 'blah.jpg'
+        },
+        done
+      )
+    })
+
+    it('should return a null value for relationship data', function (done) {
+      request(app).get('/fileModels/1').end(function (err, res) {
+        expect(err).to.equal(null)
+        expect(res.body).to.not.have.key('errors')
+        expect(res.body.data.relationships.parent).to.be.an('object')
+        expect(res.body.data.relationships.parent.data).to.equal(null)
+        done()
+      })
+    })
+  })
+
+  describe('Create relationship via API', function () {
+    beforeEach(function (done) {
+      Post.create(
+        {
+          title: 'Post One',
+          content: 'Content'
+        },
+        done
+      )
+    })
+
+    it('should define a relationship to Post when file is created', function (
+      done
+    ) {
+      request(app)
+        .post('/fileModels')
+        .send({
+          data: {
+            type: 'fileModels',
+            attributes: {
+              fileName: 'blah.jpg'
+            },
+            relationships: {
+              parent: {
+                data: {
+                  id: 1,
+                  type: 'posts'
+                }
+              }
+            }
+          }
+        })
+        .set('accept', 'application/vnd.api+json')
+        .set('content-type', 'application/json')
+        .expect(201)
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body).to.not.have.key('errors')
+          expect(res.body.data.relationships.parent).to.be.an('object')
+          expect(res.body.data.relationships.parent.data).to.be.an('object')
+          done()
+        })
+    })
+
+    it('should ignore relationships with an invalid type', function (done) {
+      request(app)
+        .post('/fileModels')
+        .send({
+          data: {
+            type: 'fileModels',
+            attributes: {
+              fileName: 'blah.jpg'
+            },
+            relationships: {
+              parent: {
+                data: {
+                  id: 1,
+                  type: 'invalidType'
+                }
+              }
+            }
+          }
+        })
+        .set('accept', 'application/vnd.api+json')
+        .set('content-type', 'application/json')
+        .expect(201)
+        .end(function (err, res) {
+          expect(err).to.equal(null)
+          expect(res.body).to.not.have.key('errors')
+          expect(res.body.data.relationships.parent).to.be.an('object')
+          expect(res.body.data.relationships.parent.data).to.equal(null)
+          done()
+        })
+    })
+  })
 })
