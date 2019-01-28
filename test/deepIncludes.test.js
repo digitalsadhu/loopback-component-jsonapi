@@ -4,7 +4,7 @@ var request = require('supertest')
 var loopback = require('loopback')
 var expect = require('chai').expect
 var JSONAPIComponent = require('../')
-var app, Post, Group, Comment, Author, Rating, ds
+var app, Post, Group, Comment, Author, Rating, Clap, ds
 
 describe('deep includes test', function () {
   beforeEach(function () {
@@ -27,6 +27,9 @@ describe('deep includes test', function () {
       title: String,
       comment: String
     })
+    Clap = ds.createModel('clap', {
+      amount: Number
+    })
     Rating = ds.createModel('rating', {
       rating: Number
     })
@@ -34,11 +37,13 @@ describe('deep includes test', function () {
     Post.settings.plural = 'posts'
     Author.settings.plural = 'authors'
     Comment.settings.plural = 'comments'
+    Clap.settings.plural = 'claps'
 
     app.model(Group)
     app.model(Author)
     app.model(Post)
     app.model(Comment)
+    app.model(Clap)
     app.model(Rating)
 
     Group.hasMany(Author)
@@ -46,8 +51,10 @@ describe('deep includes test', function () {
     Author.hasMany(Post)
     Author.hasOne(Rating)
     Post.hasMany(Comment)
+    Post.hasMany(Clap)
     Post.belongsTo(Author)
     Comment.belongsTo(Post)
+    Clap.belongsTo(Post)
     Rating.belongsTo(Author)
 
     app.use(loopback.rest())
@@ -63,23 +70,28 @@ describe('deep includes test', function () {
           author
         ) {
           expect(err).to.equal(null)
-          author.rating.create({ rating: 146 })
-          author.posts.create(
-            { title: 'my post', content: 'my post content' },
-            function (err, post) {
-              expect(err).to.equal(null)
-              post.comments.create(
-                [
-                  { title: 'My comment', comment: 'My comment text' },
-                  {
-                    title: 'My second comment',
-                    comment: 'My second comment text'
-                  }
-                ],
-                done
-              )
-            }
-          )
+          author.rating.create({ rating: 146 }, function (err) {
+            expect(err).to.equal(null)
+            author.posts.create(
+              { title: 'my post', content: 'my post content' },
+              function (err, post) {
+                expect(err).to.equal(null)
+                post.claps.create({ amount: 50 }, function (err) {
+                  expect(err).to.equal(null)
+                  post.comments.create(
+                    [
+                      { title: 'My comment', comment: 'My comment text' },
+                      {
+                        title: 'My second comment',
+                        comment: 'My second comment text'
+                      }
+                    ],
+                    done
+                  )
+                })
+              }
+            )
+          })
         })
       })
     })
@@ -202,30 +214,202 @@ describe('deep includes test', function () {
           expect(postsIncluded.length).to.equal(1)
           expect(authorsIncluded.length).to.equal(1)
 
-          included.forEach(item => {
+          commentsIncluded.forEach(item => {
             expect(item).to.has.property('id')
-            expect(item.type).to.be.oneOf(['posts', 'authors', 'comments'])
+            expect(item.attributes).to.has.property('title')
+            expect(item.attributes).to.has.property('comment')
+          })
 
-            if (item.type === 'authors') {
+          authorsIncluded.forEach(item => {
+            expect(item).to.has.property('id')
+            expect(item.attributes).to.has.property('firstName')
+            expect(item.attributes).to.has.property('lastName')
+            expect(item.relationships).to.has.property('posts')
+            expect(item.relationships.posts.data).to.be.an('array')
+            item.relationships.posts.data.forEach(post => {
+              expect(post).to.has.property('id')
+              expect(post.type).to.equal('posts')
+            })
+          })
+
+          postsIncluded.forEach(item => {
+            expect(item).to.has.property('id')
+            expect(item.attributes).to.has.property('title')
+            expect(item.attributes).to.has.property('content')
+            expect(item.relationships).to.has.property('comments')
+            expect(item.relationships.comments.data).to.be.an('array')
+            item.relationships.comments.data.forEach(comment => {
+              expect(comment).to.has.property('id')
+              expect(comment.type).to.equal('comments')
+            })
+          })
+
+          done()
+        })
+    })
+    it(
+      'should return correct response for one-level and two-level nested includes',
+      function (done) {
+        request(app)
+          .get('/groups/1/?include=authors.posts.comments,authors.rating')
+          .expect(200)
+          .end(function (err, res) {
+            var data = res.body.data
+            expect(err).to.equal(null)
+            expect(data.id).to.equal('1')
+            expect(data.type).to.equal('groups')
+            expect(data.relationships).to.be.a('object')
+            expect(data.relationships.authors).to.be.a('object')
+            expect(data.relationships.authors.data.length).to.equal(1)
+            data.relationships.authors.data.forEach(post => {
+              expect(post.id).to.equal('1')
+              expect(post.type).to.equal('authors')
+            })
+            expect(data.attributes).to.deep.equal({ title: 'art' })
+            const included = res.body.included
+            expect(included).to.be.an('array')
+
+            const commentsIncluded = included.filter(
+              incl => incl.type === 'comments'
+            )
+            const postsIncluded = included.filter(
+              incl => incl.type === 'posts'
+            )
+            const authorsIncluded = included.filter(
+              incl => incl.type === 'authors'
+            )
+            const ratingIncluded = included.filter(
+              incl => incl.type === 'rating'
+            )
+
+            expect(commentsIncluded.length).to.equal(2)
+            expect(postsIncluded.length).to.equal(1)
+            expect(authorsIncluded.length).to.equal(1)
+            expect(ratingIncluded.length).to.equal(1)
+
+            ratingIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('rating')
+            })
+
+            commentsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('title')
+              expect(item.attributes).to.has.property('comment')
+            })
+
+            authorsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('firstName')
+              expect(item.attributes).to.has.property('lastName')
               expect(item.relationships).to.has.property('posts')
               expect(item.relationships.posts.data).to.be.an('array')
               item.relationships.posts.data.forEach(post => {
                 expect(post).to.has.property('id')
                 expect(post.type).to.equal('posts')
               })
-            }
+            })
 
-            if (item.type === 'posts') {
+            postsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('title')
+              expect(item.attributes).to.has.property('content')
               expect(item.relationships).to.has.property('comments')
               expect(item.relationships.comments.data).to.be.an('array')
-              item.relationships.comments.data.forEach(post => {
-                expect(post).to.has.property('id')
-                expect(post.type).to.equal('comments')
+              item.relationships.comments.data.forEach(comment => {
+                expect(comment).to.has.property('id')
+                expect(comment.type).to.equal('comments')
               })
-            }
+            })
+
+            done()
           })
-          done()
-        })
-    })
+      }
+    )
+    it(
+      'should return correct response for two two-levels nested includes',
+      function (done) {
+        request(app)
+          .get('/groups/1/?include=authors.posts.comments,authors.posts.claps')
+          .expect(200)
+          .end(function (err, res) {
+            var data = res.body.data
+            expect(err).to.equal(null)
+            expect(data.id).to.equal('1')
+            expect(data.type).to.equal('groups')
+            expect(data.relationships).to.be.a('object')
+            expect(data.relationships.authors).to.be.a('object')
+            expect(data.relationships.authors.data.length).to.equal(1)
+            data.relationships.authors.data.forEach(post => {
+              expect(post.id).to.equal('1')
+              expect(post.type).to.equal('authors')
+            })
+            expect(data.attributes).to.deep.equal({ title: 'art' })
+            const included = res.body.included
+            expect(included).to.be.an('array')
+
+            const commentsIncluded = included.filter(
+              incl => incl.type === 'comments'
+            )
+            const postsIncluded = included.filter(
+              incl => incl.type === 'posts'
+            )
+            const authorsIncluded = included.filter(
+              incl => incl.type === 'authors'
+            )
+            const clapsIncluded = included.filter(
+              incl => incl.type === 'claps'
+            )
+
+            expect(commentsIncluded.length).to.equal(2)
+            expect(postsIncluded.length).to.equal(1)
+            expect(authorsIncluded.length).to.equal(1)
+            expect(clapsIncluded.length).to.equal(1)
+
+            clapsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes.amount).to.equal(50)
+              expect(item.attributes.postId).to.equal(1)
+            })
+
+            commentsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('title')
+              expect(item.attributes).to.has.property('comment')
+            })
+
+            authorsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('firstName')
+              expect(item.attributes).to.has.property('lastName')
+              expect(item.relationships).to.has.property('posts')
+              expect(item.relationships.posts.data).to.be.an('array')
+              item.relationships.posts.data.forEach(post => {
+                expect(post).to.has.property('id')
+                expect(post.type).to.equal('posts')
+              })
+            })
+
+            postsIncluded.forEach(item => {
+              expect(item).to.has.property('id')
+              expect(item.attributes).to.has.property('title')
+              expect(item.attributes).to.has.property('content')
+              expect(item.relationships).to.has.property('comments')
+              expect(item.relationships).to.has.property('claps')
+              expect(item.relationships.comments.data).to.be.an('array')
+              expect(item.relationships.claps.data).to.be.an('array')
+              item.relationships.comments.data.forEach(comment => {
+                expect(comment).to.has.property('id')
+                expect(comment.type).to.equal('comments')
+              })
+              item.relationships.claps.data.forEach(clap => {
+                expect(clap).to.has.property('id')
+                expect(clap.type).to.equal('claps')
+              })
+            })
+            done()
+          })
+      }
+    )
   })
 })
