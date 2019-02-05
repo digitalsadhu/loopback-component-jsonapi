@@ -34,11 +34,6 @@ describe('deep includes test', function () {
       rating: Number
     })
 
-    Post.settings.plural = 'posts'
-    Author.settings.plural = 'authors'
-    Comment.settings.plural = 'comments'
-    Clap.settings.plural = 'claps'
-
     app.model(Group)
     app.model(Author)
     app.model(Post)
@@ -105,13 +100,13 @@ describe('deep includes test', function () {
         .end(function (err, res) {
           var data = res.body.data
           expect(err).to.equal(null)
-          expect(data.id).to.equal('1')
+          expect(data.id).to.equal(1)
           expect(data.type).to.equal('groups')
           expect(data.relationships).to.be.a('object')
           expect(data.relationships.authors).to.be.a('object')
 
           data.relationships.authors.data.forEach(post => {
-            expect(post.id).to.equal('1')
+            expect(post.id).to.equal(1)
             expect(post.type).to.equal('authors')
           })
           expect(data.attributes).to.deep.equal({ title: 'art' })
@@ -143,17 +138,17 @@ describe('deep includes test', function () {
           .end(function (err, res) {
             var data = res.body.data
             expect(err).to.equal(null)
-            expect(data.id).to.equal('1')
+            expect(data.id).to.equal(1)
             expect(data.type).to.equal('authors')
             expect(data.relationships).to.be.a('object')
             expect(data.relationships.posts).to.be.a('object')
 
             data.relationships.posts.data.forEach(post => {
-              expect(post.id).to.equal('1')
+              expect(post.id).to.equal(1)
               expect(post.type).to.equal('posts')
             })
 
-            expect(data.relationships.rating.data.id).to.equal('1')
+            expect(data.relationships.rating.data.id).to.equal(1)
             expect(data.relationships.rating.data.type).to.equal('ratings')
 
             expect(data.attributes).to.deep.equal({
@@ -189,13 +184,13 @@ describe('deep includes test', function () {
         .end(function (err, res) {
           var data = res.body.data
           expect(err).to.equal(null)
-          expect(data.id).to.equal('1')
+          expect(data.id).to.equal(1)
           expect(data.type).to.equal('groups')
           expect(data.relationships).to.be.a('object')
           expect(data.relationships.authors).to.be.a('object')
           expect(data.relationships.authors.data.length).to.equal(1)
           data.relationships.authors.data.forEach(post => {
-            expect(post.id).to.equal('1')
+            expect(post.id).to.equal(1)
             expect(post.type).to.equal('authors')
           })
           expect(data.attributes).to.deep.equal({ title: 'art' })
@@ -256,13 +251,13 @@ describe('deep includes test', function () {
           .end(function (err, res) {
             var data = res.body.data
             expect(err).to.equal(null)
-            expect(data.id).to.equal('1')
+            expect(data.id).to.equal(1)
             expect(data.type).to.equal('groups')
             expect(data.relationships).to.be.a('object')
             expect(data.relationships.authors).to.be.a('object')
             expect(data.relationships.authors.data.length).to.equal(1)
             data.relationships.authors.data.forEach(post => {
-              expect(post.id).to.equal('1')
+              expect(post.id).to.equal(1)
               expect(post.type).to.equal('authors')
             })
             expect(data.attributes).to.deep.equal({ title: 'art' })
@@ -279,7 +274,7 @@ describe('deep includes test', function () {
               incl => incl.type === 'authors'
             )
             const ratingIncluded = included.filter(
-              incl => incl.type === 'rating'
+              incl => incl.type === 'ratings'
             )
 
             expect(commentsIncluded.length).to.equal(2)
@@ -335,13 +330,13 @@ describe('deep includes test', function () {
           .end(function (err, res) {
             var data = res.body.data
             expect(err).to.equal(null)
-            expect(data.id).to.equal('1')
+            expect(data.id).to.equal(1)
             expect(data.type).to.equal('groups')
             expect(data.relationships).to.be.a('object')
             expect(data.relationships.authors).to.be.a('object')
             expect(data.relationships.authors.data.length).to.equal(1)
             data.relationships.authors.data.forEach(post => {
-              expect(post.id).to.equal('1')
+              expect(post.id).to.equal(1)
               expect(post.type).to.equal('authors')
             })
             expect(data.attributes).to.deep.equal({ title: 'art' })
@@ -369,7 +364,6 @@ describe('deep includes test', function () {
             clapsIncluded.forEach(item => {
               expect(item).to.has.property('id')
               expect(item.attributes.amount).to.equal(50)
-              expect(item.attributes.postId).to.equal(1)
             })
 
             commentsIncluded.forEach(item => {

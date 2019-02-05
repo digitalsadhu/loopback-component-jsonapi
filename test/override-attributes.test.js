@@ -31,7 +31,18 @@ describe('attributes option', function () {
     app.use(loopback.rest())
 
     Post.create(
-      { title: 'my post', content: 'my post content', other: 'my post other' },
+      [
+        {
+          title: 'my post',
+          content: 'my post content',
+          other: 'my post other'
+        },
+        {
+          title: 'my second post',
+          content: 'my second post content',
+          other: 'my second post other'
+        }
+      ],
       function () {
         Comment.create(
           {
@@ -58,6 +69,9 @@ describe('attributes option', function () {
       request(app).get('/posts').expect(200).end(function (err, res) {
         expect(err).to.equal(null)
         expect(res.body.data[0].attributes).to.deep.equal({ title: 'my post' })
+        expect(res.body.data[1].attributes).to.deep.equal({
+          title: 'my second post'
+        })
         done()
       })
     })

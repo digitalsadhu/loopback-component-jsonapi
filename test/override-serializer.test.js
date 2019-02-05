@@ -48,9 +48,10 @@ describe('hook in to modify serialization process', function () {
   })
 
   describe('before serialization', function () {
+    var customTitle = 'my own custom title'
     beforeEach(function () {
       Post.beforeJsonApiSerialize = function (options, cb) {
-        options.type = 'notPosts'
+        options.results[0].title = customTitle
         cb(null, options)
       }
     })
@@ -62,7 +63,7 @@ describe('hook in to modify serialization process', function () {
     ) {
       request(app).get('/posts').expect(200).end(function (err, res) {
         expect(err).to.equal(null)
-        expect(res.body.data[0].type).to.equal('notPosts')
+        expect(res.body.data[0].attributes.title).to.equal(customTitle)
         done()
       })
     })

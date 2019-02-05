@@ -33,7 +33,7 @@ describe('loopback json api remote methods', function () {
     Archive = ds.createModel('archive', {
       id: { type: Number, id: true },
       raw: Object,
-      createAt: Date
+      createdAt: Number
     })
 
     Post = ds.createModel('post', {
@@ -186,7 +186,7 @@ describe('loopback json api remote methods', function () {
             expect(res.body).to.be.an('object')
             expect(res.body.data).to.be.an('array').with.lengthOf(1)
             expect(res.body.data[0].type).to.equal('archives')
-            expect(res.body.data[0].id).to.equal(archiveData.id + '')
+            expect(res.body.data[0].id).to.equal(archiveData.id)
             expect(res.body.data[0].attributes).to.deep.equal({
               raw: archiveData.raw,
               createdAt: archiveData.createdAt
@@ -205,7 +205,7 @@ describe('loopback json api remote methods', function () {
         expect(err).to.equal(null)
 
         expect(res.body.data).to.be.an('object')
-        expect(res.body.data.id).to.equal(postData.id + '')
+        expect(res.body.data.id).to.equal(postData.id)
         expect(res.body.data.type).to.equal('posts')
         expect(res.body.data.attributes).to.deep.equal({
           title: postData.title,

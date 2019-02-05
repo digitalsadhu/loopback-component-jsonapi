@@ -141,8 +141,8 @@ describe('hasManyThrough upsert', function () {
     return agent.patch('/movies/1').send(payload).then(() => {
       return agent.get('/movies/1/categories').then(res => {
         expect(res.body.data.length).to.equal(2)
-        expect(res.body.data[0].id).to.equal('1')
-        expect(res.body.data[1].id).to.equal('4')
+        expect(res.body.data[0].id).to.equal(1)
+        expect(res.body.data[1].id).to.equal(4)
       })
     })
   })

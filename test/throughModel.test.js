@@ -65,7 +65,7 @@ describe('through Model', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             expect(res).to.not.have.deep.property('body.errors')
-            expect(res.body.data.id).to.equal('1')
+            expect(res.body.data.id).to.equal(1)
             done(err)
           })
       })
@@ -87,9 +87,9 @@ describe('through Model', function () {
             'topics'
           )
           expect(res.body.included[0].type).to.equal('topics')
-          expect(res.body.included[0].id).to.equal('1')
+          expect(res.body.included[0].id).to.equal(1)
           expect(res.body.included[1].type).to.equal('topics')
-          expect(res.body.included[1].id).to.equal('2')
+          expect(res.body.included[1].id).to.equal(2)
           done(err)
         })
       })
@@ -108,7 +108,7 @@ describe('through Model', function () {
             'users'
           )
           expect(res.body.included[0].type).to.equal('users')
-          expect(res.body.included[0].id).to.equal('1')
+          expect(res.body.included[0].id).to.equal(1)
           done(err)
         })
       })
