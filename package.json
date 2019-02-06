@@ -41,14 +41,10 @@
   "homepage": "https://github.com/digitalsadhu/loopback-component-jsonapi#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "debug": "^3.1.0",
     "http-status-codes": "^1.3.0",
     "inflection": "^1.7.2",
-    "lint-staged": "^6.0.0",
     "lodash": "^4.17.1",
     "loopback-jsonapi-model-serializer": "^1.0.1",
-    "prettier-standard-formatter": "^0.222222222222222.333333333333333",
-    "snazzy": "^7.0.0",
     "type-is": "^1.6.14"
   },
   "devDependencies": {
@@ -58,13 +54,17 @@
     "chai": "^4.1.2",
     "commitizen": "^2.9.6",
     "coveralls": "^3.0.0",
+    "debug": "^3.1.0",
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
+    "lint-staged": "^6.0.0",
     "loopback": "^3.16.2",
     "loopback-datasource-juggler": "^3.13.0",
     "mocha": "^4.0.1",
+    "prettier-standard-formatter": "^0.222222222222222.333333333333333",
     "rsvp": "4.7.0",
     "semantic-release": "^12.2.2",
+    "snazzy": "^7.0.0",
     "standard": "^10.0.3",
     "supertest": "^3.0.0",
     "travis-deploy-once": "^4.3.1"
