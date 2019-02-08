@@ -566,12 +566,6 @@ context.
 The name of the property that is the primary key for the model. This is usually just
 `id` unless defined differently in a model.json file.
 
-###### `options.requestedIncludes`
-The relationships that the user has requested be side loaded with the request.
-For example, for the request `GET /api/posts?include=comments` options.requestedIncludes
-would be `'comments'`.
-- Type: `string` or `array`
-- eg: `'comments'` or `['posts', 'comments']`
 
 ###### `options.host`
 The host part of the url including any port information.

@@ -6,9 +6,9 @@ cache:
 notifications:
   email: false
 node_js:
+  - '10'
   - '8'
   - '6'
-  - '4'
 before_script:
   - npm prune
   - 'npm i -g jsinspect'
