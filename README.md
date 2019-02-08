@@ -384,7 +384,7 @@ Never expose foreign keys for any models (default behaviour)
 }
 ```
 
-Only expose foreign keys for the commeht model
+Only expose foreign keys for the comment model
 ```js
 {
   ...
