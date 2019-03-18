@@ -124,8 +124,14 @@ describe('include option', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.included.length).equal(3)
-            expect(res.body.included[0].type).equal('authors')
-            expect(res.body.included[1].type).equal('comments')
+            var authors = res.body.included.filter(function (incl) {
+              return incl.type === 'authors'
+            })
+            var comments = res.body.included.filter(function (incl) {
+              return incl.type === 'comments'
+            })
+            expect(authors.length).equal(1)
+            expect(comments.length).equal(2)
             done()
           })
       })
@@ -150,8 +156,11 @@ describe('include option', function () {
           .end(function (err, res) {
             expect(err).to.equal(null)
             expect(res.body.included.length).equal(3)
-            expect(res.body.included[0].type).equal('categories')
-            expect(res.body.included[0].attributes).to.include({})
+            var categories = res.body.included.filter(function (incl) {
+              return incl.type === 'categories'
+            })
+            expect(categories.length).to.equal(1)
+            expect(categories[0].attributes).to.include({})
             done()
           })
       })

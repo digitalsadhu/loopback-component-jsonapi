@@ -117,11 +117,9 @@ describe('loopback json api hasOne relationships', function () {
           expect(res.body).to.be.an('object')
           expect(res.body.links).to.be.an('object')
           expect(res.body.links.self).to.match(/posts\/1\/author/)
-          expect(res.body.data.attributes).to.deep.equal({
-            name: 'Bob Jones'
-          })
+          expect(res.body.data.attributes.name).to.equal('Bob Jones')
           expect(res.body.data.type).to.equal('people')
-          expect(res.body.data.id).to.equal('1')
+          expect(res.body.data.id).to.equal(1)
           expect(res.body.data.links.self).to.match(/^http.*\/people\/1$/)
           done()
         })
@@ -146,10 +144,8 @@ describe('loopback json api hasOne relationships', function () {
               /posts\/1\/relationships\/author/
             )
             expect(res.body.links.related).to.match(/posts\/1\/author/)
-            expect(res.body.data).to.deep.equal({
-              type: 'people',
-              id: '1'
-            })
+            expect(res.body.data.id).to.equal(1)
+            expect(res.body.data.type).to.equal('people')
             done()
           })
       })
@@ -204,7 +200,7 @@ describe('loopback json api hasOne relationships', function () {
                   res.body.data[0].relationships.author.data
                 ).to.deep.equal({
                   type: 'people',
-                  id: '1'
+                  id: 1
                 })
                 expect(res.body.data[0].relationships.author.links).to.be.an(
                   'object'
@@ -214,13 +210,11 @@ describe('loopback json api hasOne relationships', function () {
                 ).to.match(/posts\/1\/author/)
                 expect(res.body.included).to.be.an('array')
                 expect(res.body.included.length).to.equal(1)
-                expect(res.body.included[0]).to.have.all.keys(
-                  'type',
-                  'id',
-                  'attributes'
-                )
+                expect(res.body.included[0]).has.property('id')
+                expect(res.body.included[0]).has.property('type')
+                expect(res.body.included[0]).has.property('attributes')
                 expect(res.body.included[0].type).to.equal('people')
-                expect(res.body.included[0].id).to.equal('1')
+                expect(res.body.included[0].id).to.equal(1)
                 done()
               })
           }
@@ -243,13 +237,11 @@ describe('loopback json api hasOne relationships', function () {
               expect(err).to.equal(null)
               expect(res.body.included).to.be.an('array')
               expect(res.body.included.length).to.equal(1)
-              expect(res.body.included[0]).to.deep.equal({
-                id: '1',
-                type: 'people',
-                attributes: {
-                  postId: 1,
-                  name: 'Bob Jones'
-                }
+              expect(res.body.included[0].id).to.equal(1)
+              expect(res.body.included[0].type).to.equal('people')
+              expect(res.body.included[0].attributes).to.deep.equal({
+                postId: 1,
+                name: 'Bob Jones'
               })
               done()
             })
@@ -313,7 +305,7 @@ describe('loopback json api hasOne relationships', function () {
                 expect(res.body.data.relationships.author).to.be.an('object')
                 expect(res.body.data.relationships.author.data).to.deep.equal({
                   type: 'people',
-                  id: '1'
+                  id: 1
                 })
                 expect(res.body.data.relationships.author.links).to.be.an(
                   'object'
@@ -323,13 +315,12 @@ describe('loopback json api hasOne relationships', function () {
                 ).to.match(/posts\/1\/author/)
                 expect(res.body.included).to.be.an('array')
                 expect(res.body.included.length).to.equal(1)
-                expect(res.body.included[0]).to.have.all.keys(
-                  'type',
-                  'id',
-                  'attributes'
-                )
+
+                expect(res.body.included[0]).has.property('type')
+                expect(res.body.included[0]).has.property('id')
+                expect(res.body.included[0]).has.property('attributes')
                 expect(res.body.included[0].type).to.equal('people')
-                expect(res.body.included[0].id).to.equal('1')
+                expect(res.body.included[0].id).to.equal(1)
                 done()
               })
           }

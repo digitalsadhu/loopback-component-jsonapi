@@ -165,10 +165,8 @@ describe('loopback json api hasMany relationships', function () {
             expect(res.body.links.related).to.match(/posts\/1\/comments/)
             expect(res.body.data).to.be.an('array')
             expect(res.body.data.length).to.equal(2)
-            expect(res.body.data[0]).to.deep.equal({
-              type: 'comments',
-              id: '1'
-            })
+            expect(res.body.data[0].id).to.equal(1)
+            expect(res.body.data[0].type).to.equal('comments')
             done()
           })
       })
@@ -226,11 +224,11 @@ describe('loopback json api hasMany relationships', function () {
                 ).to.deep.equal([
                   {
                     type: 'comments',
-                    id: '1'
+                    id: 1
                   },
                   {
                     type: 'comments',
-                    id: '2'
+                    id: 2
                   }
                 ])
                 expect(res.body.data[0].relationships.comments.links).to.be.an(
@@ -241,14 +239,12 @@ describe('loopback json api hasMany relationships', function () {
                 ).to.match(/posts\/1\/comments/)
                 expect(res.body.included).to.be.an('array')
                 expect(res.body.included.length).to.equal(2)
-                expect(res.body.included[0]).to.have.all.keys(
-                  'type',
-                  'id',
-                  'attributes',
-                  'relationships'
-                )
+                expect(res.body.included[0]).has.property('id')
+                expect(res.body.included[0]).has.property('type')
+                expect(res.body.included[0]).has.property('attributes')
+                expect(res.body.included[0]).has.property('relationships')
                 expect(res.body.included[0].type).to.equal('comments')
-                expect(res.body.included[0].id).to.equal('1')
+                expect(res.body.included[0].id).to.equal(1)
                 done()
               })
           }
@@ -276,33 +272,31 @@ describe('loopback json api hasMany relationships', function () {
               expect(res.body.included).to.be.an('array')
               expect(res.body.included.length).to.equal(2)
               expect(res.body.data[0].attributes).to.not.have.keys('comments')
-              expect(res.body.included[0]).to.deep.equal({
-                id: '1',
-                type: 'comments',
-                attributes: {
-                  title: 'My comment',
-                  comment: 'My comment text'
-                },
-                relationships: {
-                  replies: {
-                    links: {
-                      related: relatedReplies(0)
-                    }
+              expect(res.body.included[0].id).to.equal(1)
+              expect(res.body.included[0].type).to.equal('comments')
+              expect(res.body.included[0].attributes).to.deep.equal({
+                title: 'My comment',
+                comment: 'My comment text',
+                postId: 1
+              })
+              expect(res.body.included[0].relationships).to.deep.equal({
+                replies: {
+                  links: {
+                    related: relatedReplies(0)
                   }
                 }
               })
-              expect(res.body.included[1]).to.deep.equal({
-                id: '2',
-                type: 'comments',
-                attributes: {
-                  title: 'My second comment',
-                  comment: 'My second comment text'
-                },
-                relationships: {
-                  replies: {
-                    links: {
-                      related: relatedReplies(1)
-                    }
+              expect(res.body.included[1].id).to.equal(2)
+              expect(res.body.included[1].type).to.equal('comments')
+              expect(res.body.included[1].attributes).to.deep.equal({
+                title: 'My second comment',
+                comment: 'My second comment text',
+                postId: 1
+              })
+              expect(res.body.included[1].relationships).to.deep.equal({
+                replies: {
+                  links: {
+                    related: relatedReplies(1)
                   }
                 }
               })
@@ -371,11 +365,11 @@ describe('loopback json api hasMany relationships', function () {
                 ).to.deep.equal([
                   {
                     type: 'comments',
-                    id: '1'
+                    id: 1
                   },
                   {
                     type: 'comments',
-                    id: '2'
+                    id: 2
                   }
                 ])
                 expect(res.body.data.relationships.comments.links).to.be.an(
@@ -386,14 +380,12 @@ describe('loopback json api hasMany relationships', function () {
                 ).to.match(/posts\/1\/comments/)
                 expect(res.body.included).to.be.an('array')
                 expect(res.body.included.length).to.equal(2)
-                expect(res.body.included[0]).to.have.all.keys(
-                  'type',
-                  'id',
-                  'attributes',
-                  'relationships'
-                )
+                expect(res.body.included[0]).has.property('id')
+                expect(res.body.included[0]).has.property('type')
+                expect(res.body.included[0]).has.property('attributes')
+                expect(res.body.included[0]).has.property('relationships')
                 expect(res.body.included[0].type).to.equal('comments')
-                expect(res.body.included[0].id).to.equal('1')
+                expect(res.body.included[0].id).to.equal(1)
                 done()
               })
           }

@@ -156,10 +156,8 @@ describe('loopback json api referencesMany relationships', function () {
             expect(res.body.links.related).to.match(/posts\/1\/comments/)
             expect(res.body.data).to.be.an('array')
             expect(res.body.data.length).to.equal(1)
-            expect(res.body.data[0]).to.deep.equal({
-              type: 'comments',
-              id: '1'
-            })
+            expect(res.body.data[0].type).to.equal('comments')
+            expect(res.body.data[0].id).to.equal(1)
             done()
           })
       })

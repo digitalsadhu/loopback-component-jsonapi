@@ -223,7 +223,7 @@ describe('loopback json api component find methods', function () {
           'attributes',
           'links'
         )
-        expect(res.body.data[0].id).to.equal('1')
+        expect(res.body.data[0].id).to.equal(1)
         expect(res.body.data[0].type).to.equal('posts')
         expect(res.body.data[0].attributes).to.have.all.keys(
           'title',
@@ -247,7 +247,7 @@ describe('loopback json api component find methods', function () {
           'attributes',
           'links'
         )
-        expect(res.body.data.id).to.equal('1')
+        expect(res.body.data.id).to.equal(1)
         expect(res.body.data.type).to.equal('posts')
         expect(res.body.data.attributes).to.have.all.keys('title', 'content')
         expect(res.body.data.attributes).to.not.have.keys('id')
@@ -369,7 +369,7 @@ describe('loopback json api component find methods', function () {
         .end(function (err, res) {
           expect(err).to.equal(null)
           expect(res.body.data.length).to.equal(1)
-          expect(res.body.data[0].id).to.equal('2')
+          expect(res.body.data[0].id).to.equal(2)
           done()
         })
     })
@@ -395,7 +395,7 @@ describe('non standard primary key naming', function () {
     request(app).get('/posts').expect(200).end(function (err, res) {
       expect(err).to.equal(null)
       expect(res.body.data.length).to.equal(1)
-      expect(res.body.data[0].id).to.equal('1')
+      expect(res.body.data[0].id).to.equal(1)
       done()
     })
   })

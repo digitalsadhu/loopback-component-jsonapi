@@ -143,7 +143,7 @@ describe('loopback json api component update method', function () {
         .set('Content-Type', 'application/json')
         .end(function (err, res) {
           expect(err).to.equal(null)
-          expect(res.body.data.id).to.equal('1')
+          expect(res.body.data.id).to.equal(1)
           expect(res.body.data.type).to.equal('posts')
           expect(res.body.data.attributes.title).to.equal(
             'my post title changed'
@@ -172,7 +172,7 @@ describe('loopback json api component update method', function () {
           .set('Content-Type', 'application/json')
           .end(function (err, res) {
             expect(err).to.equal(null)
-            expect(res.body.data.id).to.equal('1')
+            expect(res.body.data.id).to.equal(1)
             expect(res.body.data.type).to.equal('posts')
             expect(res.body.data.attributes.title).to.equal('my post')
             expect(res.body.data.attributes.content).to.equal(
@@ -195,7 +195,7 @@ describe('loopback json api component update method', function () {
           .expect(200)
           .end(function (err, res) {
             expect(err).to.equal(null)
-            expect(res.body.data.id).to.equal('1')
+            expect(res.body.data.id).to.equal(1)
             expect(res.body.data.type).to.equal('posts')
             expect(res.body.data.attributes.title).to.equal('my post')
             expect(res.body.data.attributes.content).to.equal(
@@ -221,7 +221,7 @@ describe('loopback json api component update method', function () {
           .expect(200)
           .end(function (err, res) {
             expect(err).to.equal(null)
-            expect(res.body.data.id).to.equal('1')
+            expect(res.body.data.id).to.equal(1)
             expect(res.body.data.type).to.equal('posts')
             expect(res.body.data.attributes.title).to.equal('my post')
             expect(res.body.data.attributes.content).to.equal(
@@ -324,7 +324,7 @@ describe('non standard primary key naming', function () {
       .expect(200)
       .end(function (err, res) {
         expect(err).to.equal(null)
-        expect(res.body.data.id).to.equal('1')
+        expect(res.body.data.id).to.equal(1)
         expect(res.body.data.attributes.title).to.equal('my post 2')
         expect(res.body.data.links.self).to.match(
           /http:\/\/127\.0\.0\.1.*\/posts\/1/

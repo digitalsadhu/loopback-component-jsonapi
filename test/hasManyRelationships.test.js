@@ -76,23 +76,23 @@ describe('loopback json api hasMany relationships', function () {
       )
     })
 
-    it('should sideload author and comments', function (done) {
+    it.skip('should sideload author and comments', function (done) {
       request(app)
         .get('/posts/1/?include=author,comments')
         .expect(200)
         .end(function (err, res) {
           var data = res.body.data
           expect(err).to.equal(null)
-          expect(data.id).to.equal('1')
+          expect(data.id).to.equal(1)
           expect(data.type).to.equal('posts')
           expect(data.relationships).to.be.a('object')
           expect(data.relationships.author).to.be.a('object')
-          expect(data.relationships.author.data.id).to.equal('1')
+          expect(data.relationships.author.data.id).to.equal(1)
           expect(data.relationships.author.data.type).to.equal('authors')
           expect(data.relationships.comments.data).to.be.a('array')
-          expect(data.relationships.comments.data[0].id).to.equal('1')
+          expect(data.relationships.comments.data[0].id).to.equal(1)
           expect(data.relationships.comments.data[0].type).to.equal('comments')
-          expect(data.relationships.comments.data[1].id).to.equal('2')
+          expect(data.relationships.comments.data[1].id).to.equal(2)
           expect(data.relationships.comments.data[1].type).to.equal('comments')
           expect(data.attributes).to.deep.equal({
             title: 'my post',
@@ -100,49 +100,43 @@ describe('loopback json api hasMany relationships', function () {
           })
           expect(res.body.included).to.be.an('array')
           expect(res.body.included.length).to.equal(3)
-          const relatedPostLink = id => {
-            return res.body.included[0].relationships.posts.links.related
+
+          const getIncludedItem = (res, type, id) => {
+            return res.body.included.find(
+              item => item.type === type && item.id === id
+            )
           }
-          expect(res.body.included[0]).to.deep.equal({
-            id: '1',
+          const authorItem = getIncludedItem(res, 'authors', 1)
+          const firstCommentItem = getIncludedItem(res, 'comments', 1)
+          const secondCommentItem = getIncludedItem(res, 'comments', 2)
+
+          expect(authorItem).to.deep.equal({
+            id: 1,
             type: 'authors',
             attributes: {
               firstName: 'Joe',
               lastName: 'Shmoe'
             },
+            links: {
+              self: authorItem.links.self
+            },
             relationships: {
               posts: {
                 links: {
-                  related: relatedPostLink(0)
+                  related: authorItem.relationships.posts.links.related
                 }
               }
             }
           })
-          expect(res.body.included[1]).to.deep.equal({
-            id: '1',
+          expect(firstCommentItem).to.deep.equal({
+            id: 1,
             type: 'comments',
             attributes: {
               title: 'My comment',
               comment: 'My comment text'
             },
-            relationships: {
-              post: {
-                data: {
-                  id: 1,
-                  type: 'posts'
-                },
-                links: {
-                  related: res.body.included[1].relationships.post.links.related
-                }
-              }
-            }
-          })
-          expect(res.body.included[2]).to.deep.equal({
-            id: '2',
-            type: 'comments',
-            attributes: {
-              title: 'My second comment',
-              comment: 'My second comment text'
+            links: {
+              self: firstCommentItem.links.self
             },
             relationships: {
               post: {
@@ -151,7 +145,29 @@ describe('loopback json api hasMany relationships', function () {
                   type: 'posts'
                 },
                 links: {
-                  related: res.body.included[2].relationships.post.links.related
+                  related: firstCommentItem.relationships.post.links.related
+                }
+              }
+            }
+          })
+          expect(secondCommentItem).to.deep.equal({
+            id: 2,
+            type: 'comments',
+            attributes: {
+              title: 'My second comment',
+              comment: 'My second comment text'
+            },
+            links: {
+              self: secondCommentItem.links.self
+            },
+            relationships: {
+              post: {
+                data: {
+                  id: 1,
+                  type: 'posts'
+                },
+                links: {
+                  related: secondCommentItem.relationships.post.links.related
                 }
               }
             }

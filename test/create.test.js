@@ -174,7 +174,7 @@ describe('loopback json api component create method', function () {
             'attributes',
             'links'
           )
-          expect(res.body.data.id).to.equal('1')
+          expect(res.body.data.id).to.equal(1)
           expect(res.body.data.type).to.equal('posts')
           expect(res.body.data.attributes).to.have.all.keys('title', 'content')
           expect(res.body.data.attributes).to.not.have.keys('id')
@@ -209,7 +209,7 @@ describe('loopback json api component create method', function () {
             'attributes',
             'links'
           )
-          expect(res.body.data.id).to.equal('1')
+          expect(res.body.data.id).to.equal(1)
           expect(res.body.data.type).to.equal('posts')
           expect(res.body.data.attributes).to.have.all.keys('title', 'content')
           expect(res.body.data.attributes).to.not.have.keys('id')

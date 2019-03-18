@@ -8,7 +8,7 @@ var app
 var Post
 var Comment
 
-describe('foreign key configuration', function () {
+describe.skip('foreign key configuration', function () {
   beforeEach(function (done) {
     app = loopback()
     app.set('legacyExplorer', false)
