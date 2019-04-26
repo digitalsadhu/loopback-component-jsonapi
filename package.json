@@ -48,7 +48,7 @@
     "lodash": "^4.17.1",
     "prettier-standard-formatter": "^0.222222222222222.333333333333333",
     "snazzy": "^7.0.0",
-    "type-is": "^1.6.14"
+    "type-is": "^1.6.18"
   },
   "devDependencies": {
     "@commitlint/cli": "^6.0.2",
