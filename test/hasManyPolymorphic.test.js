@@ -104,4 +104,60 @@ describe('loopback json api hasMany polymorphic relationships', function () {
       }
     )
   })
+
+  describe('Create relationship via API', function () {
+    beforeEach(function (done) {
+      Resource.create(
+        {
+          fileName: 'blah.jpg'
+        },
+        done
+      )
+    })
+
+    it(
+      'should define a relationship to Resources when Post is created',
+      function (done) {
+        Resource.create(
+          {
+            fileName: 'blah.jpg'
+          },
+          function (err, resource) {
+            expect(err).to.equal(null)
+            request(app)
+              .post('/posts')
+              .send({
+                data: {
+                  type: 'posts',
+                  attributes: {
+                    fileName: 'blah.jpg'
+                  },
+                  relationships: {
+                    resources: {
+                      data: [
+                        {
+                          id: 1,
+                          type: 'resources'
+                        }
+                      ]
+                    }
+                  }
+                }
+              })
+              .set('accept', 'application/vnd.api+json')
+              .set('content-type', 'application/json')
+              .expect(201)
+              .end(function (err, res) {
+                expect(err).to.equal(null)
+                expect(res.body).to.not.have.key('errors')
+                expect(res.body.data.relationships.resources).to.be.an(
+                  'object'
+                )
+                done()
+              })
+          }
+        )
+      }
+    )
+  })
 })
